@@ -374,7 +374,7 @@ function dibujaHtml() {
     });
   } else {
     contenidoBody['r'].forEach(function (item, index) {
-      respuestaHtml += `<div class="col-md-${item.width.md} col-sm-${item.width.sm} col-xs-${item.width.xs} tag">`
+      respuestaHtml += `<div class="col-md-${item.width.md} col-sm-${item.width.sm} col-${item.width.xs} tag">`
       if (item.tag != 'general') {
         if (m.tag == 'svg') {
           contenidoHtml += `<svg id="container-r${index}" class="img-fluid mx-auto d-block"></svg>`
