@@ -374,7 +374,7 @@ function dibujaHtml() {
     });
   } else {
     contenidoBody['r'].forEach(function (item, index) {
-      respuestaHtml += `<div class="col-md-${item.width.md} col-sm-${item.width.sm} col-xs-${item.width.xs} tag">`
+      respuestaHtml += `<div class="col-md-${item.width.md} col-sm-${item.width.sm} col-${item.width.xs} tag">`
       if (item.tag != 'general') {
         if (m.tag == 'svg') {
           contenidoHtml += `<svg id="container-r${index}" class="img-fluid mx-auto d-block"></svg>`
@@ -555,8 +555,8 @@ function insertarInputFraccion(config) {
   const { enteroMaxLen, numeradorMaxLen, denominadorMaxLen, validaciones, enteroCorrecta, numeradorCorrecta, denominadorCorrecta } = params
   let vars = vt ? variables : versions
   //console.log(regexFunctions(regex(b64_to_utf8(validaciones), vars, vt)))
-  //_VALIDACIONES_INPUT_TABLA_ = JSON.parse(regex(b64_to_utf8(validaciones), vars, vt));
-  let inputFraccion = `<table class="mx-auto d-block">
+  _VALIDACIONES_INPUT_TABLA_ = JSON.parse(regex(b64_to_utf8(validaciones), vars, vt));
+  let inputFraccion = `<table class="mx-auto">
 	<tbody>
 		<tr>
 			<td rowspan="2">
