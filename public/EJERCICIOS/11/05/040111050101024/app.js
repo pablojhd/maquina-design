@@ -665,7 +665,7 @@ function insertarTabla(config) {
             break;
           case 'image':
             var relativePath = table[row][col].value.url.replace('https://desarrolloadaptatin.blob.core.windows.net/sistemaejercicios/ejercicios/Nivel-4/', '../../../../');
-            r += `<img src=${regexFunctions(regex(relativePath, vars, vt))} height=${table[row][col].value.height} width=${table[row][col].value.width}/>`;
+            r += `<img src=${regex(relativePath, vars, vt)} height=${table[row][col].value.height} width=${table[row][col].value.width}/>`;
             break;
           case 'input':
             var { anchoInput, correctas, idInput, maxLength, placeholder, tipoInput } = table[row][col].value;
@@ -4523,12 +4523,7 @@ async function repeticionPicV2(config) {
           alto: altoImg + (sepY[0] > 0 ? cantidadRepeticiones * altoImg : 0) + ((cantidadRepeticiones - 1) * sepY[0])
         };
       case 'dado':
-        if (cantidadRepeticiones === 0) {
-          return {
-            ancho: 0,
-            alto: 0
-          }
-        } else if (cantidadRepeticiones === 1) {
+        if (cantidadRepeticiones === 1) {
           return {
             ancho: anchoImg,
             alto: altoImg
