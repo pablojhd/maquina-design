@@ -50,7 +50,7 @@ canvas {
 }
 
 .mascinco{
-  padding-bottom: 40px
+  padding-top: 1.5em;
 }
 
 img {
@@ -89,8 +89,8 @@ table {
   }
 
   .contenido {
-    max-height: calc(100vh - 120px); /*header 50px + 10px de margen + footer mobile 60 px*/
-    height: calc(100vh - 120px); /*header 50px + 10px de margen + footer mobile 60 px*/
+    max-height: calc(100vh+120px); /*header 50px + 10px de margen + footer mobile 60 px*/
+    height: calc(100vh+120px); /*header 50px + 10px de margen + footer mobile 60 px*/
     overflow: auto;
     overflow-y: scroll;
     margin-bottom: 0;
@@ -603,7 +603,7 @@ hr.sidelinebar {
 }
 
 .tabla td {
-  font-size: 20px;
+  font-size: 1em;
   color: #000000;
   text-align: center; 
   vertical-align: middle;
@@ -613,6 +613,7 @@ hr.sidelinebar {
 @media(max-width: 775px){
   .tabla p {
     margin-bottom: 24px;
+    font-size: 16px;
   }
   .tabla {
     width: 100%;

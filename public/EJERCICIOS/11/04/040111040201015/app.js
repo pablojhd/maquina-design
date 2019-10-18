@@ -556,7 +556,7 @@ function insertarInputFraccion(config) {
   let vars = vt ? variables : versions
   //console.log(regexFunctions(regex(b64_to_utf8(validaciones), vars, vt)))
   _VALIDACIONES_INPUT_TABLA_ = JSON.parse(regex(b64_to_utf8(validaciones), vars, vt));
-  let inputFraccion = `<table class="mx-auto d-block">
+  let inputFraccion = `<table class="mx-auto">
 	<tbody>
 		<tr>
 			<td rowspan="2">

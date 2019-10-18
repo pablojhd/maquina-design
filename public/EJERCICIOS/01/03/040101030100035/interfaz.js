@@ -385,7 +385,6 @@ function continuarEjercicio() { //permite continuar con el segundo intento en DE
             $('.inputTexto-incorrecto').removeClass('inputTexto-incorrecto');
         }
     }
-
 }
 //handle modals
 function openModalFeedback(feedback, correcto) {
