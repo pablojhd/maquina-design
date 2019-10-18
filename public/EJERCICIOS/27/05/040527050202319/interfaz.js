@@ -163,7 +163,7 @@ function evaluaInputsEjercicio() {
 		}
 	}
 	if(errFre === '') {
-		feed = feedbackDefecto;
+		feed = regexFunctions(feedbackDefecto);
 		errFre = errFrecDefecto;
 		var inputs = document.querySelectorAll(".contenido input[name='answer']");
 		for(var input of inputs) {
@@ -426,12 +426,10 @@ function closeModalFeedback() {//esta funcion permite continuar con el segundo i
 		if(inputsCount === 1) {
 			$('section.contenido').find('input[type=text]').val('');
 			$('input.inputTexto-incorrecto').prop('disabled', false);
-			$('input.inputTexto').prop('disabled', false);
 			$('.inputTexto-incorrecto').removeClass('inputTexto-incorrecto');
 		} else {
 			$('section.contenido').find('input:not(.inputTexto-correcto)[type=text]').val('');
 			$('input.inputTexto-incorrecto').prop('disabled', false);
-			$('input.inputTexto').prop('disabled', false);
 			$('.inputTexto-incorrecto').removeClass('inputTexto-incorrecto');
 		}
 	}
@@ -475,7 +473,8 @@ function seleccionaImagenRadio(e, labelId) {
 	document.getElementById(labelId).click();
 }
 function cambiaInputTexto(e) {
-	var validacion = (e.keyCode >= 65 && e.keyCode <= 90) //letra mayuzc
+	var validacion = (e.keyCode >= 48 && e.keyCode <= 57) //numero
+		|| (e.keyCode >= 65 && e.keyCode <= 90) //letra mayuzc
 		|| (e.keyCode >= 97 && e.keyCode <= 122) //letra minusc
 		|| (e.keyCode == 241 || e.keyCode == 209) //ñ y Ñ
 		|| (e.keyCode == 225 || e.keyCode == 233 || e.keyCode == 237 || e.keyCode == 243 || e.keyCode == 250) //áéíóú
