@@ -1,45 +1,53 @@
-const path = require('path');
-const express = require('express');
-const fs = require('fs');
-const bodyParser = require('body-parser');
-const port = process.env.PORT || 4000;
+const path = require('path')
+const express = require('express')
+const fs = require('fs')
+const bodyParser = require('body-parser')
+const port = process.env.PORT || 4000
 
-const app = express();
-const publicPath = path.join(__dirname, 'public');
+const app = express()
+const publicPath = path.join(__dirname, 'public')
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
-app.use(express.static(publicPath));
+app.use(express.static(publicPath))
 
 app.get('/', (request, response) => {
-  response.sendFile(path.join(publicPath, 'iframe.html'));
-});
+  response.sendFile(path.join(publicPath, 'iframe.html'))
+})
 
 app.get('/prueba', (request, response) => {
-  response.sendFile(path.join(publicPath, 'test.html'));
-});
+  response.sendFile(path.join(publicPath, 'test.html'))
+})
 
 app.get('/archivos', (request, response) => {
-  let archivos = [];
-  const ejerciciosPath = path.join(publicPath, 'EJERCICIOS');
-  const oaFolders = fs.readdirSync(ejerciciosPath);//lee carpetas de oas
-  for(var oa = 0; oa < oaFolders.length; oa++) {
-    let ieFolderPath = path.join(ejerciciosPath, oaFolders[oa]);
-    const ieFolders = fs.readdirSync(ieFolderPath);//lee carpetas de ies
-    for(var ie = 0; ie < ieFolders.length; ie++) {
-      let ejercicioFoldersPath = path.join(ieFolderPath, ieFolders[ie]);
-      const ejercicioFolders = fs.readdirSync(ejercicioFoldersPath);
-      for(var archivoEjercicio = 0; archivoEjercicio < ejercicioFolders.length; archivoEjercicio++) {
-        let htmlsPath = path.join(ejercicioFoldersPath, ejercicioFolders[archivoEjercicio]);
-        let datos = fs.readdirSync(htmlsPath).filter(x => !x.endsWith('.js') && !x.endsWith('.css')).map(x => [
-          ejercicioFolders[archivoEjercicio],
-          oaFolders[oa],
-          ieFolders[ie],
-          path.join(ejercicioFoldersPath, ejercicioFolders[archivoEjercicio], x)
-                  .replace('C:\\Users\\usuario\\Documents\\Sourcetree\\maquina-design\\public\\', '')
-                  .replace(/\\/g, '/')
-        ]);
-        archivos = archivos.concat(datos);
+  let archivos = []
+  const ejerciciosPath = path.join(publicPath, 'EJERCICIOS')
+  const nivelesCarpeta = fs.readdirSync(ejerciciosPath)
+  for(let nivel of nivelesCarpeta) {
+    const ejesPath = path.join(ejerciciosPath, nivel)
+    const ejesCarpeta = fs.readdirSync(ejesPath).filter(x => x.startsWith('Eje-'))
+    for(let eje of ejesCarpeta) {
+      const oasPath = path.join(ejesPath, eje)
+      const oasCarpeta = fs.readdirSync(oasPath)
+      for(let oa of oasCarpeta) {
+        const iesPath = path.join(oasPath, oa)
+        const iesCarpeta = fs.readdirSync(iesPath)
+        for(let ie of iesCarpeta) {
+          const ejerciciosPath = path.join(iesPath, ie)
+          const ejerciciosCarpeta = fs.readdirSync(ejerciciosPath)
+          for(let ejercicio of ejerciciosCarpeta) {
+            const versionesPath = path.join(ejerciciosPath, ejercicio)
+            const versionesHtml = fs.readdirSync(versionesPath).filter(x => x.endsWith('.html')).map(x => [
+              nivel,
+              eje,
+              oa,
+              ie,
+              ejercicio,
+              path.join(versionesPath, x).replace(publicPath, '').replace(/\\/g, '/')
+            ])
+            archivos = archivos.concat(versionesHtml)
+          }
+        }
       }
     }
   }
@@ -48,9 +56,9 @@ app.get('/archivos', (request, response) => {
     recordsTotal: archivos.length,
     recordsFiltered: archivos.length,
     data: archivos
-  });
-});
+  })
+})
 
 app.listen(port, () => {
   console.log(`Running on port ${port}`)
-});
+})

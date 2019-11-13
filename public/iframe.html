@@ -55,62 +55,25 @@
   <table id="ejercicios" class="display" style="width: 800px;margin:auto;display: block;">
     <thead>
       <tr>
-        <th>CODIGO</th>
+        <th>NIVEL</th>
+        <th>EJE</th>
         <th>OA</th>
         <th>IE</th>
+        <th>CODIGO</th>
         <th>PATH</th>
       </tr>
     </thead>
     <tfoot>
       <tr>
-        <th>CODIGO</th>
+        <th>NIVEL</th>
+        <th>EJE</th>
         <th>OA</th>
         <th>IE</th>
+        <th>CODIGO</th>
         <th>PATH</th>
       </tr>
     </tfoot>
   </table>
-</div>
-<div class="contenedor">
-<p>
-progreso = {
-  tmpProgreso: [{
-    idasigejermat:00001,
-    correcto:false,
-    NUMEROINTENTOS:2
-  },{
-    idasigejermat:00002,
-    correcto:true,
-    NUMEROINTENTOS:1
-  },{
-    idasigejermat:00003,
-    correcto:false,
-    NUMEROINTENTOS:2
-  },{
-    idasigejermat:00003,
-    correcto:false,
-    NUMEROINTENTOS:2
-  },{
-    idasigejermat:00003,
-    correcto:false,
-    NUMEROINTENTOS:2
-  },{
-    idasigejermat:00003,
-    correcto:false,
-    NUMEROINTENTOS:2
-  },{
-    idasigejermat:00003,
-    correcto:false,
-    NUMEROINTENTOS:2
-  },{
-    idasigejermat:00003,
-    correcto:false,
-    NUMEROINTENTOS:2
-  }],
-  tmpTotal: 15
-};
-document.getElementById('barraProgreso').value = JSON.stringify(progreso);
-</p>
 </div>
 <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
 <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
@@ -161,7 +124,7 @@ document.getElementById('barraProgreso').value = JSON.stringify(progreso);
     });
     $('#ejercicios tbody').on('click', 'tr', function () {
         var data = table.row( this ).data();
-        $('iframe').attr('src', data[3]);
+        $('iframe').attr('src', data[5]);
     });
   });
 </script>
