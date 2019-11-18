@@ -6,31 +6,34 @@ import {
   tmpProgreso,
   srcImgRespuestaCorrecta,
   srcImgRespuestaIncorrecta
-} from "./Variables";
-import { validaRespuesta } from "./ValidaRespuesta";
-import { continuarEjercicio } from "./ContinuarEjercicio";
+} from "./Variables"
+import { validaRespuesta } from "./ValidaRespuesta"
+import { continuarEjercicio } from "./ContinuarEjercicio"
 
 export const handleRespuesta = () => {
-  document.querySelector("footer").style.display = "none";
-  document.getElementById("btnResponder").disabled = true;
-  let { feedback, errorFrecuente } = validaRespuesta(validaciones, tipo);
-  let feedbackElement = document.querySelector(".feedback");
-  let feedbackStrong = document.querySelector(".feedback span");
-  let feedbackText = document.querySelector(".feedback p");
-  let imgFeedback = document.querySelector(".feedback img");
+  document.querySelector("footer").style.display = "none"
+  document.getElementById("btnResponder").disabled = true
+  document.getElementsByName('answer').forEach(input => {
+    input.disabled = true
+  })
+  let { feedback, errorFrecuente } = validaRespuesta(validaciones, tipo)
+  let feedbackElement = document.querySelector(".feedback")
+  let feedbackStrong = document.querySelector(".feedback span")
+  let feedbackText = document.querySelector(".feedback p")
+  let imgFeedback = document.querySelector(".feedback img")
   if (!errorFrecuente) {
     //respuesta correcta
-    feedbackElement.style.display = "block";
-    feedbackElement.classList.add("feedback-correcto");
-    feedbackStrong.innerHTML = "¡Muy Bien!";
-    let racha = rachaCorrectas();
+    feedbackElement.style.display = "block"
+    feedbackElement.classList.add("feedback-correcto")
+    feedbackStrong.innerHTML = "¡Muy Bien!"
+    let racha = rachaCorrectas()
     if (racha) {
-      feedbackText.innerHTML = `Tienes una racha de <b>${rachaCorrectas()}</b> respuestas correctas.`;
+      feedbackText.innerHTML = `Tienes una racha de <b>${rachaCorrectas()}</b> respuestas correctas.`
     }
     imgFeedback.setAttribute(
       "src",
       srcImgRespuestaCorrecta[imgRandomIndex(true)]
-    );
+    )
     //se debe agregar la funcion al #btnContinuar para pasar al siguiente ejercicio
   } else {
     //respuesta incorrecta
@@ -38,37 +41,37 @@ export const handleRespuesta = () => {
       imgFeedback.setAttribute(
         "src",
         srcImgRespuestaIncorrecta[imgRandomIndex(false)]
-      );
-      feedbackElement.style.display = "block";
-      feedbackElement.classList.add("feedback-incorrecto");
-      feedbackStrong.innerHTML = "¡Ten Cuidado!";
-      feedbackText.innerHTML = feedback;
+      )
+      feedbackElement.style.display = "block"
+      feedbackElement.classList.add("feedback-incorrecto")
+      feedbackStrong.innerHTML = "¡Ten Cuidado!"
+      feedbackText.innerHTML = feedback
       document
         .getElementById("btnContinuar")
-        .addEventListener("click", continuarEjercicio);
-      siguienteIntento();
+        .addEventListener("click", continuarEjercicio)
+      siguienteIntento()
     } else {
-      document.getElementById("glosa").style.display = "block";
+      document.getElementById("glosa").style.display = "block"
     }
   }
-};
+}
 
 const imgRandomIndex = esCorrecta => {
   if (esCorrecta) {
-    return Math.floor(Math.random() * srcImgRespuestaCorrecta.length);
+    return Math.floor(Math.random() * srcImgRespuestaCorrecta.length)
   } else {
-    return Math.floor(Math.random() * srcImgRespuestaIncorrecta.length);
+    return Math.floor(Math.random() * srcImgRespuestaIncorrecta.length)
   }
-};
+}
 
 const rachaCorrectas = () => {
-  var correctos = 0;
+  var correctos = 0
   for (var i = tmpProgreso.length - 1; i > -1; i--) {
     if (tmpProgreso[i].correcto) {
-      correctos++;
+      correctos++
     } else {
-      break;
+      break
     }
   }
-  return correctos + 1 > 1 ? correctos + 1 : null;
-};
+  return correctos + 1 > 1 ? correctos + 1 : null
+}

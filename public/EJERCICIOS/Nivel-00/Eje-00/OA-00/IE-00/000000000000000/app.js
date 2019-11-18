@@ -33,9 +33,14 @@ const FUNCIONES = [
   }
 ]
 
-document.onload = function() {
+window.onload = function() {
   dibujaHtml()
   print()
+  document.querySelectorAll('input[type=radio]').forEach(input => {
+    input.addEventListener('change', () => {
+      document.getElementById('btnResponder').disabled = false
+    })
+  })
 }
 
 function imagenEnTexto(imgsrc, alto, ancho) {
@@ -358,13 +363,12 @@ function dibujaHtml() {
       let textoOpcion = item.params.textoOpcion ? regex(item.params.textoOpcion, versionBody.vars, false) : `Opción ${index + 1}`
       respuestaHtml += `<div class="col-md-${item.params.colmd} col-sm-${item.params.colsm} col-${item.params.col}">
           <div class="radio-div" onclick="seleccionaImagenRadio(event, 'label${index}')">
-            <input id="rbtn${index}" name="answer" value="${textoOpcion}" type="radio" data-content='${JSON.stringify(dataContent)}' onchange="cambiaRadioImagen(event)"/>
+            <input id="rbtn${index}" name="answer" value="${textoOpcion}" type="radio"/>
             <label for="rbtn${index}" id="label${index}">${textoOpcion}</label>
-						${
-        item.tag != 'general' ?
-          item.tag == 'svg' ?
-            `<svg id="container-r${index}" class="img-fluid"></svg>` :
-            `<canvas class="img-fluid" id="container-r${index}"></canvas>` :
+						${item.tag != 'general' ?
+              item.tag == 'svg' ?
+                `<svg id="container-r${index}" class="img-fluid"></svg>` :
+                `<canvas class="img-fluid" id="container-r${index}"></canvas>` :
           `<div id="container-r${index}" class="general"></div>`
         }
 					</div>
@@ -522,8 +526,7 @@ function insertarInput(config) {
           var lmnt = document.createElement('div');
           lmnt.className = `col-${col} col-sm-${colsm} col-md-${colmd}`;
           lmnt.innerHTML = `<div class="opcionradio">
-	<span></span>
-	<input type="radio" id="radio-${i}" name="answer" value="${m.respuesta}" onchange="cambiaRadios(event)" data-content='${JSON.stringify(m)}'>
+	<input type="radio" id="radio-${i}" name="answer" value="${m.respuesta}">
 	<label for="radio-${i}">${m.respuesta}</label>
 </div>`;
           lmnt.style.marginBottom = '5px';
