@@ -33,10 +33,10 @@ const FUNCIONES = [
   }
 ]
 
-$(document).ready(function () {
-  dibujaHtml();
-  print();
-});
+document.onload = function() {
+  dibujaHtml()
+  print()
+}
 
 function imagenEnTexto(imgsrc, alto, ancho) {
   return `<img src="${imgsrc.replace('https://desarrolloadaptatin.blob.core.windows.net/sistemaejercicios/ejercicios/Nivel-4/', '../../../../')}" height="${alto}" width="${ancho}"/>`

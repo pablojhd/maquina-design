@@ -25,18 +25,33 @@ app.get('/archivos', (request, response) => {
   const nivelesCarpeta = fs.readdirSync(ejerciciosPath)
   for(let nivel of nivelesCarpeta) {
     const ejesPath = path.join(ejerciciosPath, nivel)
+    if(ejesPath.indexOf('.DS_Store') > 0) {
+      continue
+    }
     const ejesCarpeta = fs.readdirSync(ejesPath).filter(x => x.startsWith('Eje-'))
     for(let eje of ejesCarpeta) {
       const oasPath = path.join(ejesPath, eje)
+      if(oasPath.indexOf('.DS_Store') > 0) {
+        continue
+      }
       const oasCarpeta = fs.readdirSync(oasPath)
       for(let oa of oasCarpeta) {
         const iesPath = path.join(oasPath, oa)
+        if(iesPath.indexOf('.DS_Store') > 0) {
+          continue
+        }
         const iesCarpeta = fs.readdirSync(iesPath)
         for(let ie of iesCarpeta) {
           const ejerciciosPath = path.join(iesPath, ie)
+          if(ejerciciosPath.indexOf('.DS_Store') > 0) {
+            continue
+          }
           const ejerciciosCarpeta = fs.readdirSync(ejerciciosPath)
           for(let ejercicio of ejerciciosCarpeta) {
             const versionesPath = path.join(ejerciciosPath, ejercicio)
+            if(versionesPath.indexOf('.DS_Store') > 0) {
+              continue
+            }
             const versionesHtml = fs.readdirSync(versionesPath).filter(x => x.endsWith('.html')).map(x => [
               nivel,
               eje,

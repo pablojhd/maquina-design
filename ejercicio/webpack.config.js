@@ -6,16 +6,12 @@ const devtool = mode === 'develompent' ? 'source-map' : 'inline-source-map'
 module.exports = {
     entry: './index.js',
     output: {
-        path: path.resolve(__dirname, 'public', 'assets'),
+        path: path.resolve(__dirname, '..', 'public', 'EJERCICIOS', 'Nivel-00', 'Eje-00', 'OA-00', 'IE-00', '000000000000000'),
         filename: 'index.js'
     },
     plugins: [
         new MiniCSSExtractPlugin({
-            // TODO: modificar ruta para que no muera en Windows
-            filename: 'index.css',
-            options: {
-                url: false
-            }
+            filename: path.join('..', '..', '..', '..', 'css', 'index.css')
         })
     ],
     module: {
@@ -32,7 +28,12 @@ module.exports = {
             test: /\.scss$/, 
             use: [
                 MiniCSSExtractPlugin.loader,
-                "css-loader",
+                {
+                    loader: 'css-loader',
+                    options: {
+                        url: false
+                    }
+                },
                 'sass-loader',
             ]
         }]
