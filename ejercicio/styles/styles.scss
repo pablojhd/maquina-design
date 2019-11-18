@@ -1,0 +1,19 @@
+@import "../../ejercicio/node_modules/bootstrap/scss/bootstrap-grid";
+@import "./general/variables";
+@import "./general/fonts";
+@import "./general/general";
+
+@import "./container_fluid/container_fluid.scss";
+
+@import "./header/header";
+@import "./header/barraprogreso";
+
+@import "./section/section";
+@import "./section/radios";
+
+@import "./footer/footer";
+@import "./footer/botones";
+
+@import "./feedback/feedback";
+
+@import "./glosa/glosa";

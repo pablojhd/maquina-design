@@ -1,0 +1,16 @@
+body {
+  margin: 0;
+  height: 100vh;
+  background-color: #f9f3e9;
+}
+
+p {
+  font-family: $opensans-reg;
+  font-size: $font-size;
+  color: $font-color;
+}
+
+.img-fluid {
+  max-width: 100%;
+  height: auto;
+}

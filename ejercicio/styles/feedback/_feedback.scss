@@ -1,0 +1,140 @@
+.feedback {
+  display: none;
+}
+
+.feedback span {
+  font-family: $opensans-reg;
+  font-size: $font-size;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.feedback p {
+  color: inherit !important;
+  margin: 0px;
+}
+
+#btnContinuar {
+  color: white;
+  border: none;
+}
+/* FEEDBACK PARA RESPUESTA CORRECTA */
+.feedback-correcto {
+  background-color: #bff199;
+  color: #4d8b4b;
+}
+
+.feedback-correcto #btnContinuar {
+  background: #4d8b4b;
+  color: #fff;
+}
+/* FEEDBACK RESPUESTA INCORRECTA */
+.feedback-incorrecto {
+  background-color: #f6b3b1;
+  color: #d33131;
+  height: 120px;
+}
+
+#animate-zoom {
+  position: fixed;
+  margin: 0px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 120px;
+  z-index: 1000;
+  // border-top: 1px solid;
+  border-color: #bfbfbf;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  -webkit-box-align: center;
+  display: grid;
+  -ms-flex-align: center;
+  align-items: center;
+  grid-template-rows: 100%;
+  grid-gap: 8px 16px;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+}
+
+#imagen-feedback {
+  padding: 0px;
+  height: 120px;
+}
+
+#animate-zoom img {
+  text-align: center;
+  padding: 0px;
+}
+
+#siguiente-feedback {
+  grid-column: 5 / auto;
+  justify-self: end;
+  text-align: center;
+  padding: 0px;
+}
+
+.feedback-incorrecto #btnContinuar {
+  background: #d33131;
+  color: #fff;
+}
+
+@include media-breakpoint-down(xs) {
+  /*ESTAS CLASES MUESTRAN EL FEEDBACK COMO MODAL*/
+  .feedback {
+    position: fixed;
+    z-index: 1030;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+  }
+
+  .feedback .container-fluid {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+  }
+
+  #animate-zoom {
+    border-radius: 20px;
+    padding: 10px;
+    border: 4px;
+    grid: unset;
+    height: 160px;
+  }
+
+  .feedback.feedback-correcto #animate-zoom {
+    background-color: #bff199;
+  }
+
+  .feedback.feedback-incorrecto #animate-zoom {
+    background-color: #f6b3b1;
+  }
+
+  .animate-zoom {
+    animation: animatezoom 0.6s;
+  }
+
+  @keyframes animatezoom {
+    from {
+      transform: scale(0);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+}
+
+@include media-breakpoint-up(sm) {
+  /*ESTAS CLASES MUESTRAN EL FEEDBACK AL PIE DE PAGINA*/
+  .feedback {
+    height: 120px;
+    z-index: 1030;
+  }
+}
