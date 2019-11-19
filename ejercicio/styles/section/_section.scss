@@ -4,7 +4,6 @@ section {
   font-family: $varelaround-reg;
   font-size: 16px;
   position: relative;
-  /*overflow-y: scroll;*/
   width: 100%;
   height: calc(100% - 120px - 70px);
   height: -moz-calc(100% - 120px - 70px);
@@ -43,14 +42,6 @@ ul {
 
 #tabla {
   margin: 5px;
-}
-
-#opciones {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  margin-top: 20px;
-  margin-bottom: 20px;
 }
 
 .texto {
@@ -96,10 +87,6 @@ img {
 @include media-breakpoint-up(sm) {
   ul {
     justify-content: space-around;
-  }
-
-  #opciones {
-    justify-content: space-evenly;
   }
 }
 

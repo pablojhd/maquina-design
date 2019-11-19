@@ -325,10 +325,9 @@ function print() { //Dibujar ejercicios
 
 function dibujaHtml() {
   // INICIO ENUNCIADO
-  var contenidoDiv = document.getElementById('enunciado');
+  var contenidoDiv = document.getElementById('contenido');
   var contenidoHtml = '';
   contenidoBody['e'].forEach((m, i) => {
-    contenidoHtml += `<div class="col-md-${m.width.md} col-sm-${m.width.sm} col-${m.width.xs} tag">`
     if (m.tag != 'general') {
       if (m.tag == 'svg') {
         contenidoHtml += `<svg id="container-e${i}" class="img-fluid mx-auto d-block"></svg>`
@@ -338,7 +337,6 @@ function dibujaHtml() {
     } else {
       contenidoHtml += `<div id="container-e${i}" class="general"></div>`
     }
-    contenidoHtml += '</div>'
   });
   contenidoDiv.innerHTML = contenidoHtml;
   // INICIO RESPUESTA
@@ -376,7 +374,6 @@ function dibujaHtml() {
     });
   } else {
     contenidoBody['r'].forEach(function (item, index) {
-      respuestaHtml += `<div class="col-md-${item.width.md} col-sm-${item.width.sm} col-xs-${item.width.xs} tag">`
       if (item.tag != 'general') {
         if (m.tag == 'svg') {
           contenidoHtml += `<svg id="container-r${index}" class="img-fluid mx-auto d-block"></svg>`
@@ -386,7 +383,6 @@ function dibujaHtml() {
       } else {
         respuestaHtml += `<div id="container-r${index}" class="general"></div>`
       }
-      respuestaHtml += '</div>'
     });
   }
 
@@ -520,16 +516,14 @@ function insertarInput(config) {
         break;
       case 'radio':
         container.innerHTML = '';
-        container.className = 'row justify-content-center';
+        container.className = 'opciones';
         answers = shuffle(answers);
         answers.forEach((m, i) => {
           var lmnt = document.createElement('div');
-          lmnt.className = `col-${col} col-sm-${colsm} col-md-${colmd}`;
-          lmnt.innerHTML = `<div class="opcionradio">
-	<input type="radio" id="radio-${i}" name="answer" value="${m.respuesta}">
-	<label for="radio-${i}">${m.respuesta}</label>
-</div>`;
-          lmnt.style.marginBottom = '5px';
+          lmnt.className = `opcionradio`;
+          lmnt.innerHTML = `
+            <input type="radio" id="radio-${i}" name="answer" value="${m.respuesta}">
+            <label for="radio-${i}">${m.respuesta}</label>`;
           container.appendChild(lmnt);
         });
         break;
