@@ -5,33 +5,34 @@ import {
   tipo,
   tmpProgreso,
   srcImgRespuestaCorrecta,
-  srcImgRespuestaIncorrecta
-} from "./Variables"
-import { validaRespuesta } from "./ValidaRespuesta"
-import { continuarEjercicio } from "./ContinuarEjercicio"
+  srcImgRespuestaIncorrecta,
+  srcImgGlosa
+} from './Variables'
+import { validaRespuesta } from './ValidaRespuesta'
+import { continuarEjercicio } from './ContinuarEjercicio'
 
 export const handleRespuesta = () => {
-  document.querySelector("footer").style.display = "none"
-  document.getElementById("btnResponder").disabled = true
+  document.querySelector('footer').style.display = 'none'
+  document.getElementById('btnResponder').disabled = true
   document.getElementsByName('answer').forEach(input => {
     input.disabled = true
   })
   let { feedback, errorFrecuente } = validaRespuesta(validaciones, tipo)
-  let feedbackElement = document.querySelector(".feedback")
-  let feedbackStrong = document.querySelector(".feedback span")
-  let feedbackText = document.querySelector(".feedback p")
-  let imgFeedback = document.querySelector(".feedback img")
+  let feedbackElement = document.querySelector('.feedback')
+  let feedbackStrong = document.querySelector('.feedback span')
+  let feedbackText = document.querySelector('.feedback p')
+  let imgFeedback = document.querySelector('.feedback img')
   if (!errorFrecuente) {
     //respuesta correcta
-    feedbackElement.style.display = "block"
-    feedbackElement.classList.add("feedback-correcto")
-    feedbackStrong.innerHTML = "¡Muy Bien!"
+    feedbackElement.style.display = 'block'
+    feedbackElement.classList.add('feedback-correcto')
+    feedbackStrong.innerHTML = '¡Muy Bien!'
     let racha = rachaCorrectas()
     if (racha) {
       feedbackText.innerHTML = `Tienes una racha de <b>${rachaCorrectas()}</b> respuestas correctas.`
     }
     imgFeedback.setAttribute(
-      "src",
+      'src',
       srcImgRespuestaCorrecta[imgRandomIndex(true)]
     )
     //se debe agregar la funcion al #btnContinuar para pasar al siguiente ejercicio
@@ -39,19 +40,23 @@ export const handleRespuesta = () => {
     //respuesta incorrecta
     if (numeroIntento === 1) {
       imgFeedback.setAttribute(
-        "src",
+        'src',
         srcImgRespuestaIncorrecta[imgRandomIndex(false)]
       )
-      feedbackElement.style.display = "block"
-      feedbackElement.classList.add("feedback-incorrecto")
-      feedbackStrong.innerHTML = "¡Ten Cuidado!"
+      feedbackElement.style.display = 'block'
+      feedbackElement.classList.add('feedback-incorrecto')
+      feedbackStrong.innerHTML = '¡Ten Cuidado!'
       feedbackText.innerHTML = feedback
       document
-        .getElementById("btnContinuar")
-        .addEventListener("click", continuarEjercicio)
+        .getElementById('btnContinuar')
+        .addEventListener('click', continuarEjercicio)
       siguienteIntento()
     } else {
-      document.getElementById("glosa").style.display = "block"
+      document.getElementById('imagenGlosa').setAttribute(
+        'src', 
+        srcImgGlosa[Math.floor(Math.random() * srcImgGlosa.length)]
+      )
+      document.getElementById('glosa').style.display = 'block'
     }
   }
 }

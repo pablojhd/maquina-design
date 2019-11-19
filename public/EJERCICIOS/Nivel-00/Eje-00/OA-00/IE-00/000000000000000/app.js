@@ -381,14 +381,14 @@ function dibujaHtml() {
           contenidoHtml += `<canvas id="container-r${index}" class="img-fluid mx-auto d-block"></canvas>`
         }
       } else {
-        respuestaHtml += `<div id="container-r${index}" class="general"></div>`
+        respuestaHtml += `<div id="container-r${index}"></div>`
       }
     });
   }
 
   respuestaDiv.innerHTML = respuestaHtml;
   // INICIO GLOSA
-  var glosaDiv = document.getElementById('glosa');
+  var glosaDiv = document.getElementById('contenido-glosa');
   var glosaHtml = '';
   contenidoBody['g'].forEach((m, i) => {
     glosaHtml += `<div class="col-md-${m.width.md} col-sm-${m.width.sm} col-xs-${m.width.xs} tag">`

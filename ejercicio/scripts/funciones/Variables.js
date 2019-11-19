@@ -3,7 +3,7 @@ export const idEjercicio = document.body.dataset.id
 export const version = document.body.dataset.version
 
 export const validaciones = JSON.parse(
-  Buffer(document.body.dataset.validation, 'base64').toString('utf8')
+  Buffer(document.body.dataset.x, 'base64').toString('utf8')
 )
 
 export const tipo = document.body.dataset.type
@@ -14,15 +14,58 @@ export const siguienteIntento = () => {
   numeroIntento++
 }
 
-export const srcImgRespuestaCorrecta = [
-  '../../../../imagenes_front/pumas/Correct_feedback_PUMA_nino.svg',
-  '../../../../imagenes_front/pumas/Correct_feedback_PUMA_nina.svg'
-]
+export let srcImgRespuestaCorrecta, srcImgRespuestaIncorrecta, srcImgGlosa
 
-export const srcImgRespuestaIncorrecta = [
-  '../../../../imagenes_front/pumas/Mistake_feedback_PUMA_nino.svg',
-  '../../../../imagenes_front/pumas/Mistake_feedback_PUMA_nina.svg'
-]
+switch(idEjercicio.substr(2,2)) {
+	case '00':
+		srcImgRespuestaCorrecta = [
+			'../../../../imagenes_front/patos/Correct_feedback_PATO_nino.svg',
+			'../../../../imagenes_front/patos/Correct_feedback_PATO_nina.svg'
+		]
+		srcImgRespuestaIncorrecta = [
+			'../../../../imagenes_front/patos/Mistake_feedback_PATO_nino.svg',
+			'../../../../imagenes_front/patos/Mistake_feedback_PATO_nina.svg'
+		]
+		srcImgGlosa = [
+			'../../../../imagenes_front/patos/Pato_nina_glosa.svg',
+			'../../../../imagenes_front/patos/Pato_nino_glosa.svg'
+		]
+		break
+	case '01':
+		srcImgRespuestaCorrecta = [
+			'../../../../imagenes_front/patos/Correct_feedback_PATO_nino.svg',
+			'../../../../imagenes_front/patos/Correct_feedback_PATO_nina.svg'
+		]
+		srcImgRespuestaIncorrecta = [
+			'../../../../imagenes_front/patos/Mistake_feedback_PATO_nino.svg',
+			'../../../../imagenes_front/patos/Mistake_feedback_PATO_nina.svg'
+		]
+		srcImgGlosa = [
+			'../../../../imagenes_front/patos/Pato_nina_glosa.svg',
+			'../../../../imagenes_front/patos/Pato_nino_glosa.svg'
+		]
+		break
+	case '02':
+		srcImgRespuestaCorrecta = [
+			'../../../../imagenes_front/pumas/Correct_feedback_PUMA_nino.svg',
+			'../../../../imagenes_front/pumas/Correct_feedback_PUMA_nina.svg'
+		]
+		srcImgRespuestaIncorrecta = [
+			'../../../../imagenes_front/pumas/Mistake_feedback_PUMA_nino.svg',
+			'../../../../imagenes_front/pumas/Mistake_feedback_PUMA_nina.svg'
+		]
+		srcImgGlosa = [
+			'../../../../imagenes_front/pumas/Puma_nina_glosa.svg',
+			'../../../../imagenes_front/pumas/Puma_nino_glosa.svg'
+		]
+		break
+	case '03':
+		break
+	case '04':
+		break
+	case '05':
+		break
+}
 
 export let tmpProgreso, tmpTotal
 let hiddenBarraDatos = window.parent.parent.barraProgreso
