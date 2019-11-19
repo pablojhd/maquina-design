@@ -70,3 +70,13 @@
 .opcionradio label {
   cursor: pointer;
 }
+
+@include media-breakpoint-down(sm) {
+  .opcionradio input[type="radio"] + label {
+    padding: 8px 20px;
+  }
+
+  .opcionradio input[type="radio"]:checked + label {
+    padding: 8px 20px;
+  }
+}

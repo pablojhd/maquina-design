@@ -20,19 +20,38 @@
 }
 /* FEEDBACK PARA RESPUESTA CORRECTA */
 .feedback-correcto {
-  background-color: #bff199;
-  color: #4d8b4b;
+  background-color: #b2e675;
+  color: #529b00;
 }
 
 .feedback-correcto #btnContinuar {
-  background: #4d8b4b;
-  color: #fff;
+  background: #72bc00;
+  color: #f9f3e9;
+  border-color: #5bac00;
+}
+
+.feedback-correcto #btnContinuar:hover {
+  background: #7ed000;
+  color: #f9f3e9;
+  border-color: #5bac00;
 }
 /* FEEDBACK RESPUESTA INCORRECTA */
 .feedback-incorrecto {
-  background-color: #f6b3b1;
-  color: #d33131;
+  background-color: #f9b4ab;
+  color: #e41e15;
   height: 120px;
+}
+
+.feedback-incorrecto #btnContinuar {
+  background: #f44316;
+  color: #f9f3e9;
+  border-color: #f92219;
+}
+
+.feedback-incorrecto #btnContinuar:hover {
+  background: #f9463c;
+  color: #f9f3e9;
+  border-color: #f92219;
 }
 
 #animate-zoom {
@@ -75,11 +94,6 @@
   padding: 0px;
 }
 
-.feedback-incorrecto #btnContinuar {
-  background: #d33131;
-  color: #fff;
-}
-
 @include media-breakpoint-down(xs) {
   /*ESTAS CLASES MUESTRAN EL FEEDBACK COMO MODAL*/
   .feedback {
@@ -110,11 +124,11 @@
   }
 
   .feedback.feedback-correcto #animate-zoom {
-    background-color: #bff199;
+    background-color: #b2e675;
   }
 
   .feedback.feedback-incorrecto #animate-zoom {
-    background-color: #f6b3b1;
+    background-color: #f9b4ab;
   }
 
   .animate-zoom {
