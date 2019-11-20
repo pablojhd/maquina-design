@@ -1,6 +1,6 @@
 //datos ejercicio
-var contenidoBody = JSON.parse(document.body.getAttribute('data-content').replace(/\'/g, '\"'));
-var versionBody = JSON.parse(document.body.getAttribute('data-version').replace(/\'/g, '\"'));
+var contenidoBody = JSON.parse(document.body.getAttribute('data-content'));
+var versionBody = JSON.parse(document.body.getAttribute('data-version'));
 var svgGlosa = []
 
 const FUNCIONES = [
