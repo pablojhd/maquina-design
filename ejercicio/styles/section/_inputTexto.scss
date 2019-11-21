@@ -1,0 +1,25 @@
+.inputTexto {
+    min-width: 40px;
+    max-height: 50px;
+    border: 2px solid #cfcfcf;
+    border-radius: 8px;
+    padding: 5px;
+    background: transparent;
+    font-family: 'opensans';
+    font-size: 20px;
+    color: #000000;
+}
+
+.inputTexto:focus {
+    border-color: #1cb0f6;
+}
+
+.inputTexto-correcto {
+    border: 2px solid #BFF199 !important;
+    color: #BFF199 !important;
+}
+
+.inputTexto-incorrecto {
+    border: 2px solid #F6B3B1 !important;
+    color: #F6B3B1 !important;
+}

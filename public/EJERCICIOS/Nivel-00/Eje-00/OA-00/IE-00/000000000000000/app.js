@@ -42,6 +42,32 @@ window.onload = function() {
       document.getElementById('btnResponder').disabled = false
     })
   })
+  document.querySelectorAll('input[type=text]').forEach(input => {
+    input.addEventListener('keyup', () => {
+      let todasRespondidas = true
+      for(let input of document.querySelectorAll('input[type=text]')) {
+        if(input.value.trim() === '') {
+          disabled = false
+          break
+        }
+      }
+      document.getElementById('btnResponder').disabled = !todasRespondidas
+    })
+  })
+  document.querySelectorAll('[data-tipoinput="texto-numerico"]').forEach(input => {
+    input.addEventListener('keypress', (e) => {
+      let validacion = (e.keyCode >= 65 && e.keyCode <= 90) //letra mayuzc
+          || (e.keyCode >= 97 && e.keyCode <= 122) //letra minusc
+          || (e.keyCode == 241 || e.keyCode == 209) //ñ y Ñ
+          || (e.keyCode == 225 || e.keyCode == 233 || e.keyCode == 237 || e.keyCode == 243 || e.keyCode == 250) //áéíóú
+          || (e.keyCode == 193 || e.keyCode == 201 || e.keyCode == 205 || e.keyCode == 211 || e.keyCode == 218) //ÁÉÍÓÚ
+          || (e.keyCode == 32) //espacio
+      if (!validacion) {
+          e.preventDefault();
+          return false;
+      }
+    })
+  })
 }
 
 function imagenEnTexto(imgsrc, alto, ancho) {
@@ -461,53 +487,43 @@ function insertarImagen(config) {
 function insertarInput(config) {
   const { container, params, variables, versions, vt } = config,
     { tipoInput, maxLength, inputSize, placeholder, anchoInput,
-      error0, defaultError,
-      feed0, defaultFeed,
       value1, value2, value3, value4, inputType, colmd, colsm, col } = params
   var vars = vt ? variables : versions;
-  //console.log(feedGenerico)
-  var answers = [{
-    respuesta: espacioMilesRegex(regexFunctions(regex(value1, vars, vt)))
-  }];
-  if (inputSize > 1) {
-    answers[1] = {
-      respuesta: espacioMilesRegex(regexFunctions(regex(value2, vars, vt)))
-    }
-  }
-  if (inputSize > 2) {
-    answers[2] = {
-      respuesta: espacioMilesRegex(regexFunctions(regex(value3, vars, vt)))
-    }
-  }
-  if (inputSize > 3) {
-    answers[3] = {
-      respuesta: espacioMilesRegex(regexFunctions(regex(value4, vars, vt)))
-    }
-  }
-  //console.log(answers)
   if (container) {
     switch (inputType) {
       case 'input':
-        var dataContent = {
-          tipoInput,
-          answers,
-          feedbackDefecto: feed0 === '' ? regexFunctions(regex(defaultFeed, vars, vt)) : feedGenerico,
-          errFrecDefecto: error0 === '' ? defaultError : error0
-        };
         container.innerHTML = '';
         switch (tipoInput) {
           case 'texto':
-            container.innerHTML = `<input type="text" name="answer" maxlength="${maxLength}" autocomplete="off" class="inputTexto" style="width:${anchoInput};" placeholder="${placeholder}" data-content='${utf8_to_b64(JSON.stringify(dataContent))}' onkeypress="cambiaInputTexto(event)" onkeyup="checkTexts()"/> `;
+            container.innerHTML = `<input type="text" name="answer" maxlength="${maxLength}" autocomplete="off" class="inputTexto" style="width:${anchoInput};" placeholder="${placeholder}" data-content='${utf8_to_b64(JSON.stringify(value1))}' data-tipoinput="${tipoInput}"/>`;
             break;
           case 'numero':
-            container.innerHTML = `<input type="text" name="answer" maxlength="${maxLength}" autocomplete="off" class="inputTexto" style="width:${anchoInput};" placeholder="${placeholder}" data-content='${utf8_to_b64(JSON.stringify(dataContent))}' onkeypress="cambiaInputNumerico(event)" onkeyup="formatearNumero(event)" />`;
+            container.innerHTML = `<input type="text" name="answer" maxlength="${maxLength}" autocomplete="off" class="inputTexto" style="width:${anchoInput};" placeholder="${placeholder}" data-content='${utf8_to_b64(JSON.stringify(value1))}' data-tipoinput="${tipoInput}" onkeypress="cambiaInputNumerico(event)" onkeyup="formatearNumero(event)"/>`;
             break;
           case 'texto-numerico':
-            container.innerHTML = `<input type="text" name="answer" maxlength="${maxLength}" autocomplete="off" class="inputTexto" style="width:${anchoInput};" placeholder="${placeholder}" data-content='${utf8_to_b64(JSON.stringify(dataContent))}' onkeypress="cambiaInputTexto(event)" onkeyup="checkTexts()"/>`;
+            container.innerHTML = `<input type="text" name="answer" maxlength="${maxLength}" autocomplete="off" class="inputTexto" style="width:${anchoInput};" placeholder="${placeholder}" data-content='${utf8_to_b64(JSON.stringify(value1))}' data-tipoinput="${tipoInput}"/>`;
             break;
         }
         break;
       case 'radio':
+        var answers = [{
+          respuesta: espacioMilesRegex(regexFunctions(regex(value1, vars, vt)))
+        }];
+        if (inputSize > 1) {
+          answers[1] = {
+            respuesta: espacioMilesRegex(regexFunctions(regex(value2, vars, vt)))
+          }
+        }
+        if (inputSize > 2) {
+          answers[2] = {
+            respuesta: espacioMilesRegex(regexFunctions(regex(value3, vars, vt)))
+          }
+        }
+        if (inputSize > 3) {
+          answers[3] = {
+            respuesta: espacioMilesRegex(regexFunctions(regex(value4, vars, vt)))
+          }
+        }
         container.innerHTML = '';
         container.className = 'opciones';
         answers = shuffle(answers);
