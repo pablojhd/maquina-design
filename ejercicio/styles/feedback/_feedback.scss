@@ -14,10 +14,10 @@
   margin: 0px;
 }
 
-#btnContinuar {
-  color: white;
-  border: none;
-}
+// #btnContinuar {
+//   color: white;
+//   border: none;
+// }
 /* FEEDBACK PARA RESPUESTA CORRECTA */
 .feedback-correcto {
   background-color: #b2e675;
@@ -88,7 +88,7 @@
 }
 
 #siguiente-feedback {
-  grid-column: 5 / auto;
+  grid-column: 3 / auto;
   justify-self: end;
   text-align: center;
   padding: 0px;
@@ -117,10 +117,21 @@
 
   #animate-zoom {
     border-radius: 20px;
-    padding: 10px;
+    justify-content: space-around;
     border: 4px;
     grid: unset;
     height: 160px;
+  }
+
+  #imagen-feedback {
+    display: none;
+  }
+
+  #siguiente-feedback {
+    grid-column: 2 / auto;
+    justify-self: end;
+    text-align: center;
+    padding: 0px;
   }
 
   .feedback.feedback-correcto #animate-zoom {
