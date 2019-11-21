@@ -1,6 +1,6 @@
 export const validaRespuesta = (validaciones, tipo) => {
 	let feedback, errorFrecuente, respuesta
-	if(tipo === 'selección múltiple') {
+	if(tipo === 'seleccion multiple') {
 		respuesta = document.querySelector('input[type=radio]:checked').value
 		for(let validacion of validaciones) {
 			if(respuesta === validacion.opcion) {

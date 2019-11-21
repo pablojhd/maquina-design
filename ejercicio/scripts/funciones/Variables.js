@@ -1,12 +1,16 @@
+import ReemplazaVariables from '../utils/ReemplazaVariables'
+
 export const idEjercicio = document.body.dataset.id
 
-export const version = document.body.dataset.version
-
-export const validaciones = JSON.parse(
-  Buffer(document.body.dataset.x, 'base64').toString('utf8')
+export const version = JSON.parse(
+	document.body.dataset.version.replace(/'/g, '"')
 )
 
-export const tipo = document.body.dataset.type
+export const validaciones = JSON.parse(
+	ReemplazaVariables(Buffer(document.body.dataset.x, 'base64').toString('utf8'), version.vars, false)
+)
+
+export const tipo = document.body.dataset.tipoejercicio
 
 export let numeroIntento = 1
 

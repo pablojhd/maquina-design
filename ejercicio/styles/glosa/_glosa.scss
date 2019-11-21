@@ -13,13 +13,8 @@
   top: 0;
   width: 100vw;
   height: 100vh;
-  overflow: auto;
   background-color: rgba(0, 0, 0, 0.4);
   padding: 15px;
-}
-
-#explicacion {
-  overflow-y: scroll;
 }
 
 #glosa h2 {
@@ -33,6 +28,10 @@
   padding: 15px 0;
   height: 100%;
   width: 100%;
+}
+
+#contenido-glosa {
+  overflow-y: auto;
 }
 
 #btnCerrarGlosa {

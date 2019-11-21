@@ -11,7 +11,7 @@ export const continuarEjercicio = () => {
   document.getElementsByName('answer').forEach(input => {
     input.disabled = false
   })
-  if (tipo === 'selección múltiple') {
+  if (tipo === 'seleccion multiple') {
     document.querySelector('input[type=radio]:checked').checked = false
   } else {
     document.querySelectorAll('input[type=text]').forEach(input => {
