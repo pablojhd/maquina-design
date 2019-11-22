@@ -1,4 +1,5 @@
 import ReemplazaVariables from '../utils/ReemplazaVariables'
+import ReemplazaFunciones from '../utils/ReemplazaFunciones'
 
 export const idEjercicio = document.body.dataset.id
 
@@ -7,7 +8,7 @@ export const version = JSON.parse(
 )
 
 export const validaciones = JSON.parse(
-	ReemplazaVariables(Buffer(document.body.dataset.x, 'base64').toString('utf8'), version.vars, false)
+	ReemplazaFunciones(ReemplazaVariables(Buffer(document.body.dataset.x, 'base64').toString('utf8'), version.vars, false))
 )
 
 export const tipo = document.body.dataset.tipoejercicio
