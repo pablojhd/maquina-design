@@ -2498,7 +2498,7 @@ body {
   background-color: #f9f3e9; }
 
 p {
-  font-family: "opensansreg";
+  font-family: "quicksandmedium";
   font-size: 16px;
   color: #000000;
   text-align: center; }
@@ -2734,7 +2734,7 @@ img {
   border-radius: 40px;
   border-radius: 40px;
   text-align: center;
-  font-family: "opensansreg";
+  font-family: "quicksandmedium";
   font-size: 16px; }
 
 /*
@@ -2958,7 +2958,7 @@ footer {
   display: none; }
 
 .feedback span {
-  font-family: "opensansreg";
+  font-family: "quicksandmedium";
   font-size: 16px;
   font-weight: bold;
   text-transform: uppercase; }
@@ -3100,7 +3100,7 @@ footer {
   padding: 15px; }
 
 #glosa h2 {
-  font-family: "opensansreg";
+  font-family: "quicksandmedium";
   margin: 0 0 15px 0; }
 
 #glosa .modal-content {
