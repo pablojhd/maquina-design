@@ -565,14 +565,16 @@ function insertarInput(config) {
           }
         }
         container.innerHTML = '';
-        container.className = 'opciones';
+        container.className = 'row justify-content-center';
         answers = shuffle(answers);
         answers.forEach((m, i) => {
           var lmnt = document.createElement('div');
-          lmnt.className = `opcionradio`;
+          lmnt.className = `col-${col} col-sm-${colsm} col-md-${colmd}`;
           lmnt.innerHTML = `
-            <input type="radio" id="radio-${i}" name="answer" value="${m.respuesta}">
-            <label for="radio-${i}">${m.respuesta}</label>`;
+            <div class="opcionradio">
+              <input type="radio" id="radio-${i}" name="answer" value="${m.respuesta}">
+              <label for="radio-${i}">${m.respuesta}</label>
+            </div>`;
           container.appendChild(lmnt);
         });
         break;
