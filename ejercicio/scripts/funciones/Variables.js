@@ -13,7 +13,7 @@ export const validaciones = JSON.parse(
 
 export const tipo = document.body.dataset.tipoejercicio
 
-export let numeroIntento = 1
+export let numeroIntento = parseInt(document.getElementById('hiddenIntento').value) || 1
 
 export const siguienteIntento = () => {
   numeroIntento++

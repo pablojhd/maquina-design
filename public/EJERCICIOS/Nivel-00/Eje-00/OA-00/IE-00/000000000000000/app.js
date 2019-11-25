@@ -36,6 +36,17 @@ const FUNCIONES = [
 window.onload = function() {
   dibujaHtml()
   print()
+  iniciaListeners()
+}
+
+function iniciaListeners() {
+  const preventAction = (event) => {
+    event.preventDefault()
+    return false
+  }
+  document.body.addEventListener('drop', preventAction)
+  document.body.addEventListener('contextmenu', preventAction)
+
   document.querySelectorAll('input[type=radio]').forEach(input => {
     input.addEventListener('change', () => {
       document.getElementById('btnResponder').disabled = false
@@ -52,8 +63,26 @@ window.onload = function() {
       }
       document.getElementById('btnResponder').disabled = !todasRespondidas
     })
+    input.addEventListener('copy', preventAction)
+    input.addEventListener('paste', preventAction)
+    input.addEventListener('cut', preventAction)
   })
-  document.querySelectorAll('[data-tipoinput="texto-numerico"]').forEach(input => {
+  document.querySelectorAll('[data-tipoinput="alfanumerico"]').forEach(input => {
+    input.addEventListener('keypress', (e) => {
+      let validacion = (e.keyCode >= 48 && e.keyCode <= 57) //numeros
+          || (e.keyCode >= 65 && e.keyCode <= 90) //letra mayuzc
+          || (e.keyCode >= 97 && e.keyCode <= 122) //letra minusc
+          || (e.keyCode == 241 || e.keyCode == 209) //ñ y Ñ
+          || (e.keyCode == 225 || e.keyCode == 233 || e.keyCode == 237 || e.keyCode == 243 || e.keyCode == 250) //áéíóú
+          || (e.keyCode == 193 || e.keyCode == 201 || e.keyCode == 205 || e.keyCode == 211 || e.keyCode == 218) //ÁÉÍÓÚ
+          || (e.keyCode == 32) //espacio
+      if (!validacion) {
+          e.preventDefault();
+          return false;
+      }
+    })
+  })
+  document.querySelectorAll('[data-tipoinput="texto-numerico"],[data-tipoinput="texto"]').forEach(input => {
     input.addEventListener('keypress', (e) => {
       let validacion = (e.keyCode >= 65 && e.keyCode <= 90) //letra mayuzc
           || (e.keyCode >= 97 && e.keyCode <= 122) //letra minusc
@@ -87,6 +116,36 @@ window.onload = function() {
           }
       }
       e.target.value = valor;
+    })
+  })
+  document.querySelectorAll('[data-tipoinput="decimal"]').forEach(input => {
+    input.addEventListener('keypress', (e) => {
+      var validacion = e.keyCode >= 48 && e.keyCode <= 57 || //solo numero
+        e.keyCode === 44 //coma
+      if (!validacion) {
+        e.preventDefault();
+        return false;
+      }
+    })
+    input.addEventListener('keyup', (e) => {
+      let valorReal = String(e.target.value).replace(' ', '')
+      let entero = String(valorReal).split(',')[0]
+      let decimal = String(valorReal).split(',')[1]
+      let enteroEspaciado = entero.length >= 4 ? '' : entero
+      if (entero.length >= 4) {
+        let enteroReverse = entero.split('').reverse()
+        let count = 1
+        enteroReverse.forEach(function (numero) {
+          if (count === 3) {
+            enteroEspaciado = ' ' + numero + enteroEspaciado
+            count = 1
+          } else {
+            enteroEspaciado = numero + enteroEspaciado
+            count++;
+          }
+        })
+      }
+      e.target.value = `${enteroEspaciado}${typeof decimal === 'undefined' ? '' : ','}${typeof decimal === 'undefined' ? '': decimal}`
     })
   })
 }
@@ -484,18 +543,7 @@ function insertarInput(config) {
   if (container) {
     switch (inputType) {
       case 'input':
-        container.innerHTML = '';
-        switch (tipoInput) {
-          case 'texto':
-            container.innerHTML = `<input id=${id} type="text" name="answer" maxlength="${maxLength}" autocomplete="off" class="inputTexto" style="width:${anchoInput};" placeholder="${placeholder}" data-content='${utf8_to_b64(JSON.stringify(value1))}' data-tipoinput="${tipoInput}"/>`;
-            break;
-          case 'numero':
-            container.innerHTML = `<input id=${id} type="text" name="answer" maxlength="${maxLength}" autocomplete="off" class="inputTexto" style="width:${anchoInput};" placeholder="${placeholder}" data-content='${utf8_to_b64(JSON.stringify(value1))}' data-tipoinput="${tipoInput}"/>`;
-            break;
-          case 'texto-numerico':
-            container.innerHTML = `<input id=${id} type="text" name="answer" maxlength="${maxLength}" autocomplete="off" class="inputTexto" style="width:${anchoInput};" placeholder="${placeholder}" data-content='${utf8_to_b64(JSON.stringify(value1))}' data-tipoinput="${tipoInput}"/>`;
-            break;
-        }
+        container.innerHTML = `<input id=${id} type="text" name="answer" maxlength="${maxLength}" autocomplete="off" class="inputTexto" style="width:${anchoInput};" placeholder="${placeholder}" data-content='${utf8_to_b64(value1)}' data-tipoinput="${tipoInput}"/>`;
         break;
       case 'radio':
         var answers = [{
@@ -560,13 +608,8 @@ function insertarInputFraccion(config) {
 
 function insertarTabla(config) {
   const { container, params, variables, versions, vt } = config,
-    { table, cssclases, encabezado, lineasHorizontales, estiloLineaHorizontal, destacado, estiloFondoTD, anchoCols, tituloTabla, widthTabla, validaciones } = params,
+    { table, cssclases, encabezado, lineasHorizontales, estiloLineaHorizontal, destacado, estiloFondoTD, anchoCols, tituloTabla, widthTabla } = params,
     vars = vt ? variables : versions;
-  if (validaciones) {
-    //console.log(regex(b64_to_utf8(validaciones), vars, vt))
-    _VALIDACIONES_INPUT_TABLA_ = JSON.parse(regex(b64_to_utf8(validaciones), vars, vt));
-  }
-  //_VALIDACIONES_INPUT_TABLA_ = validaciones != '' && JSON.parse(regex(validaciones, vars, vt));
   var marcasEnTd = destacado !== '' ? String(destacado).split(';') : false;
   function debeMarcarse(tr, td) {
     var encontrado = false;
@@ -650,73 +693,13 @@ function insertarTabla(config) {
             r += `<img src=${regex(relativePath, vars, vt)} height=${table[row][col].value.height} width=${table[row][col].value.width}/>`;
             break;
           case 'input':
-            var { anchoInput, correctas, idInput, maxLength, placeholder, tipoInput } = table[row][col].value;
-            var dataContent = {
-              correctas: utf8_to_b64(regex(correctas, vars, vt)),
-              tipoInput
-            }
-            switch (tipoInput) {
-              case 'texto':
-                r += `<input type="text" id="${idInput}" name="answer" maxlength="${maxLength}" placeholder="${placeholder}" style="width:${anchoInput};" autocomplete="off" data-content='${JSON.stringify(dataContent)}' onkeypress="cambiaInputTexto(event)" />`;
-                break;
-              case 'numero':
-                r += `<input type="text" id="${idInput}" name="answer" maxlength="${maxLength}" placeholder="${placeholder}" style="width:${anchoInput};" autocomplete="off" data-content='${JSON.stringify(dataContent)}' onkeypress="cambiaInputNumerico(event)" onkeyup="formatearNumero(event)" />`;
-                break;
-              case 'alfanumerico':
-                r += `<input type="text" id="${idInput}" name="answer" maxlength="${maxLength}" placeholder="${placeholder}" style="width:${anchoInput};" autocomplete="off" data-content='${JSON.stringify(dataContent)}' onkeypress="cambiaInputAlfanumerico(event)"/>`;
-                break;
-            }
+            var { tipoInput,idInput, maxLength, placeholder, anchoInput, correctas } = table[row][col].value;
+              r +=`<input id=${idInput} type="text" name="answer" maxlength="${maxLength}" autocomplete="off" class="inputTexto" style="width:${anchoInput};" placeholder="${placeholder}" data-content='${utf8_to_b64(correctas)}' data-tipoinput="${tipoInput}"/>`;
             break;
           case 'text-input':
-            var { text, tipoInput, maxLength, error0, error2, error3, error4, defaultError,
-              feed0, feed1, feed2, feed3, feed4, defaultFeed,
-              value1, value2, value3, value4 } = table[row][col].value;
+            var { text, tipoInput,idInput, maxLength, placeholder, anchoInput, correctas } = table[row][col].value;
             var p = regex(text, vars, vt);
-            var feedGenerico = regex(feed0, vars, vt);
-            var answers = [{
-              respuesta: regex(value1, vars, vt),
-              feedback: regex(feed1, vars, vt),
-              errFrec: null
-            }];
-            if (value2 !== '') {
-              answers[1] = {
-                respuesta: regex(value2, vars, vt),
-                feedback: feed0 === '' ? regexFunctions(regex(feed2, vars, vt)) : feedGenerico,
-                errFrec: error0 === '' ? error2 : error0
-              }
-            }
-            if (value3 !== '') {
-              answers[2] = {
-                respuesta: regex(value3, vars, vt),
-                feedback: feed0 === '' ? regexFunctions(regex(feed3, vars, vt)) : feedGenerico,
-                errFrec: error0 === '' ? error3 : error0
-              }
-            }
-            if (value4 !== '') {
-              answers[3] = {
-                respuesta: regex(value4, vars, vt),
-                feedback: feed0 === '' ? regexFunctions(regex(feed4, vars, vt)) : feedGenerico,
-                errFrec: error0 === '' ? error4 : error0
-              }
-            }
-            var dataContent = {
-              tipoInput,
-              answers,
-              feedbackDefecto: feed0 === '' ? regexFunctions(regex(defaultFeed, vars, vt)) : feedGenerico,
-              errFrecDefecto: error0 === '' ? defaultError : error0
-            };
-            var input;
-            switch (tipoInput) {
-              case 'text':
-                input = `<input type="text" name="answer" maxlength="${maxLength}" placeholder="${placeholder}" style="width:${anchoInput};" autocomplete="off" data-content='${JSON.stringify(dataContent)}' onkeypress="cambiaInputTexto(event)" />`;
-                break;
-              case 'numero':
-                input = `<input type="text" name="answer" maxlength="${maxLength}" placeholder="${placeholder}" style="width:${anchoInput};" autocomplete="off" data-content='${JSON.stringify(dataContent)}' onkeypress="cambiaInputNumerico(event)" onkeyup="formatearNumero(event)" />`;
-                break;
-              case 'alfanumerico':
-                input = `<input type="text" name="answer" maxlength="${maxLength}" placeholder="${placeholder}" style="width:${anchoInput};" autocomplete="off" data-content='${JSON.stringify(dataContent)}' onkeypress="cambiaInputAlfanumerico(event)"/>`;
-                break;
-            }
+            var input = `<input id=${idInput} type="text" name="answer" maxlength="${maxLength}" autocomplete="off" class="inputTexto" style="width:${anchoInput};" placeholder="${placeholder}" data-content='${utf8_to_b64(correctas)}' data-tipoinput="${tipoInput}"/>`;
             r += `<p>${p.replace('{input}', input)}</p>`;
             break;
           case 'text-image':
