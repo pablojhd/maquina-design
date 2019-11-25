@@ -564,6 +564,7 @@ function insertarInput(config) {
             respuesta: espacioMilesRegex(regexFunctions(regex(value4, vars, vt)))
           }
         }
+        
         container.innerHTML = '';
         container.className = 'row justify-content-center';
         answers = shuffle(answers);
@@ -572,7 +573,7 @@ function insertarInput(config) {
           lmnt.className = `col-${col} col-sm-${colsm} col-md-${colmd}`;
           lmnt.innerHTML = `
             <div class="opcionradio">
-              <input type="radio" id="radio-${i}" name="answer" value="${m.respuesta}">
+              <input type="radio" id="radio-${i}" name="answer" value="${m.respuesta.replace(/\s/g, ' ')}">
               <label for="radio-${i}">${m.respuesta}</label>
             </div>`;
           container.appendChild(lmnt);
