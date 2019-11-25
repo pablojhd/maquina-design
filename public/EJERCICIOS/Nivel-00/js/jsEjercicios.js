@@ -1,4 +1,5 @@
 var numeroIntento = 1;
+var fechaEntrada = (new Date()).toLocaleTimeString();
 var hiddenParent = window.parent.parent.varHidden; //Comunicacón con frame para resolver ejercicio
 var hiddenTutorial = window.parent.parent.varTutorial; //Comunicacón con frame por video tutorial
 var hiddenSegundoError = window.parent.parent.varSegundoError; //Comunicacón con frame Segundo error
@@ -7,10 +8,11 @@ var hiddenPressConsulta = window.parent.parent.pressConsulta; //Comunicacón con
 
 function cambio(elemento){
 	numeroIntento = $(elemento).val();
-	respGeneral = parseInt($(elemento).val())-1;
 }
 	
-function enviar(){
+function enviar(check, errFre){
+	var idEjercicio = document.body.dataset.id
+	var tipoejercicio = document.body.dataset.tipoejercicio
 	var fechaTerminoIntento = new Date();
 	var vercionEjercicio = window.location.href.substring(window.location.href.search(idEjercicio)+(String(idEjercicio).length+1),window.location.href.search(".html"));
 	
@@ -27,30 +29,30 @@ function enviar(){
 	var date = new Date();
 	
 	/*---captura valores de los elementos-----*/
-		var values = "";
-		if(_TIPO_INPUT_ === 'radio') {
-			values = "Valor radio= "+ $("input[name=answer]:checked").val();
-		} else {
-			var inputs = document.querySelectorAll(".contenido input[name='answer']");
-			for(var input of inputs) {
+	var values = "";
+	if(tipoejercicio === 'radio') {
+		values = "Valor radio= "+ $("input[name=answer]:checked").val();
+	} else {
+		var inputs = document.querySelectorAll(".contenido input[name='answer']");
+		for(var input of inputs) {
+			values += 'Valor input= '+input.value+' ';		
 				values += 'Valor input= '+input.value+' ';		
-			}
+			values += 'Valor input= '+input.value+' ';		
 		}
+	}
 	/*---------------------------------------*/
 	var envioIntento = JSON.stringify({ 
 		"idejercicioversion":vercionEjercicio,
-		"correcto" : check ? 1 : 0, 
-		"estarea" : 0 , 
-		"idtareaiematricula" :0 , 
-		"tiempoInicio" : ""+date.yyyymmdd()+" "+fechaEntrada+"", 
-		"tiempoRespuesta" : ""+date.yyyymmdd()+" "+fechaTerminoIntento.toLocaleTimeString()+"", 
-		"feedback": check ? 'Respuesta Correcta' : 
-												numeroIntento < 2 ? feed.replace(/(\\n)|(\\t)/g, '').trim() :
-																						'', 
+		"correcto":check ? 1 : 0, 
+		"estarea":0 , 
+		"idtareaiematricula":0 , 
+		"tiempoInicio":""+date.yyyymmdd()+" "+fechaEntrada+"", 
+		"tiempoRespuesta":""+date.yyyymmdd()+" "+fechaTerminoIntento.toLocaleTimeString()+"", 
+		"feedback": check ? 'Respuesta Correcta' : '', 
 		"codigoErrorComun" : errFre ? errFre : 0, 
 		"respuesta": values,
-		"glosa": numeroIntento === 2 ? 
-				$('#glosa').text()
+		"glosa": numeroIntento == 2 ? 
+				$('#contenido-glosa').text()
 				.replace(/(\s\s)/g, '')
 				.replace(/(\\n)|(\\t)/g, '')
 				.trim() : null

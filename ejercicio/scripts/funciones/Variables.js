@@ -19,6 +19,11 @@ export const siguienteIntento = () => {
   numeroIntento++
 }
 
+document.getElementById('hiddenIntento').addEventListener('change', function(event){
+	numeroIntento = parseInt(event.target.value)
+	/*document.getElementById('hiddenIntento').dispatchEvent(new Event('change'))*/
+})
+
 export let srcImgRespuestaCorrecta, srcImgRespuestaIncorrecta, srcImgGlosa
 
 switch(idEjercicio.substr(2,2)) {

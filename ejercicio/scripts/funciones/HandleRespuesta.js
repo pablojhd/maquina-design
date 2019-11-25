@@ -61,6 +61,7 @@ export const handleRespuesta = () => {
       document.getElementById("glosa").style.display = "block";
     }
   }
+  eval(`enviar(${errorFrecuente == null}, ${errorFrecuente == null ? errorFrecuente : '"'+errorFrecuente+ '"'})`)
 };
 
 const imgRandomIndex = esCorrecta => {
