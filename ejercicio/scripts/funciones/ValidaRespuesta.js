@@ -4,15 +4,15 @@ import ValidaNumeroEscrito from '../utils/ValidaNumeroEscrito'
 export const validaRespuesta = (validaciones, tipo) => {
 	let feedback, errorFrecuente
 	if(tipo === 'seleccion multiple') {
-		let respuesta = document.querySelector('input[type=radio]:checked').value
+        let respuesta = document.querySelector('input[type=radio]:checked').value
 		for(let validacion of validaciones) {
-			if(respuesta === validacion.opcion) {
+			if(respuesta == validacion.opcion) {
 				feedback = validacion.feedback
 				errorFrecuente = validacion.errorFrecuente
 				break
 			}
 		}
-		return { respuesta, feedback, errorFrecuente }
+		return { feedback, errorFrecuente }
 	} else {
 		const { respuestas, errFrecDefecto, feedbackDefecto } = validaciones
 		for (let respuesta of respuestas) {
