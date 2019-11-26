@@ -4392,7 +4392,7 @@ function sucesiones(config) {
   let vars = vt ? variables : versions
   let { 
       alto,ancho,grosorGrilla,colorGrilla,radioBorde,colorFondo,colorUnion,
-      filas,columnas,inicio,patron,
+      filas,columnas,inicio,patron,ocultarYReemplazar,mostrarIncremento,
       secuencias, flechas
   } = params
   //conversion de variables
@@ -4403,6 +4403,7 @@ function sucesiones(config) {
   inicio = Number(regexFunctions(regex(inicio, vars, vt)))
   patron = Number(regexFunctions(regex(patron, vars, vt)))
   grosorGrilla = Number(grosorGrilla)
+  mostrarIncremento = mostrarIncremento === 'si' ? true : false
   let terminosTotales = filas * columnas
   let fin = inicio + (patron * (terminosTotales-1))
   let altoTotal = alto * (filas+1)
@@ -4410,7 +4411,10 @@ function sucesiones(config) {
   let diferenciaGrosor = grosorGrilla/2
   secuencias = secuencias ? secuencias.map(x => obtenerSecuencia(x)) : []
   flechas = flechas ? flechas.map(x => obtenerFlecha(x)) : []
-  console.log(flechas)
+  ocultarYReemplazar = regexFunctions(regex(ocultarYReemplazar, vars, vt)).split(';').map(x => ({
+      numero: Number(x.split(',')[0]),
+      reemplazo: x.split(',')[1]
+  }))
   // diseño de la sucesion
   container.setAttributeNS(null, 'height', altoTotal)
 container.setAttributeNS(null, 'width', anchoTotal)
@@ -4490,23 +4494,33 @@ styles.innerHTML = '@font-face{font-family:"Open-Sans-Reg";src:url("https://desa
                       stroke: flecha.color,
                       fill: 'transparent'
                   }))
+                  if(mostrarIncremento) {
+                      numeros.appendChild(crearElementoDeTexto({
+                          x: puntoMedioX,
+                          y: yInicial - 12.5,
+                          style: 'font-family:Open-Sans-Reg;',
+                          fontSize: 15,
+                          textAnchor: 'middle',
+                          fill: flecha.color
+                      }, '+'+flecha.patron))
+                  }
                   if(flecha.direccion === 'derecha') {
                       let pendiente = Math.atan((yFinal - yInicial + 25) / (xFinal - puntoMedioX))*180/Math.PI
-                      let punta1Flecha = polarToCartesian(xFinal, yFinal, 5, pendiente+30)
-                      let punta2Flecha = polarToCartesian(xFinal, yFinal, 5, pendiente-30)
+                      let punta1Flecha = polarToCartesian(xFinal, yFinal, 8, pendiente+30)
+                      let punta2Flecha = polarToCartesian(xFinal, yFinal, 8, pendiente-30)
                       container.appendChild(crearElemento('path', {
-                          d: `M ${xFinal} ${yFinal} L ${punta1Flecha.x} ${punta1Flecha.y} L ${punta2Flecha.x} ${punta2Flecha.y} Z`,
+                          d: `M ${punta1Flecha.x} ${punta1Flecha.y } L ${xFinal} ${yFinal} L ${punta2Flecha.x} ${punta2Flecha.y}`,
                           stroke: flecha.color,
-                          fill: flecha.color
+                          fill: 'none'
                       }))
                   } else {
                       let pendiente = Math.atan((yInicial - 25 - yFinal) / (puntoMedioX - xInicial))*180/Math.PI
-                      let punta1Flecha = polarToCartesian(xInicial, yInicial, 5, pendiente+210)
-                      let punta2Flecha = polarToCartesian(xInicial, yInicial, 5, pendiente-210)
+                      let punta1Flecha = polarToCartesian(xInicial, yInicial, 8, pendiente+210)
+                      let punta2Flecha = polarToCartesian(xInicial, yInicial, 8, pendiente-210)
                       container.appendChild(crearElemento('path', {
-                          d: `M ${xInicial} ${yInicial} L ${punta1Flecha.x} ${punta1Flecha.y} L ${punta2Flecha.x} ${punta2Flecha.y} Z`,
+                          d: `M ${punta1Flecha.x} ${punta1Flecha.y } L ${xInicial} ${yFinal} L ${punta2Flecha.x} ${punta2Flecha.y}`,
                           stroke: flecha.color,
-                          fill: flecha.color
+                          fill: 'none'
                       }))
                   }
                   
@@ -4533,21 +4547,21 @@ styles.innerHTML = '@font-face{font-family:"Open-Sans-Reg";src:url("https://desa
 
                   if(flecha.direccion === 'derecha') {
                       let pendiente = Math.atan((yFlecha2 - yFlecha2 + 25) / (xFinal2 - puntoMedioX2))*180/Math.PI
-                      let punta1Flecha = polarToCartesian(xFinal2, yFlecha2, 5, pendiente+30)
-                      let punta2Flecha = polarToCartesian(xFinal2, yFlecha2, 5, pendiente-30)
+                      let punta1Flecha = polarToCartesian(xFinal2, yFlecha2, 8, pendiente+30)
+                      let punta2Flecha = polarToCartesian(xFinal2, yFlecha2, 8, pendiente-30)
                       container.appendChild(crearElemento('path', {
-                          d: `M ${xFinal2} ${yFlecha2} L ${punta1Flecha.x} ${punta1Flecha.y} L ${punta2Flecha.x} ${punta2Flecha.y} Z`,
+                          d: `M ${punta1Flecha.x} ${punta1Flecha.y} L ${xFinal2} ${yFlecha2} L ${punta2Flecha.x} ${punta2Flecha.y}`,
                           stroke: flecha.color,
-                          fill: flecha.color
+                          fill: 'none'
                       }))
                   } else {
                       let pendiente = Math.atan((yFlecha1 - yFlecha1 + 25) / (xInicial1 - puntoMedioX1))*180/Math.PI
-                      let punta1Flecha = polarToCartesian(xInicial1, yFlecha1, 5, pendiente+210)
-                      let punta2Flecha = polarToCartesian(xInicial1, yFlecha1, 5, pendiente-210)
+                      let punta1Flecha = polarToCartesian(xInicial1, yFlecha1, 8, pendiente+210)
+                      let punta2Flecha = polarToCartesian(xInicial1, yFlecha1, 8, pendiente-210)
                       container.appendChild(crearElemento('path', {
-                          d: `M ${xInicial1} ${yFlecha1} L ${punta1Flecha.x} ${punta1Flecha.y} L ${punta2Flecha.x} ${punta2Flecha.y} Z`,
+                          d: `M ${punta1Flecha.x} ${punta1Flecha.y} L ${xInicial1} ${yFlecha1} L ${punta2Flecha.x} ${punta2Flecha.y}`,
                           stroke: flecha.color,
-                          fill: flecha.color
+                          fill: 'none'
                       }))
                   }
               }
@@ -4602,11 +4616,21 @@ styles.innerHTML = '@font-face{font-family:"Open-Sans-Reg";src:url("https://desa
               ry: radioBorde
           }))
       }
-      numeros.appendChild(crearElementoDeTexto({
-          x: ancho/2+ columna * ancho + (ancho/2),
-          y: alto/2 + fila * alto + (alto /2) + 8,
-          style: 'font-family:Open-Sans-Reg;'
-      }, valor.toString()))
+      let index = ocultarYReemplazar.map(x => x.numero).indexOf(valor)
+      if(index >= 0 ) {
+          numeros.appendChild(crearElementoDeTexto({
+              x: ancho/2+ columna * ancho + (ancho/2),
+              y: alto/2 + fila * alto + (alto /2) + 8,
+              style: 'font-family:Open-Sans-Reg;'
+          }, ocultarYReemplazar[index].reemplazo || '' ))
+      } else {
+          numeros.appendChild(crearElementoDeTexto({
+              x: ancho/2+ columna * ancho + (ancho/2),
+              y: alto/2 + fila * alto + (alto /2) + 8,
+              style: 'font-family:Open-Sans-Reg;'
+          }, valor.toString()))
+      }
+      
   }
 
   function obtenerSecuencia(secuencia) {
