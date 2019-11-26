@@ -1,4 +1,5 @@
 import ReemplazaVariables from '../utils/ReemplazaVariables'
+import ReemplazaFunciones from '../utils/ReemplazaFunciones'
 
 export const idEjercicio = document.body.dataset.id
 
@@ -7,16 +8,21 @@ export const version = JSON.parse(
 )
 
 export const validaciones = JSON.parse(
-	ReemplazaVariables(Buffer(document.body.dataset.x, 'base64').toString('utf8'), version.vars, false)
+	ReemplazaFunciones(ReemplazaVariables(Buffer(document.body.dataset.x, 'base64').toString('utf8'), version.vars, false))
 )
 
 export const tipo = document.body.dataset.tipoejercicio
 
-export let numeroIntento = 1
+export let numeroIntento = parseInt(document.getElementById('hiddenIntento').value) || 1
 
 export const siguienteIntento = () => {
   numeroIntento++
 }
+
+document.getElementById('hiddenIntento').addEventListener('change', function(event){
+	numeroIntento = parseInt(event.target.value)
+	/*document.getElementById('hiddenIntento').dispatchEvent(new Event('change'))*/
+})
 
 export let srcImgRespuestaCorrecta, srcImgRespuestaIncorrecta, srcImgGlosa
 

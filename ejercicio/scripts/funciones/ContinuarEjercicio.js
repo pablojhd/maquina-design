@@ -8,13 +8,16 @@ export const continuarEjercicio = () => {
   document.querySelector('.feedback img').setAttribute('src', '')
   document.querySelector('.feedback').classList.remove('feedback-incorrecto')
   document.querySelector('footer').style.display = 'grid'
-  document.getElementsByName('answer').forEach(input => {
-    input.disabled = false
-  })
+  
   if (tipo === 'seleccion multiple') {
     document.querySelector('input[type=radio]:checked').checked = false
+    document.getElementsByName('answer').forEach(input => {
+      input.disabled = false
+    })
   } else {
-    document.querySelectorAll('input[type=text]').forEach(input => {
+    document.querySelectorAll('input[type=text].inputTexto-incorrecto').forEach(input => {
+      input.disabled = false
+      input.classList.remove('inputTexto-incorrecto')
       input.value = ''
     })
   }

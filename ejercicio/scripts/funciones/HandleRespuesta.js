@@ -22,8 +22,6 @@ export const handleRespuesta = () => {
   let feedbackStrong = document.querySelector(".feedback span");
   let feedbackText = document.querySelector(".feedback p");
   let imgFeedback = document.querySelector(".feedback img");
-  console.log(feedbackStrong);
-  console.log(feedbackText);
   if (!errorFrecuente) {
     //respuesta correcta
     feedbackElement.style.display = "block";
@@ -37,7 +35,8 @@ export const handleRespuesta = () => {
       "src",
       srcImgRespuestaCorrecta[imgRandomIndex(true)]
     );
-    //se debe agregar la funcion al #btnContinuar para pasar al siguiente ejercicio
+    numeroIntento === 2 && document.getElementById("btnContinuar").removeEventListener ("click", continuarEjercicio);//si es que es el segundo intento
+    document.getElementById("btnContinuar").setAttribute("onClick", "cerrarFeed();");
   } else {
     //respuesta incorrecta
     if (numeroIntento === 1) {
@@ -49,10 +48,9 @@ export const handleRespuesta = () => {
       feedbackElement.classList.add("feedback-incorrecto");
       feedbackStrong.innerHTML = "¡Ten Cuidado!";
       feedbackText.innerHTML = feedback;
-      document
-        .getElementById("btnContinuar")
-        .addEventListener("click", continuarEjercicio);
+      document.getElementById("btnContinuar").addEventListener("click", continuarEjercicio);
       siguienteIntento();
+      window.MathJax && MathJax.Hub.Queue(["Typeset", MathJax.Hub]) //muestra el mathjax en los feedbacks en caso de que existan
     } else {
       document
         .getElementById("imagenGlosa")
@@ -63,6 +61,7 @@ export const handleRespuesta = () => {
       document.getElementById("glosa").style.display = "block";
     }
   }
+  eval(`enviar(${errorFrecuente == null}, ${errorFrecuente == null ? errorFrecuente : '"'+errorFrecuente+ '"'})`)
 };
 
 const imgRandomIndex = esCorrecta => {

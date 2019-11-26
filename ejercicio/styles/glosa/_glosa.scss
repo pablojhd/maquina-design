@@ -3,6 +3,24 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  overflow-y: scroll;
+}
+
+#contenedor-glosa::-webkit-scrollbar {
+  width: 8px;
+}
+/* Track */
+#contenedor-glosa::-webkit-scrollbar-track {
+  color: transparent;
+}
+/* Handle */
+#contenedor-glosa::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 10px;
+}
+/* Handle on hover */
+#contenedor-glosa::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.6);
 }
 
 #glosa {
@@ -28,10 +46,6 @@
   padding: 15px 0;
   height: 100%;
   width: 100%;
-}
-
-#contenido-glosa {
-  overflow-y: auto;
 }
 
 #btnCerrarGlosa {

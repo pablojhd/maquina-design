@@ -38,15 +38,13 @@ data-x="W3sKICAib3BjaW9uIjogIiRhIiwKICAiZmVlZGJhY2siOiAiRXN0w6FzIGNvbnRhbmRvIGRl
 	</section>
 	<footer class="container-fluid">
 		<div id="consulta" class="col-sm">
-			<button type="button" id="btnConsulta" class="boton boton-icon boton-animation icon-consulta">
+			<button type="button" id="btnConsulta" onclick="pressConsulta();" class="boton boton-icon boton-animation icon-consulta">
 				<span>CONSULTA</span>
 			</button>
 		</div>
 		<div id="siguiente" class="col-sm">
 			<button type="button" id="btnResponder" class="boton boton-icon boton-animation icon-responder" disabled>
 				<span>RESPONDER</span>
-			</button>
-							</button> 
 			</button>
 		</div>
 	</footer>
@@ -95,7 +93,7 @@ data-x="W3sKICAib3BjaW9uIjogIiRhIiwKICAiZmVlZGJhY2siOiAiRXN0w6FzIGNvbnRhbmRvIGRl
 			</div>
 		</div>
 	</div>
-	<input id="hiddenIntento" type="hidden" value="hiddenIntento" />
+	<input id="hiddenIntento" type="hidden" onchange="cambio(this);" />
 	<script src="../../../../js/jquery-3.3.1.slim.min.js"></script>
 	<script src="index.js"></script>
 	<script src="app.js"></script>
