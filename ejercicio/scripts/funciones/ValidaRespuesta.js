@@ -32,7 +32,7 @@ export const validaRespuesta = (validaciones, tipo) => {
                         }
                         break
                     case 'texto-numerico':
-                        let numberArr = val.valor.length === 3 ? ('0' + val.valor).split('') : val.valor.split('');
+                        let numberArr = String(val.valor).padStart(4, '0').split('')
                         if (!(ValidaNumeroEscrito(input.value.trim(), numberArr)) && val.valor !== '-any-') {
                             coincidenTodas = false
                         }

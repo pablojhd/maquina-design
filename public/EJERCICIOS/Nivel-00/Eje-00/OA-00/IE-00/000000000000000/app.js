@@ -444,17 +444,15 @@ function dibujaHtml() {
       };
       let textoOpcion = item.params.textoOpcion ? regex(item.params.textoOpcion, versionBody.vars, false) : `Opción ${index + 1}`
       respuestaHtml += `<div class="col-md-${item.params.colmd} col-sm-${item.params.colsm} col-${item.params.col}">
-          <div class="radio-div" onclick="seleccionaImagenRadio(event, 'label${index}')">
-            <input id="rbtn${index}" name="answer" value="${textoOpcion}" type="radio"/>
-            <label for="rbtn${index}" id="label${index}">${textoOpcion}</label>
+            <input id="radio${index}" name="answer" value="${textoOpcion}" type="radio"/>
+            <label for="radio${index}" id="label${index}">${textoOpcion}</label>
 						${item.tag != 'general' ?
-              item.tag == 'svg' ?
-                `<svg id="container-r${index}" class="img-fluid"></svg>` :
-                `<canvas class="img-fluid" id="container-r${index}"></canvas>` :
-          `<div id="container-r${index}"></div>`
-        }
-					</div>
-				</div>`;
+                item.tag == 'svg' ?
+                  `<svg id="container-r${index}" class="img-fluid"></svg>` :
+                  `<canvas class="img-fluid" id="container-r${index}"></canvas>` :
+                  `<div id="container-r${index}"></div>`
+            }
+				  </div>`;
     });
   } else {
     contenidoBody['r'].forEach(function (item, index) {
