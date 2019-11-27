@@ -436,24 +436,26 @@ function dibujaHtml() {
   });
   if (contenidoRespuestas.length > 0) {
     contenidoRespuestas = shuffle(contenidoBody['r']);
+    respuestaHtml += `<div class="row justify-content-center">`
     contenidoRespuestas.forEach(function (item, index) {
-      var dataContent = {
-        feedback: espacioMilesRegex(regexFunctions(regex(item.params.feed, versionBody.vars, false))),
-        respuesta: `Opción ${index + 1}`,
-        errFrec: item.params.errFrec === '' ? null : item.params.errFrec
-      };
-      let textoOpcion = item.params.textoOpcion ? regex(item.params.textoOpcion, versionBody.vars, false) : `Opción ${index + 1}`
+      let valor = regexFunctions(regex(item.params.errFrec, versionBody.vars, false)).replace(/\s/g,' ')
+      let textoOpcion = item.params.textoOpcion ? regexFunctions(regex(item.params.textoOpcion, versionBody.vars, false)) : `Opción ${index + 1}`
       respuestaHtml += `<div class="col-md-${item.params.colmd} col-sm-${item.params.colsm} col-${item.params.col}">
-            <input id="radio${index}" name="answer" value="${textoOpcion}" type="radio"/>
-            <label for="radio${index}" id="label${index}">${textoOpcion}</label>
-						${item.tag != 'general' ?
-                item.tag == 'svg' ?
-                  `<svg id="container-r${index}" class="img-fluid"></svg>` :
-                  `<canvas class="img-fluid" id="container-r${index}"></canvas>` :
-                  `<div id="container-r${index}"></div>`
-            }
-				  </div>`;
+          <div class="opcionradio opcionradio-imagen">
+            <input type="radio" id="radio-${index}" name="answer" value="${valor}"/>
+            <label for="radio-${index}">
+              <span>${textoOpcion}</span>
+              ${item.tag != 'general' ?
+                  item.tag == 'svg' ?
+                    `<svg id="container-r${index}" class="img-fluid"></svg>` :
+                    `<canvas class="img-fluid" id="container-r${index}"></canvas>` :
+                    `<div id="container-r${index}"></div>`
+              }
+            </label>
+          </div>  
+        </div>`;
     });
+    respuestaHtml += `</div>`
   } else {
     contenidoBody['r'].forEach(function (item, index) {
       if (item.tag != 'general') {
@@ -3879,7 +3881,7 @@ async function tabPos(config) {
 async function formadorGrupos(config) {
   const { container, params, variables, versions, vt } = config
   container.innerHTML = ''
-  console.log(container.innerHTML)
+  //console.log(container.innerHTML)
   let {
     altoViewPort, anchoViewPort, bordeViewPort,
     altoGrupos, anchoGrupos, bordeGrupos,

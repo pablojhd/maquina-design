@@ -80,3 +80,19 @@
     padding: 8px 20px;
   }
 }
+/*
+consideraciones para opcion de imagenes ._.
+*/
+
+.opcionradio label span {
+  display: block;
+  font-size: 18px;
+}
+
+.opcionradio-imagen label {
+  padding: 8px;
+}
+
+.opcionradio input[type="radio"]:checked + label {
+  padding: 8px;
+}
