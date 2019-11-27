@@ -150,6 +150,10 @@ function iniciaListeners() {
   })
 }
 
+function capitalize(a) {
+  return a.charAt(0).toUpperCase()+a.slice(1)
+}
+
 function imagenEnTexto(imgsrc, alto, ancho) {
   return `<img src="${imgsrc.replace('https://desarrolloadaptatin.blob.core.windows.net/sistemaejercicios/ejercicios/Nivel-4/', '../../../../')}" height="${alto}" width="${ancho}"/>`
 }
@@ -4492,6 +4496,7 @@ styles.innerHTML = '@font-face{font-family:"Open-Sans-Reg";src:url("https://desa
                   container.appendChild(crearElemento('path', {
                       d: `M ${xInicial} ${yInicial} C ${xInicial} ${yInicial}, ${puntoMedioX} ${yInicial - 25} , ${xFinal} ${yFinal}`,
                       stroke: flecha.color,
+                      strokeWidth: '2',
                       fill: 'transparent'
                   }))
                   if(mostrarIncremento) {
@@ -4511,6 +4516,7 @@ styles.innerHTML = '@font-face{font-family:"Open-Sans-Reg";src:url("https://desa
                       container.appendChild(crearElemento('path', {
                           d: `M ${punta1Flecha.x} ${punta1Flecha.y } L ${xFinal} ${yFinal} L ${punta2Flecha.x} ${punta2Flecha.y}`,
                           stroke: flecha.color,
+                          strokeWidth: '2',
                           fill: 'none'
                       }))
                   } else {
@@ -4520,6 +4526,7 @@ styles.innerHTML = '@font-face{font-family:"Open-Sans-Reg";src:url("https://desa
                       container.appendChild(crearElemento('path', {
                           d: `M ${punta1Flecha.x} ${punta1Flecha.y } L ${xInicial} ${yFinal} L ${punta2Flecha.x} ${punta2Flecha.y}`,
                           stroke: flecha.color,
+                          strokeWidth: '2',
                           fill: 'none'
                       }))
                   }
@@ -4533,6 +4540,7 @@ styles.innerHTML = '@font-face{font-family:"Open-Sans-Reg";src:url("https://desa
                   container.appendChild(crearElemento('path', {
                       d: `M ${xInicial1} ${yFlecha1} C ${xInicial1} ${yFlecha1}, ${puntoMedioX1} ${yFlecha1 - 25} , ${xFinal1} ${yFlecha1}`,
                       stroke: flecha.color,
+                      strokeWidth: '2',
                       fill: 'transparent'
                   }))
                   let xInicial2 = (columnaActual - diferenciaEnColumnas) * ancho + ancho + 5
@@ -4542,6 +4550,7 @@ styles.innerHTML = '@font-face{font-family:"Open-Sans-Reg";src:url("https://desa
                   container.appendChild(crearElemento('path', {
                       d: `M ${xInicial2} ${yFlecha2} C ${xInicial2} ${yFlecha2}, ${puntoMedioX2} ${yFlecha2 - 25} , ${xFinal2} ${yFlecha2}`,
                       stroke: flecha.color,
+                      strokeWidth: '2',
                       fill: 'transparent'
                   }))
 
@@ -4552,6 +4561,7 @@ styles.innerHTML = '@font-face{font-family:"Open-Sans-Reg";src:url("https://desa
                       container.appendChild(crearElemento('path', {
                           d: `M ${punta1Flecha.x} ${punta1Flecha.y} L ${xFinal2} ${yFlecha2} L ${punta2Flecha.x} ${punta2Flecha.y}`,
                           stroke: flecha.color,
+                          strokeWidth: '2',
                           fill: 'none'
                       }))
                   } else {
@@ -4561,6 +4571,7 @@ styles.innerHTML = '@font-face{font-family:"Open-Sans-Reg";src:url("https://desa
                       container.appendChild(crearElemento('path', {
                           d: `M ${punta1Flecha.x} ${punta1Flecha.y} L ${xInicial1} ${yFlecha1} L ${punta2Flecha.x} ${punta2Flecha.y}`,
                           stroke: flecha.color,
+                          strokeWidth: '2',
                           fill: 'none'
                       }))
                   }
