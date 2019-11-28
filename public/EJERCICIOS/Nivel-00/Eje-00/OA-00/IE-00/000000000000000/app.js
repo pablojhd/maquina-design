@@ -4507,7 +4507,7 @@ styles.innerHTML = '@font-face{font-family:"Open-Sans-Reg";src:url("https://desa
                           fontSize: 15,
                           textAnchor: 'middle',
                           fill: flecha.color
-                      }, '+'+flecha.patron))
+                      },  flecha.patron > 0 ? '+'+flecha.patron : flecha.patron))
                   }
                   if(flecha.direccion === 'derecha') {
                       let pendiente = Math.atan((yFinal - yInicial + 25) / (xFinal - puntoMedioX))*180/Math.PI
@@ -4574,6 +4574,16 @@ styles.innerHTML = '@font-face{font-family:"Open-Sans-Reg";src:url("https://desa
                           strokeWidth: '2',
                           fill: 'none'
                       }))
+                  }
+                  if(mostrarIncremento) {
+                      numeros.appendChild(crearElementoDeTexto({
+                          x: flecha.direccion === 'derecha' ? ancho/4 : anchoTotal-(ancho/4),
+                          y: flecha.direccion === 'derecha' ? yFlecha2 - 12.5 : yFlecha1 - 12.5,
+                          style: 'font-family:Open-Sans-Reg;',
+                          fontSize: 15,
+                          textAnchor: 'middle',
+                          fill: flecha.color
+                      },  flecha.patron > 0 ? '+'+flecha.patron : flecha.patron))
                   }
               }
               flecha.filaValorAnterior = filaActual
