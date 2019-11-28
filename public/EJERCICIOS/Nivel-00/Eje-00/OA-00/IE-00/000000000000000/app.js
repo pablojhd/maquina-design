@@ -2107,9 +2107,9 @@ async function repeticionPicV2(config) {
           } else {
             x = xCentro + (sepX / 2)
           }
-          if (numero == 1 || numero == 2 || numero == 3) {
+          if(numero == 1 || numero == 2) {
             y = yCentro - (altoImg * 1.5) - sepY
-          } else if (numero == 4 || numero == 5 || numero == 6) {
+          } else if (numero == 3 || numero == 4) {
             y = yCentro - (altoImg / 2)
           } else {
             y = yCentro + (altoImg / 2) + sepY
