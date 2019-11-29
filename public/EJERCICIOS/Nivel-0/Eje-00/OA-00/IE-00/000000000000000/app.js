@@ -528,7 +528,7 @@ function insertarImagen(config) {
     } else {
       img.className = "img-fluid";
       //si errfrec y feed estan seteados es una respuesta este grid se ocupa en el col de la pregunta
-      container.className = (errFrec || feed) ? '' : `col-${col} col-sm-${colsm} offset-sm-${offsetsm} col-md-${colmd} offset-sm-${offsetmd}`;
+      //container.className = (errFrec || feed) ? '' : `col-${col} col-sm-${colsm} offset-sm-${offsetsm} col-md-${colmd} offset-sm-${offsetmd}`;
     }
     container.innerHTML = "";
     container.appendChild(img);
