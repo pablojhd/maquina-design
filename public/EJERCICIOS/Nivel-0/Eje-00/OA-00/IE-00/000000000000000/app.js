@@ -2165,7 +2165,7 @@ async function repeticionPicV2(config) {
 async function recta(config, tipo) {
   const { container, params, variables, versions, vt } = config
   container.innerHTML = '' //quitar linea en funcionalidad de app.js
-  container.style.border = '1px solid #000'
+  //container.style.border = '1px solid #000'
   let vars = vt ? variables : versions
 
   let { altoRecta, anchoRecta,
