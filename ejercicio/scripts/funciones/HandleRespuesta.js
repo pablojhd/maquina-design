@@ -18,6 +18,7 @@ export const handleRespuesta = () => {
     input.disabled = true;
   });
   let { feedback, errorFrecuente } = validaRespuesta(validaciones, tipo);
+  console.log({ errorFrecuente })
   let feedbackElement = document.querySelector(".feedback");
   let feedbackStrong = document.querySelector(".feedback span");
   let feedbackText = document.querySelector(".feedback p");

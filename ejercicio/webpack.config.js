@@ -6,7 +6,7 @@ const devtool = mode === 'develompent' ? 'source-map' : 'inline-source-map'
 module.exports = {
     entry: './index.js',
     output: {
-        path: path.resolve(__dirname, '..', 'public', 'EJERCICIOS', 'Nivel-00', 'Eje-00', 'OA-00', 'IE-00', '000000000000000'),
+        path: path.resolve(__dirname, '..', 'public', 'EJERCICIOS', 'Nivel-0', 'Eje-00', 'OA-00', 'IE-00', '000000000000000'),
         filename: 'index.js'
     },
     plugins: [
