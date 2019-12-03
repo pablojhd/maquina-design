@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link rel="stylesheet" href="../../../../css/index.css">
+	<title>02219_vt</title>
+	<!-- MATHJAX NO IMPORTADO -->
+	<script>document.domain = "adaptativamente.cl";</script>
+</head>
+
+<body 
+	data-id="030101020102219"
+	data-content="{'e':[{'id':'-LumhDmquWMDw5fWLdve','date':'28/11/2019 12:44:56','name':'Insertar Texto','params':{'active':0,'color':'#ffffff','content':'<p>En la tabla se han destacado números que son parte de una secuencia que se obtiene al contar de 3 en 3. ¿Qué número sigue en la secuencia?&nbsp;</p>\n','padding':'10px 10px 0px'},'position':0,'tag':'general','width':{'md':12,'sm':12,'xs':12}},{'id':'-LumhkHQ9rQoseid42eg','date':'28/11/2019 14:29:50','name':'Sucesiones','params':{'active':2,'alto':'50','ancho':'50','colorFondo':'white','colorGrilla':' #1F8EBE ','colorUnion':'#FFBBFF','columnas':'10','filas':'3','grosorGrilla':'1','inicio':'$x','mostrarIncremento':'no','ocultarYReemplazar':'','patron':'1','radioBorde':'10','secuencias':[{'color':'#FAF3A3 ','direccion':'derecha','inicio':'$a','patron':'3','terminos':'7'}]},'position':1,'tag':'svg','width':{'md':12,'sm':12,'xs':12}}],'r':[{'id':'-Lun4m0ZfxQQTAHgeSqs','date':'28/11/2019 14:32:12','name':'Insertar Input','params':{'active':0,'anchoInput':'','col':'12','colmd':'4','colsm':'4','id':'input1','inputSize':'3','inputType':'radio','maxLength':'','placeholder':'','tipoInput':'texto','value1':'$i','value2':'$h','value3':'$j','value4':''},'position':0,'tag':'general','width':{'md':12,'sm':12,'xs':12}}],'g':[{'id':'-Lun6apEE8JMY0NhHCKj','date':'28/11/2019 14:40:10','name':'Insertar Texto','params':{'active':0,'color':'#ffffff','content':'<p>Para identificar el número que corresponde en una secuencia que aumenta de 3 en 3, sumamos 3&amp;nbsp;unidades a cada número para obtener el siguiente.&nbsp;</p>\n','padding':'10px 10px 0px'},'position':0,'tag':'general','width':{'md':12,'sm':12,'xs':12}},{'id':'-Lun6upTzGpgHpKDwIKo','date':'28/11/2019 14:46:45','name':'Sucesiones','params':{'active':3,'alto':'50','ancho':'50','colorFondo':'white','colorGrilla':'#1F8EBE ','colorUnion':'#FFBBFF','columnas':'8','filas':'1','flechas':[{'color':'#C77AE6 ','direccion':'derecha','inicio':'$a','patron':'3','terminos':'todos'}],'grosorGrilla':'1','inicio':'$a','mostrarIncremento':'si','ocultarYReemplazar':'','patron':'3','radioBorde':'10'},'position':1,'tag':'svg','width':{'md':12,'sm':12,'xs':12}},{'id':'-Lun8UlzQ6g9bzx-yzbx','date':'28/11/2019 14:48:26','name':'Insertar Texto','params':{'active':0,'color':'#ffffff','content':'<p>Entonces si sumamos 3 al último número destacado en la tabla, obtenemos el siguiente número de la secuencia que será&amp;nbsp;$i.&nbsp;</p>\n','padding':'10px 10px 0px'},'position':2,'tag':'general','width':{'md':12,'sm':12,'xs':12}}]}"
+	data-version="{'id':'vt','vars':[{'var':'x','val':'371'},{'var':'a','val':'375'},{'var':'b','val':'378'},{'var':'c','val':'381'},{'var':'d','val':'384'},{'var':'e','val':'387'},{'var':'f','val':'390'},{'var':'g','val':'393'},{'var':'h','val':'395'},{'var':'i','val':'396'},{'var':'j','val':'399'}]}"
+	data-habilidad="AP2"
+data-tipoejercicio="seleccion multiple"
+data-x="W3sKICAgIm9wY2lvbiI6ICIkaSIsCiAgICJmZWVkYmFjayI6ICLCoU11eSBiaWVuISIsCiAgICJlcnJvckZyZWN1ZW50ZSI6IG51bGwKIH0sewogICAib3BjaW9uIjogIiRoIiwKICAgImZlZWRiYWNrIjogIklkZW50aWZpY2EgYmllbiBsYSBwb3NpY2nDs24gcG9yIGxhIHF1ZSB0ZSBwcmVndW50YW4sIHkgbHVlZ28gY3VlbnRhIGF1bWVudGFuZG8gZGUgMyBlbiAzLiIsCiAgICJlcnJvckZyZWN1ZW50ZSI6ICIxIgogfSx7CiAgICJvcGNpb24iOiAiJGoiLAogICAiZmVlZGJhY2siOiAiVGUgcHJlZ3VudGFuIHBvciBlbCBuw7ptZXJvIHF1ZSBzaWd1ZSBhJm5ic3A7JGciLAogICAiZXJyb3JGcmVjdWVudGUiOiAiMiIKIH1dCg=="
+
+>
+	<header class="container-fluid">
+		<div class="row justify-content-center no-gutters">
+			<div class="col-11 lineasbarra">
+				<img id="cerrar" src="../../../../imagenes_front/figuras/cruz.svg" alt="cerrar" />
+				<hr class="sidelinebar d-none d-sm-block" />
+				<svg xmlns="http://www.w3.org/2000/svg" id="progressbar" version="1.1"
+					class="mx-sm-auto d-sm-block"></svg>
+				<hr class="sidelinebar d-none d-sm-block" />
+			</div>
+		</div>
+	</header>
+	<section >
+		<div id="contenedor" class="container-fluid">
+			<div id="contenido" class="row justify-content-center"></div>
+			<div id="respuesta"></div>
+		</div>
+	</section>
+	<footer class="container-fluid">
+		<div id="consulta" class="col-sm">
+			<button type="button" id="btnConsulta" onclick="pressConsulta();" class="boton boton-icon boton-animation icon-consulta">
+				<span>CONSULTA</span>
+			</button>
+		</div>
+		<div id="siguiente" class="col-sm">
+			<button type="button" id="btnResponder" class="boton boton-icon boton-animation icon-responder" disabled>
+				<span>RESPONDER</span>
+			</button>
+		</div>
+	</footer>
+	<div class="container-fluid feedback">
+		<div id="animate-zoom" class="container-fluid animate-zoom">
+			<div id="imagen-feedback">
+				<img height="120" />
+			</div>
+			<div id="center-span">
+				<span></span>
+				<p></p>
+			</div>
+			<div id="siguiente-feedback">
+				<button type="button" id="btnContinuar" class="boton boton-icon boton-animation icon-responder">
+					<span>CONTINUAR</span>
+				</button>
+			</div>
+		</div>
+	</div>
+	<div id="glosa">
+		<div class="modal-content animate-zoom-glosa">
+			<div id="contenedor-glosa" class="container-fluid">
+				<div id="explicacion" class="row no-gutters">
+					<div class="col-12 offset-sm-2 col-sm-10">
+						<h2>Solución</h2>
+					</div>
+					<div class="d-none d-sm-block col-sm-2">
+						<img id="imagenGlosa" src="" class="img-fluid" />
+					</div>
+					<div class="col-12 col-sm-10">
+						<div class="row no-gutters justify-content-center" id="contenido-glosa">
+						
+						</div>
+					</div>
+				</div>
+				<div class="row no-gutters justify-content-end">
+					<div class="col-4 col-sm-3">
+						<button type="button" id="btnCerrarGlosa" onclick="cerrarFeedGlosa()"
+							class="boton boton-icon boton-animation icon-responder">
+							<span>CONTINUAR</span>
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<input id="hiddenIntento" type="hidden" onchange="cambio(this);" />
+	<script src="../../../../js/jquery-3.3.1.slim.min.js"></script>
+	<script src="index.js"></script>
+	<script src="app.js"></script>
+	<script src="../../../../js/jsEjercicios.js"></script>
+	<script src="../../../../js/svg-pan-zoom.min.js"></script>
+	<script src="../../../../js/hammer.min.js"></script>
+</body>
+
+</html>
