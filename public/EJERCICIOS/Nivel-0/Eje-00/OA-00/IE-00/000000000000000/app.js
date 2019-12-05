@@ -2239,7 +2239,7 @@ async function recta(config, tipo) {
 	//importa fuente opensans para ser utilizada en los elementos de texto
 	let defs = crearElemento('defs', {})
 	let styles = document.createElement('style')
-	styles.innerHTML = '@font-face{font-family:"Open-Sans-Reg";src:url("../../../../fonts/OpenSans-Regular-webfont.woff");}'
+	styles.innerHTML = '@font-face{font-family:"Open-Sans-Reg";src:url("../../../../fonts/Quicksand-Medium.ttf");}'
 	defs.appendChild(styles)
 	container.appendChild(defs)
 	//dibuja recta numerica (linea base y flechas)
