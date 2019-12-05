@@ -824,7 +824,7 @@ function repeticionBidimensional(config) {
 		cargaFuente(arreglo.nombreFuente, arreglo.src) :
 		cargaImagen(arreglo.src))
 	).then(async function (imagenes) {
-		await cargaFuente('Open-Sans-Regular-Font', '../../../../fonts/OpenSans-Regular-webfont.woff');
+		await cargaFuente('Open-Sans-Regular-Font', '../../../../fonts/Quicksand-Medium.ttf');
 		var anchoTotal = sepElem, altoRepeticiones = [];
 		imagenes.forEach(function (imagen, index) {
 			if (datos[index].tipo === 'arreglo') {
@@ -1495,7 +1495,7 @@ function abaco(config) {
 }
 
 async function multiplicacionElem(config) {
-	await cargaFuente('Open-Sans-Reg', '../../../../fonts/OpenSans-Regular-webfont.woff');
+	await cargaFuente('Open-Sans-Reg', '../../../../fonts/Quicksand-Medium.ttf');
 	const { container, params, variables, versions, vt } = config;
 	container.style.border = "1px solid #000"
 	//console.log(container);
@@ -1634,7 +1634,7 @@ async function repeticionPicV2(config) {
 		_mostrarVP1, _mostrarVP2, _mostrarRes, _altoVP1, _altoVP2, _altoRes, _res,
 		_flechaRes, _flechaVP1, _flechaVP2, _srcFlecha, _altoImgFlecha,
 		_altoImgSignoMas, _srcImgSignoMas, _signoMasVP1, _signoMasVP2 } = params
-	await cargaFuente('Open-Sans-Reg', '../../../../fonts/OpenSans-Regular-webfont.woff');
+	await cargaFuente('Open-Sans-Reg', '../../../../fonts/Quicksand-Medium.ttf');
 	let vars = vt ? variables : versions;
 	let titulo = regexFunctions(regex(_titulo, vars, vt)), //titulo arriba de la repeticion
 		separacion = Number(_separacion), //separaciones entre cada repeticion de elementos
@@ -3515,7 +3515,7 @@ async function tabPos(config) {
 	//agrega elementos a defs
 	let defs = crearElemento('defs', {})
 	let styles = document.createElement('style')
-	styles.innerHTML = '@font-face{font-family:"Open-Sans-Reg";src:url("../../../../fonts/OpenSans-Regular-webfont.woff");}'
+	styles.innerHTML = '@font-face{font-family:"Open-Sans-Reg";src:url("../../../../fonts/Quicksand-Medium.ttf");}'
 	defs.appendChild(styles)
 	imagenes.forEach(imagen => {
 		let g = crearElemento('g', {
@@ -3907,7 +3907,7 @@ async function formadorGrupos(config) {
 	//defs y lector de datos
 	let defs = crearElemento('defs', {})
 	let styles = document.createElement('style')
-	styles.innerHTML = '@font-face{font-family:"Open-Sans-Reg";src:url("../../../../fonts/OpenSans-Regular-webfont.woff");}'
+	styles.innerHTML = '@font-face{font-family:"Open-Sans-Reg";src:url("../../../../fonts/Quicksand-Medium.ttf");}'
 	defs.appendChild(styles)
 	//definicion de constantes
 	const anchoDiviciones = anchoViewPort / grupos.length
