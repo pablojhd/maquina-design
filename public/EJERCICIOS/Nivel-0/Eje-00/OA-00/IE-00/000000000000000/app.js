@@ -441,7 +441,7 @@ function dibujaHtml() {
 		contenidoRespuestas.forEach(function (item, index) {
 			let valor = regexFunctions(regex(item.params.errFrec, versionBody.vars, false)).replace(/\s/g, ' ')
 			let textoOpcion = item.params.textoOpcion ? regexFunctions(regex(item.params.textoOpcion, versionBody.vars, false)) : `Opción ${index + 1}`
-			respuestaHtml += `<div class="col-md-${item.params.colmd} col-sm-${item.params.colsm} col-${item.params.col}">
+			respuestaHtml += `<div class="col-md-${item.params.colmd} col-sm-${item.params.colsm} col-${item.params.col}" style="margin-bottom: 5px;">
           <div class="opcionradio opcionradio-imagen">
             <input type="radio" id="radio-${index}" name="answer" value="${valor}"/>
             <label for="radio-${index}">
@@ -576,6 +576,7 @@ function insertarInput(config) {
 				answers.forEach((m, i) => {
 					var lmnt = document.createElement('div');
 					lmnt.className = `col-${col} col-sm-${colsm} col-md-${colmd}`;
+					lmnt.style.marginBottom = '5px'
 					lmnt.innerHTML = `
             <div class="opcionradio">
               <input type="radio" id="radio-${i}" name="answer" value="${m.respuesta.replace(/\s/g, ' ')}">

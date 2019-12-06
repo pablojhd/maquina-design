@@ -1,14 +1,13 @@
 section {
   box-sizing: inherit;
   align-items: stretch;
-  font-family: $varelaround-reg;
-  font-size: 16px;
   position: relative;
   width: 100%;
   height: calc(100% - 120px - 70px);
   height: -moz-calc(100% - 120px - 70px);
   height: -webkit-calc(100% - 120px - 70px);
   display: flex;
+  overflow-y: auto;
 }
 
 #contenedor {
@@ -59,10 +58,6 @@ ul {
 }
 
 @include media-breakpoint-down(xs) {
-  section {
-    overflow-y: scroll;
-  }
-
   #padre-referencia {
     display: flex;
     flex-direction: row;
