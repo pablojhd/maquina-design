@@ -57,7 +57,7 @@ function enviar(check, errFre){
 				.replace(/(\\n)|(\\t)/g, '')
 				.trim() : null
 	});
-
+	console.log({ errFre })
 	/*----Comunicacion de frame a página padre----*/
 		$(hiddenParent).val(envioIntento).trigger('change');
 		$(hiddenParent).val(envioIntento).trigger('click');
