@@ -18,7 +18,8 @@ const FUNCIONES = [
 			{ id: 'Recta', action: recta },
 			{ id: 'Tabla Posicional V2', action: tabPos },
 			{ id: 'Formador Grupos', action: formadorGrupos },
-			{ id: 'Sucesiones', action: sucesiones }
+			{ id: 'Sucesiones', action: sucesiones },
+			{ id:'Tabla Secuencia', action: tablaSecuencia }
 		]
 	}, {
 		name: 'Numeracion', tag: 'numeracion', fns: [
@@ -4783,4 +4784,373 @@ function sucesiones(config) {
 		element.appendChild(textNode)
 		return element
 	}
+}
+
+async function tablaSecuencia(config) {
+    const { container, params, variables, versions, vt } = config
+    let vars = vt ? variables : versions
+    let {
+        tipo,
+        alto,
+        ancho,
+		altoEncabezado,
+		altoPie,
+        colorTabla,
+        imagenes,
+		terminos,
+		flechas
+    } = params
+	container.innerHTML = ''
+  	let defs = crearElemento('defs', {})
+	let styles = document.createElement('style')
+	styles.innerHTML = '@font-face{font-family:"Quicksand";src:url("../../../../fonts/Quicksand-Medium.ttf");}'
+	defs.appendChild(styles)
+
+	altoEncabezado = Number(altoEncabezado)
+	altoPie = Number(altoPie)
+
+    imagenes = imagenes ? await Promise.all(imagenes.map(i =>  agregaImagen(i))) : []
+
+	terminos = terminos ? terminos.map(x => obtenerTermino(x)) : []
+
+	flechas = flechas ? flechas.map(x => obtenerFlecha(x)) : []
+	
+	let separacionElementos = 20
+	alto = Number(alto)
+	ancho = Number(ancho)
+    let altoTotal = alto
+    let anchoTotal = ancho * terminos.length
+
+    container.setAttributeNS(null, 'height', altoTotal)
+	container.setAttributeNS(null, 'width', anchoTotal)
+    container.setAttributeNS(null, 'viewBox', `0 0 ${anchoTotal} ${altoTotal}`)
+
+    container.appendChild(defs)
+	
+	if(tipo === 'tabla') {
+		container.appendChild(crearElemento('rect',{
+			x: 1,
+			y: 1,
+			height: altoTotal - altoPie - 2,
+			width: anchoTotal-2,
+			fill: 'none',
+			stroke: colorTabla,
+			strokeWidth: '2'
+		}))
+
+		container.appendChild(crearElemento('line',{
+			x1: 0,
+			y1: altoEncabezado,
+			x2: anchoTotal,
+			y2: altoEncabezado,
+			stroke: colorTabla,
+			strokeWidth: '2'
+		}))
+
+		for(let i = 0; i < terminos.length-1; i++) {
+			container.appendChild(crearElemento('line',{
+				x1: (i+1)*ancho,
+				y1: 0,
+				x2: (i+1)*ancho,
+				y2: altoTotal-altoPie,
+				stroke: colorTabla,
+				strokeWidth: '2'
+			}))
+		}
+	} else {
+		for(let i = 0; i < terminos.length; i++) {
+			container.appendChild(crearElemento('rect',{
+				x: i * ancho + separacionElementos / 2 + 1,
+				y: altoEncabezado,
+				width: ancho - separacionElementos,
+				height: alto - altoEncabezado - altoPie - 2,
+				fill: 'none',
+				stroke: colorTabla,
+				strokeWidth: '2',
+				rx: '5',
+				ry: '5'
+			}))
+		}
+	}
+    
+	terminos.forEach((termino, index) => {
+		//agrega titulo al termino
+		container.appendChild(crearElementoDeTexto({
+			x: index * ancho + ancho/2,
+			y: altoEncabezado/2+10,
+			fontSize: 20,
+			textAnchor: 'middle',
+			fill: '#363026',
+			style: 'font-family:Quicksand;'
+		}, termino.titulo))
+		//calculos previos
+		let altoTotalRepeticion = termino.repeticiones.filter(x => x.formaRepeticion !== 'texto').reduce((total, rep) => total + rep.altoTotal, 0)
+		altoTotalRepeticion += separacionElementos * (termino.repeticiones.filter(x => x.formaRepeticion !== 'texto').length-1)
+		let centroColumna = index * ancho + ancho / 2
+		let yStart = altoEncabezado + (alto - altoEncabezado - altoPie)/2 - altoTotalRepeticion/2
+		//repeticion de imagenes
+		termino.repeticiones.forEach((repeticion, indexRepeticion) => {
+			switch(repeticion.formaRepeticion) {
+				case 'izq/der':
+					repeticionIzqDer(repeticion, centroColumna, yStart)
+					break
+				case 'diagonal':
+					repeticionDiagonal(repeticion, centroColumna, yStart)
+					break
+				case 'rectangular':
+					repeticionRectangular(repeticion, centroColumna, yStart)
+					break
+				case 'texto':
+					container.appendChild(crearElementoDeTexto({
+						x: centroColumna,
+						y: repeticion.posicionY,
+						fontSize: repeticion.alto,
+						textAnchor: 'middle',
+						fill: repeticion.color,
+						style: 'font-family:Quicksand;'
+					}, repeticion.texto))
+					break
+				default:
+					console.log('no soportado')
+					break
+			}
+			yStart += repeticion.formaRepeticion !== 'texto' ? 
+				repeticion.altoTotal+(indexRepeticion+1)*separacionElementos : 0
+		})
+	})
+
+	flechas.forEach(flecha => {
+		const { inicio, fin, colorFlecha, texto, colorTexto, direccion } = flecha
+		let yFlecha = alto - altoPie + 5
+		let puntoMedioX = inicio + (fin - inicio) /2
+		let yPuntoAltoFlecha = yFlecha + altoPie/2
+		container.appendChild(crearElemento('path', {
+			d: `M ${inicio} ${yFlecha} C ${inicio} ${yFlecha}, ${puntoMedioX} ${yPuntoAltoFlecha} , ${fin} ${yFlecha}`,
+			stroke: colorFlecha,
+			strokeWidth: '2',
+			fill: 'transparent'
+		}))
+
+		if(texto) {
+			container.appendChild(crearElementoDeTexto({
+				x: puntoMedioX,
+				y: yPuntoAltoFlecha+10,
+				fontSize: 20,
+				textAnchor: 'middle',
+				fill: colorTexto,
+				style: 'font-family:Quicksand;'
+			}, texto))
+		}
+
+		if(direccion === 'derecha') {
+			let pendiente = Math.atan((yPuntoAltoFlecha - yFlecha) / (puntoMedioX - fin))*180/Math.PI
+			let punta1Flecha = polarToCartesian(fin, yFlecha, 8, pendiente+30)
+			let punta2Flecha = polarToCartesian(fin, yFlecha, 8, pendiente-30)
+			container.appendChild(crearElemento('path', {
+				d: `M ${punta1Flecha.x} ${punta1Flecha.y } L ${fin} ${yFlecha} L ${punta2Flecha.x} ${punta2Flecha.y}`,
+				stroke: colorFlecha,
+				strokeWidth: '2',
+				fill: 'none'
+			}))
+		} else {
+			let pendiente = Math.atan((yPuntoAltoFlecha - yFlecha) / (puntoMedioX - inicio))*180/Math.PI
+			let punta1Flecha = polarToCartesian(inicio, yFlecha, 8, pendiente+210)
+			let punta2Flecha = polarToCartesian(inicio, yFlecha, 8, pendiente-210)
+			container.appendChild(crearElemento('path', {
+				d: `M ${punta1Flecha.x} ${punta1Flecha.y } L ${inicio} ${yFlecha} L ${punta2Flecha.x} ${punta2Flecha.y}`,
+				stroke: colorFlecha,
+				strokeWidth: '2',
+				fill: 'none'
+			}))
+		}
+	})
+
+	function repeticionIzqDer(repeticion, centroHorizontal, inicioRepeticionVertical) {
+		const { anchoTotal, limiteHorizontal, separacionX, separacionY, imagen, cantidad } = repeticion
+		for(let i = 0, acum = 0; i < cantidad; i++) {
+			let xRepeticion = centroHorizontal - anchoTotal/2 + acum * separacionX + imagen.width * acum
+			let yRepeticion = inicioRepeticionVertical + Math.floor(i/limiteHorizontal) * imagen.height + Math.floor(i/limiteHorizontal) * separacionY
+			container.appendChild(crearReferenciaAElemento(imagen.id, {
+				x: xRepeticion,
+				y: yRepeticion
+			}))
+			if(acum === limiteHorizontal-1) {
+				acum = 0
+			} else {
+				acum++
+			}
+		}
+	}
+
+	function repeticionDiagonal(repeticion, centroHorizontal, inicioRepeticionVertical) {
+		const { imagen, cantidad, separacionX, separacionY, anchoTotal } = repeticion
+		for(let i = 0; i < cantidad; i++) {
+			let xRepeticion = centroHorizontal - anchoTotal/2 + i * separacionX
+			let yRepeticion = inicioRepeticionVertical + i * separacionY
+			container.appendChild(crearReferenciaAElemento(imagen.id, {
+				x: xRepeticion,
+				y: yRepeticion
+			}))
+		}
+	}
+
+	function repeticionRectangular(repeticion, centroHorizontal, inicioRepeticionVertical) {
+		const { imagen, separacionX, separacionY, repeticionesX, repeticionesY, anchoTotal } = repeticion
+		for(let v = 0, yRepeticion; v < repeticionesY; v++) {
+			yRepeticion = inicioRepeticionVertical + v * imagen.height + v * separacionY
+			for(let h = 0, xRepeticion; h < repeticionesX; h++) {
+				xRepeticion = centroHorizontal - anchoTotal/2 + h * imagen.width + h * separacionX
+				container.appendChild(crearReferenciaAElemento(imagen.id, {
+					x: xRepeticion,
+					y: yRepeticion
+				}))
+			}
+		}
+	}
+
+    async function agregaImagen(img) {
+		let src = regexFunctions(regex(img.src, vars, vt))
+		src = src.replace(`https://desarrolloadaptatin.blob.core.windows.net/sistemaejercicios/ejercicios/Nivel-${nivelEjercicio}/`, '../../../../')
+        let imgCargada = await cargaImagen(src)
+        let height = Number(img.alto)
+        let width = height * imgCargada.width / imgCargada.height
+        let id = src.split('/').pop().replace('.svg','').replace(/%20/g,'-')
+        defs.appendChild(crearElementoDeImagen(src,{id:`${container.id}-${id}`,height,width}))
+        return {id:`${container.id}-${id}`,src,height,width}
+    }
+
+    function obtenerTermino(termino) {
+        return {
+            titulo: regexFunctions(regex(termino.titulo, vars, vt)),
+            repeticiones: termino.repeticiones ? termino.repeticiones.map(x => {
+				let imagen = x.formaRepeticion !== 'texto' ? imagenes.find(z => z.id === `${container.id}-${x.imagen}`) : null
+				let anchoTotal, altoTotal, cantidad, separacionX, separacionY, repeticionesX, repeticionesY, limiteHorizontal
+				switch(x.formaRepeticion) {
+					case 'izq/der':
+						cantidad = Number(regexFunctions(regex(x.cantidad, vars, vt)))
+						separacionX = Number(x.separacionX)
+						separacionY = Number(x.separacionY)
+						limiteHorizontal = Number(regexFunctions(regex(x.limiteHorizontal, vars, vt)))
+						anchoTotal = cantidad < limiteHorizontal ?
+							cantidad * imagen.width + (cantidad-1) * separacionX : 
+							limiteHorizontal * imagen.width + (limiteHorizontal-1) * separacionX
+						altoTotal =  Math.ceil(cantidad/limiteHorizontal) * imagen.height + (Math.ceil(cantidad/limiteHorizontal)-1) * separacionY
+						return {
+							imagen,
+                            formaRepeticion:x.formaRepeticion,
+                            cantidad,
+                            separacionX,
+                            separacionY,
+							limiteHorizontal,
+							anchoTotal,
+							altoTotal
+						}
+					case 'diagonal':
+						cantidad = Number(regexFunctions(regex(x.cantidad, vars, vt)))
+						separacionX = Number(x.separacionX)
+						separacionY = Number(x.separacionY)
+						anchoTotal = imagen.width + (cantidad-1) * separacionX
+						altoTotal = imagen.height + (cantidad-1) * separacionY
+						return {
+							imagen,
+                            formaRepeticion:x.formaRepeticion,
+                            cantidad,
+                            separacionX,
+							separacionY,
+							anchoTotal,
+							altoTotal
+						}
+					case 'rectangular':
+						repeticionesX = Number(regexFunctions(regex(x.repeticionesX, vars, vt)))
+                        repeticionesY = Number(regexFunctions(regex(x.repeticionesY, vars, vt)))
+						separacionX = Number(x.separacionX)
+						separacionY = Number(x.separacionY)
+						anchoTotal = imagen.width * repeticionesX + separacionX * (repeticionesX-1)
+						altoTotal = imagen.height * repeticionesY + separacionY * (repeticionesY-1)
+						return {
+							imagen,
+                            formaRepeticion:x.formaRepeticion,
+                            separacionX,
+                            separacionY,
+                            repeticionesX,
+							repeticionesY,
+							anchoTotal,
+							altoTotal
+						}
+					case 'texto':
+						return {
+							texto:regexFunctions(regex(x.texto, vars, vt)),
+							formaRepeticion:x.formaRepeticion,
+							color:x.color,
+							alto:Number(x.alto),
+							posicionY: Number(x.posicionY)
+						}
+				}
+            }) : []
+        }
+	}
+	
+	function obtenerFlecha(flecha) {
+		return {
+			inicio: Number(flecha.inicio) * ancho - (ancho/3)*1,
+			fin: Number(flecha.fin) * ancho - (ancho/3)*2,
+			colorFlecha: flecha.colorFlecha,
+			direccion: flecha.direccion,
+			texto: regexFunctions(regex(flecha.texto, vars, vt)),
+			colorTexto: flecha.colorTexto
+		}
+	}
+
+	function polarToCartesian(centerX, centerY, radius, angleInDegrees) { // 0 grados = 9 hrs
+		let angleInRadians = (angleInDegrees-180) * Math.PI / 180.0;
+		
+		return {
+			x: centerX + (radius * Math.cos(angleInRadians)),
+			y: centerY + (radius * Math.sin(angleInRadians))
+		}
+	}
+
+    function crearElementoDeImagen(src, atributos) {
+		let element = document.createElementNS('http://www.w3.org/2000/svg', 'image')
+		element.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', src)
+		for (let p in atributos) {
+		  element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
+			return '-' + m.toLowerCase()
+		  }), atributos[p])
+		}
+		return element
+	}
+
+	function crearElemento(nombre, atributos) {
+		let element = document.createElementNS('http://www.w3.org/2000/svg', nombre)
+		for (let p in atributos) {
+		  element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
+			return '-' + m.toLowerCase()
+		  }), atributos[p])
+		}
+		return element
+	}
+
+	function crearElementoDeTexto(atributos, texto) {
+		let element = document.createElementNS('http://www.w3.org/2000/svg', 'text')
+		for (let p in atributos) {
+		  element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
+			return '-' + m.toLowerCase()
+		  }), atributos[p])
+		}
+		let textNode = document.createTextNode(texto)
+		element.appendChild(textNode)
+		return element
+	}
+	
+	function crearReferenciaAElemento(id, atributos) {
+        let element = document.createElementNS('http://www.w3.org/2000/svg', 'use')
+        element.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `#${id}`)
+        for (let p in atributos) {
+            element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
+                return '-' + m.toLowerCase()
+            }), atributos[p])
+        }
+        return element
+    }
 }
