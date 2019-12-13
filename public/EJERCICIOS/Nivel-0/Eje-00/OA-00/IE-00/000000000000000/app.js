@@ -4915,7 +4915,7 @@ async function tablaSecuencia(config) {
 					break
 			}
 			yStart += repeticion.formaRepeticion !== 'texto' ? 
-				repeticion.altoTotal+(indexRepeticion+1)*separacionElementos : 0
+				repeticion.altoTotal+separacionElementos : 0
 		})
 	})
 
@@ -5022,7 +5022,21 @@ async function tablaSecuencia(config) {
     function obtenerTermino(termino) {
         return {
             titulo: regexFunctions(regex(termino.titulo, vars, vt)),
-            repeticiones: termino.repeticiones ? termino.repeticiones.map(x => {
+            repeticiones: termino.repeticiones ? termino.repeticiones.filter(x => {
+				console.log(x.formaRepeticion)
+				switch(x.formaRepeticion) {
+					case 'izq/der':
+						return Number(regexFunctions(regex(x.cantidad, vars, vt))) > 0
+					case 'rectangular':
+						return Number(regexFunctions(regex(x.repeticionesX, vars, vt))) > 0 && Number(regexFunctions(regex(x.repeticionesY, vars, vt))) > 0
+					case 'diagonal':
+						return Number(regexFunctions(regex(x.cantidad, vars, vt))) > 0
+					case 'texto':
+						return true
+					default:
+						return false
+				}
+			}).map(x => {
 				let imagen = x.formaRepeticion !== 'texto' ? imagenes.find(z => z.id === `${container.id}-${x.imagen}`) : null
 				let anchoTotal, altoTotal, cantidad, separacionX, separacionY, repeticionesX, repeticionesY, limiteHorizontal
 				switch(x.formaRepeticion) {
