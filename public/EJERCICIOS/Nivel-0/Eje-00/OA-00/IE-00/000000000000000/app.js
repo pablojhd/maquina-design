@@ -3447,8 +3447,8 @@ function beforePan(oldPan, newPan) {
 
 async function tabPos(config) {
     const { container, params, variables, versions, vt } = config
-    container.innerHTML = ''
-    container.style.border = '1px solid #000'
+    //container.innerHTML = ''
+    //container.style.border = '1px solid #000'
     let vars = vt ? variables : versions
     let {
         altoTextoVP,
