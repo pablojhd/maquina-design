@@ -55,3 +55,10 @@
 .tabla-bordes tr:last-child td:last-child {
   border-bottom-right-radius: 10px;
 }
+
+@include media-breakpoint-down(xs) {
+  .display-border td {
+    border: 1px #107dac solid;
+    border-radius: 10px;
+  }
+}
