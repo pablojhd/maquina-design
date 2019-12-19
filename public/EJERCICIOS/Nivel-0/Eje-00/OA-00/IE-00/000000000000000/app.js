@@ -19,7 +19,7 @@ const FUNCIONES = [
 			{ id: 'Tabla Posicional V2', action: tabPos },
 			{ id: 'Formador Grupos', action: formadorGrupos },
 			{ id: 'Sucesiones', action: sucesiones },
-			{ id:'Tabla Secuencia', action: tablaSecuencia }
+			{ id: 'Tabla Secuencia', action: tablaSecuencia }
 		]
 	}, {
 		name: 'Numeracion', tag: 'numeracion', fns: [
@@ -558,7 +558,7 @@ function insertarInput(config) {
 	if (container) {
 		switch (inputType) {
 			case 'input':
-				if(tipoInput === 'comparacion' && container.tagName === 'DIV') {
+				if (tipoInput === 'comparacion' && container.tagName === 'DIV') {
 					container.style.display = 'flex'
 					container.style.height = '100%'
 				}
@@ -644,23 +644,18 @@ function insertarTabla(config) {
 		});
 		return encontrado;
 	}
-	var marcasEnTd2 = lineasHorizontales !== '' ? String(lineasHorizontales).split(';') : false;
-
-	function debeDelinearse(tr, td) {
-
+	var marcasEnTd2 = lineasHorizontales !== '' ? String(lineasHorizontales).split(';') : [];
+	function debeDelinearse(tr) {
 		var encontrado = false;
-
 		marcasEnTd2.forEach(function (linea) {
-
-			if (linea[0] == (tr + 1) && linea[2] == (td + 1)) {
+			if (linea == (tr + 1)) {
 				encontrado = true;
 				return;
 			}
 		});
 		return encontrado;
 	}
-
-	let ancho = widthTabla !== '100%' ? `style="width: ${widthTabla};"` : "";
+	let ancho = widthTabla !== '100%' ? `style="width:${widthTabla};border-collapse:collapse;"` : "";
 	if (container) {
 		let r = `<table class="tabla ${cssclases}" ${ancho}><tbody>`;
 		if (anchoCols) {
@@ -669,9 +664,12 @@ function insertarTabla(config) {
 				r += `<col width="${ancho}%"/>`;
 			});
 		}
-
 		for (var row = 0; row < table.length; row++) {
-			r += '<tr>';
+			if (debeDelinearse(row)) {
+				r += `<tr style="border-bottom:${estiloLineaHorizontal};">`;
+			} else {
+				r += '<tr>';
+			}
 			for (var col = 0; col < table[row].length; col++) {
 				if (destacado === '' && lineasHorizontales === '') {
 					r += '<td>';
@@ -680,22 +678,14 @@ function insertarTabla(config) {
 						r += `<td style="background:${estiloFondoTD};">`;
 					} else { r += '<td>'; }
 				} else if (destacado === '' && lineasHorizontales !== '') {
-					if (debeDelinearse(row, col)) {
-						r += `<td style="border-bottom: ${estiloLineaHorizontal};">`;
-					} else { r += '<td>'; }
+					r += '<td>';
 				} else if (destacado !== '' && lineasHorizontales !== '') {
-					if (debeDelinearse(row, col)) {
-						r += `<td style="border-bottom: ${estiloLineaHorizontal};">`;
-						if (debeMarcarse(row, col)) {
-							r += `<td style="background:${estiloFondoTD};">`;
-						}
-					} else if (debeMarcarse(row, col)) {
+					if (debeMarcarse(row, col)) {
 						r += `<td style="background:${estiloFondoTD};">`;
 					} else {
 						r += '<td>';
 					}
 				}
-
 				switch (table[row][col].type) {
 					case 'text':
 						if (table[row][col].value.tachar) {
@@ -729,7 +719,6 @@ function insertarTabla(config) {
 						var p = regex(table[row][col].value.text, vars, vt);
 						var relativePath = table[row][col].value.url.replace(`https://desarrolloadaptatin.blob.core.windows.net/sistemaejercicios/ejercicios/Nivel-${nivelEjercicio}/`, '../../../../');
 						var img = `<img src=${regex(relativePath, vars, vt)} height=${table[row][col].value.height} width=${table[row][col].value.width}/>`;
-
 						p = `<p>${p.replace(/\{imagen\}/g, img)}</p>`
 						r += regexFunctions(p)
 						break;
@@ -3459,561 +3448,561 @@ function beforePan(oldPan, newPan) {
 }
 
 async function tabPos(config) {
-    const { container, params, variables, versions, vt } = config
-    //container.innerHTML = ''
-    //container.style.border = '1px solid #000'
-    let vars = vt ? variables : versions
-    let {
-        altoTextoVP,
-        tipoTabla,
-        pisoTabla,
-        detallePisos,
-        conOperacion,
-        tipoOperacion,
-        canje,
-        detalleCanje,
-        imagenesParaPosiciones,
-        valoresPosicionales,
-        mostrarVF,
-        formaVF,
-        VF
-    } = params
-    
-    let tiposTabla = [{
-        id:'UMCDU',
-        detalle: ['UM','C','D','U'],
-        url: `../../../../imagenes_front/tablas_posicionales/UMCDU${pisoTabla}.svg`
-    },{
-        id: 'CDU',
-        detalle: ['C','D','U'],
-        url: `../../../../imagenes_front/tablas_posicionales/CDU${pisoTabla}.svg`
-    },{
-        id: 'DU',
-        detalle: ['D','U'],
-        url: `../../../../imagenes_front/tablas_posicionales/DU${pisoTabla}.svg`
-    },{
-        id: 'DU,dc',
-        detalle: ['D','U','d','c'],
-        url: `../../../../imagenes_front/tablas_posicionales/DU_dc${pisoTabla}.svg`
-    },{
-        id: 'U,dc',
-        detalle: ['U','d','c'],
-        url: `../../../../imagenes_front/tablas_posicionales/U_dc${pisoTabla}.svg`
-    },{
-        id: 'U,d',
-        detalle: ['U','d'],
-        url: `../../../../imagenes_front/tablas_posicionales/U_d${pisoTabla}.svg`
-    }]
+	const { container, params, variables, versions, vt } = config
+	//container.innerHTML = ''
+	//container.style.border = '1px solid #000'
+	let vars = vt ? variables : versions
+	let {
+		altoTextoVP,
+		tipoTabla,
+		pisoTabla,
+		detallePisos,
+		conOperacion,
+		tipoOperacion,
+		canje,
+		detalleCanje,
+		imagenesParaPosiciones,
+		valoresPosicionales,
+		mostrarVF,
+		formaVF,
+		VF
+	} = params
 
-    let urlImagenesPosicionalesBloques = [{
-        posicion: 'U',
-        url: '../../../../imagenes_front/bloques_multibase/cubito#.svg'
-    },{
-        posicion: 'D',
-        url: '../../../../imagenes_front/bloques_multibase/barra#.svg'
-    },{
-        posicion: 'C',
-        url: '../../../../imagenes_front/bloques_multibase/placa#.svg'
-    },{
-        posicion: 'UM',
-        url: '../../../../imagenes_front/bloques_multibase/cubo#.svg'
-    },{
-        posicion: 'd',
-        url: '../../../../imagenes_front/bloques_multibase/cubo_decimo_#.svg'
-    },{
-        posicion: 'c',
-        url: '../../../../imagenes_front/bloques_multibase/cubo_centesimo_#.svg'
-    }]
+	let tiposTabla = [{
+		id: 'UMCDU',
+		detalle: ['UM', 'C', 'D', 'U'],
+		url: `../../../../imagenes_front/tablas_posicionales/UMCDU${pisoTabla}.svg`
+	}, {
+		id: 'CDU',
+		detalle: ['C', 'D', 'U'],
+		url: `../../../../imagenes_front/tablas_posicionales/CDU${pisoTabla}.svg`
+	}, {
+		id: 'DU',
+		detalle: ['D', 'U'],
+		url: `../../../../imagenes_front/tablas_posicionales/DU${pisoTabla}.svg`
+	}, {
+		id: 'DU,dc',
+		detalle: ['D', 'U', 'd', 'c'],
+		url: `../../../../imagenes_front/tablas_posicionales/DU_dc${pisoTabla}.svg`
+	}, {
+		id: 'U,dc',
+		detalle: ['U', 'd', 'c'],
+		url: `../../../../imagenes_front/tablas_posicionales/U_dc${pisoTabla}.svg`
+	}, {
+		id: 'U,d',
+		detalle: ['U', 'd'],
+		url: `../../../../imagenes_front/tablas_posicionales/U_d${pisoTabla}.svg`
+	}]
 
-    let urlImgsFichasRojas = '../../../../imagenes_front/pelotas_repeticiones/naranjo#.svg'
+	let urlImagenesPosicionalesBloques = [{
+		posicion: 'U',
+		url: '../../../../imagenes_front/bloques_multibase/cubito#.svg'
+	}, {
+		posicion: 'D',
+		url: '../../../../imagenes_front/bloques_multibase/barra#.svg'
+	}, {
+		posicion: 'C',
+		url: '../../../../imagenes_front/bloques_multibase/placa#.svg'
+	}, {
+		posicion: 'UM',
+		url: '../../../../imagenes_front/bloques_multibase/cubo#.svg'
+	}, {
+		posicion: 'd',
+		url: '../../../../imagenes_front/bloques_multibase/cubo_decimo_#.svg'
+	}, {
+		posicion: 'c',
+		url: '../../../../imagenes_front/bloques_multibase/cubo_centesimo_#.svg'
+	}]
 
-    let urlImgsFichasAmarillas = '../../../../imagenes_front/pelotas_repeticiones/amarillo#.svg'
+	let urlImgsFichasRojas = '../../../../imagenes_front/pelotas_repeticiones/naranjo#.svg'
 
-    let urlImgFlecha = '../../../../imagenes_front/flechas/flecha_abajo.svg'
+	let urlImgsFichasAmarillas = '../../../../imagenes_front/pelotas_repeticiones/amarillo#.svg'
 
-    //variables para dibujar tabla
-    mostrarVF = mostrarVF === 'si' ? true : false
-    let { imagenes, imagenTabla, imagenFlecha } = await getImagenesPorCargar()
-    let { pisosAdicionales, valores } = obtenerValorPosicional()
-    //variables para medidas
-    conOperacion = conOperacion === 'si' ? true : false
-    pisoTabla = Number(pisoTabla)
-    altoTextoVP = Number(altoTextoVP)
-    
-    canje = regexFunctions(regex(canje, vars, vt)) === 'si' ? true : false
-    let anchoPosicion = 160
-    let anchoSvg = imagenTabla.detalle.length*anchoPosicion + (conOperacion ? anchoPosicion/2 : 0)
-    let altoImagen = imagenTabla.detalle.length*anchoPosicion*imagenTabla.height/imagenTabla.width
-    let altoPosicion = (altoImagen/((pisoTabla*2)+1))*2
-    let altoSvg = altoImagen + altoPosicion * pisosAdicionales
-    let altoPosicionConMargen = altoPosicion*0.8
-    let anchoPosicionConMargen = anchoPosicion*0.8
-    let fontSize = altoPosicion*0.8
-    let altoImagenFlecha = altoPosicion * 0.8
-    let anchoImagenFlecha = imagenFlecha.width * altoImagenFlecha / imagenFlecha.height
-    //agrega elementos a defs
-    let defs = crearElemento('defs', {})
+	let urlImgFlecha = '../../../../imagenes_front/flechas/flecha_abajo.svg'
+
+	//variables para dibujar tabla
+	mostrarVF = mostrarVF === 'si' ? true : false
+	let { imagenes, imagenTabla, imagenFlecha } = await getImagenesPorCargar()
+	let { pisosAdicionales, valores } = obtenerValorPosicional()
+	//variables para medidas
+	conOperacion = conOperacion === 'si' ? true : false
+	pisoTabla = Number(pisoTabla)
+	altoTextoVP = Number(altoTextoVP)
+
+	canje = regexFunctions(regex(canje, vars, vt)) === 'si' ? true : false
+	let anchoPosicion = 160
+	let anchoSvg = imagenTabla.detalle.length * anchoPosicion + (conOperacion ? anchoPosicion / 2 : 0)
+	let altoImagen = imagenTabla.detalle.length * anchoPosicion * imagenTabla.height / imagenTabla.width
+	let altoPosicion = (altoImagen / ((pisoTabla * 2) + 1)) * 2
+	let altoSvg = altoImagen + altoPosicion * pisosAdicionales
+	let altoPosicionConMargen = altoPosicion * 0.8
+	let anchoPosicionConMargen = anchoPosicion * 0.8
+	let fontSize = altoPosicion * 0.8
+	let altoImagenFlecha = altoPosicion * 0.8
+	let anchoImagenFlecha = imagenFlecha.width * altoImagenFlecha / imagenFlecha.height
+	//agrega elementos a defs
+	let defs = crearElemento('defs', {})
 	let styles = document.createElement('style')
 	styles.innerHTML = '@font-face{font-family:"Quicksand-Medium";src:url("../../../../fonts/Quicksand-Medium.ttf");}'
-    defs.appendChild(styles)
-    imagenes.forEach(imagen => {
-        let g = crearElemento('g', {
-            id:imagen.id
-        })
-        if(imagen.id.startsWith('bloque')) {
-            let posicion = imagen.id.match(/-\w{1,}-/g)[0].replace(/-/g, '')
-            switch(posicion) {
-                case 'D':
-                    if(tipoTabla.indexOf(',')>-1) {
-                        g.appendChild(crearElementoDeImagen(imagen.url, {
-                            height: altoPosicionConMargen,
-                            width: altoPosicionConMargen*imagen.width/imagen.height
-                        }))
-                    } else {
-                        g.appendChild(crearElementoDeImagen(imagen.url, {
-                            height: anchoPosicionConMargen*imagen.height/imagen.width,
-                            width: anchoPosicionConMargen
-                        }))
-                    }
-                    break
-                case 'U':
-                    if(tipoTabla.indexOf(',')>-1) {
-                        g.appendChild(crearElementoDeImagen(imagen.url, {
-                            height: altoPosicionConMargen,
-                            width: altoPosicionConMargen*imagen.width/imagen.height
-                        }))
-                    } else {
-                        g.appendChild(crearElementoDeImagen(imagen.url, {
-                            height: altoPosicionConMargen*0.5*imagen.width/imagen.height,
-                            width: altoPosicionConMargen*0.5
-                        }))
-                    }
-                    break
-                case 'd':
-                    g.appendChild(crearElementoDeImagen(imagen.url, {
-                        height: altoPosicionConMargen*1.2,
-                        width: altoPosicionConMargen*1.2*imagen.width/imagen.height
-                    }))
-                    break
-                case 'c':
-                    g.appendChild(crearElementoDeImagen(imagen.url, {
-                        height: altoPosicionConMargen*1.2,
-                        width: altoPosicionConMargen*1.2*imagen.width/imagen.height
-                    }))
-                    break
-                default:
-                    g.appendChild(crearElementoDeImagen(imagen.url, {
-                        height: altoPosicionConMargen,
-                        width: altoPosicionConMargen*imagen.width/imagen.height
-                    }))
-                    break
-            }
-        } else {
-            g.appendChild(crearElementoDeImagen(imagen.url, {
-                height: altoPosicionConMargen,
-                width: altoPosicionConMargen*imagen.width/imagen.height
-            }))
-        }
-        defs.appendChild(g)
-    })
-    container.appendChild(defs)
-
-    //setea tamaños de la tabla
-    container.setAttributeNS(null, 'height', altoSvg)
-	container.setAttributeNS(null, 'width', anchoSvg)
-    container.setAttributeNS(null, 'viewBox', `0 0 ${anchoSvg} ${altoSvg}`)
-    //dibuja tabla principal
-    container.appendChild(crearElementoDeImagen(imagenTabla.url, {
-        x: conOperacion ? anchoPosicion/2 : 0,
-        y: 0,
-        width: conOperacion ? anchoSvg-anchoPosicion/2 : anchoSvg,
-        height: altoImagen
-    }))
-    //inicio de relleno de pisos
-    detallePisos = detallePisos.map(x => getDetallePiso(x)).forEach((detallePiso,piso) => {
-        let centroYPiso = (piso+1) * altoPosicion
-        switch(detallePiso.tipo) {
-            case 'numero':
-                let yNumero = centroYPiso+fontSize/3
-                let grupoT = crearElemento('g',{
-                    id: `Piso${piso+1}`,
-                    textAnchor: 'middle',
-                    fontSize: fontSize,
-					fill: '#363026'
-                })
-                imagenTabla.detalle.forEach((posicion,index)=>{
-                    let centroXPiso = conOperacion ? anchoPosicion + index*anchoPosicion : anchoPosicion/2 + index*anchoPosicion
-                    let numero = detallePiso.detalle[posicion]
-                    let moverNumeroX = conOperacion && tipoOperacion === 'resta' && canje && piso === 0 && detalleCanje[posicion]
-                    let moverNumeroY = conOperacion && canje && piso === 0 && detalleCanje[posicion]
-                    grupoT.appendChild(crearElementoDeTexto({
-                        //si es con operacion, hay que mostrar canje, es la primera fila y hay un numero en el objeto de canje pàra la columna especifica
-                        x: moverNumeroX ? centroXPiso-fontSize/2 : centroXPiso,
-                        y: moverNumeroY ? yNumero+fontSize/4 : yNumero,
-                        style: 'font-family:Quicksand-Medium;'
-                    }, numero))
-                })
-                container.appendChild(grupoT)
-                break
-            case 'fichas amarillas':
-                let grupoFA = crearElemento('g',{
-                    id: `Piso${piso+1}`
-                })
-                imagenTabla.detalle.forEach((posicion,index)=>{
-                    let centroXPiso = conOperacion ? anchoPosicion + index*anchoPosicion : anchoPosicion/2 + index*anchoPosicion
-                    grupoFA.appendChild(crearReferenciaAElemento(
-                        detallePiso.tipo.replace(' ','-')+'-'+detallePiso.detalle[posicion], {
-                        x: centroXPiso-altoPosicionConMargen/2,
-                        y: centroYPiso-altoPosicionConMargen/2
-                    }))
-                })
-                container.appendChild(grupoFA)
-                break
-            case 'fichas rojas':
-                let grupoFR = crearElemento('g',{
-                    id: `Piso${piso+1}`
-                })
-                imagenTabla.detalle.forEach((posicion,index)=>{
-                    let centroXPiso = conOperacion ? anchoPosicion + index*anchoPosicion : anchoPosicion/2 + index*anchoPosicion
-                    grupoFR.appendChild(crearReferenciaAElemento(
-                        detallePiso.tipo.replace(' ','-')+'-'+detallePiso.detalle[posicion], {
-                        x: centroXPiso-altoPosicionConMargen/2,
-                        y: centroYPiso-altoPosicionConMargen/2
-                    }))
-                })
-                container.appendChild(grupoFR)
-                break
-            case 'bloques':
-                let grupoB = crearElemento('g',{
-                    id: `Piso${piso+1}`
-                })
-                imagenTabla.detalle.forEach((posicion,index)=>{
-                    if(detallePiso.detalle[posicion] > 0) {
-                        let imagen = document.getElementById(detallePiso.tipo+'-'+posicion+'-'+detallePiso.detalle[posicion]).children[0]
-                        let centroXPiso = conOperacion ? anchoPosicion + index*anchoPosicion : anchoPosicion/2 + index*anchoPosicion
-                        grupoB.appendChild(crearReferenciaAElemento(
-                            detallePiso.tipo+'-'+posicion+'-'+detallePiso.detalle[posicion], {
-                            x: centroXPiso-Number(imagen.getAttribute('width'))/2,
-                            y: centroYPiso-Number(imagen.getAttribute('height'))/2
-                        }))
-                    }
-                })
-                container.appendChild(grupoB)
-                break
-            default:
-                //no soportado
-                break
-        }
-    })
-    //dibuja la operacion y los canjes
-    if(conOperacion) {
-        let simbolo =  tipoOperacion === 'suma' ? '+' : '-'
-        let centroYUltimoPiso = (pisoTabla-1) * altoPosicion
-        container.appendChild(crearElementoDeTexto({
-            x: (anchoPosicion/2)/2,
-            y: centroYUltimoPiso+(fontSize*1.2)/3,
-            style: 'font-family:Quicksand-Medium;',
-            textAnchor: 'middle',
-            fontSize: fontSize*1.2,
-            fill: '#2A8EBE'
-        },simbolo))
-
-        let yLineaOperacion = (pisoTabla-1) * altoPosicion + altoPosicion/2
-        container.appendChild(crearElemento('rect', {
-            x: 0,
-            y: yLineaOperacion-2,
-            width: anchoSvg,
-            height: 4,
-            stroke: '#2A8EBE',
-            fill: '#2A8EBE'
-        }))
-        imagenTabla.detalle.forEach((posicion,columna)=>{
-            if(detalleCanje[posicion]) {
-                let numero = regexFunctions(regex(detalleCanje[posicion], vars, vt))
-                if(numero) {
-                    let centroXPiso = anchoPosicion + columna*anchoPosicion
-                    if(tipoOperacion === 'resta') {
-                        container.appendChild(crearElementoDeTexto({
-                            x: centroXPiso+fontSize/4,
-                            y: altoPosicion+fontSize/4,
-                            style: 'font-family:Quicksand-Medium;',
-                            textAnchor: 'middle',
-                            fontSize: fontSize,
-                            fill: '#363026'
-                        }, numero))
-                        container.appendChild(crearElemento('line', {
-                            x1: centroXPiso-fontSize/4,
-                            y1: altoPosicion - fontSize/4.5,
-                            x2: centroXPiso - fontSize/1.8 - fontSize/4,
-                            y2: altoPosicion + altoPosicion /2,
-                            stroke: '#363026',
-                            strokeWidth: '3'
-                        }))
-                    } else {
-                        container.appendChild(crearElementoDeTexto({
-                            x: centroXPiso,
-                            y: altoPosicion/2+fontSize/2.3,
-                            style: 'font-family:Quicksand-Medium;',
-                            textAnchor: 'middle',
-                            fontSize: fontSize/2,
-                            fill: '#363026'
-                        }, numero))
-                    }
-                }
-            }
-        })
-    }
-
-    let pisoActual = pisoTabla
-    valores.forEach(vp => {
-        let centroY = altoPosicion * pisoActual + altoPosicion
-        if(vp.mostrarFlecha) {
-            Object.keys(vp.detalle).forEach((pos, col) => {
-                let centroX = conOperacion ? anchoPosicion * col + anchoPosicion : anchoPosicion * col + anchoPosicion/2
-                container.appendChild(crearElementoDeImagen(urlImgFlecha, {
-                    x: centroX - anchoImagenFlecha/2,
-                    y: centroY - altoImagenFlecha/2,
-                    height: altoImagenFlecha,
-                    width: anchoImagenFlecha
-                }))
-            })
-            pisoActual++
-            centroY += altoPosicion
+	defs.appendChild(styles)
+	imagenes.forEach(imagen => {
+		let g = crearElemento('g', {
+			id: imagen.id
+		})
+		if (imagen.id.startsWith('bloque')) {
+			let posicion = imagen.id.match(/-\w{1,}-/g)[0].replace(/-/g, '')
+			switch (posicion) {
+				case 'D':
+					if (tipoTabla.indexOf(',') > -1) {
+						g.appendChild(crearElementoDeImagen(imagen.url, {
+							height: altoPosicionConMargen,
+							width: altoPosicionConMargen * imagen.width / imagen.height
+						}))
+					} else {
+						g.appendChild(crearElementoDeImagen(imagen.url, {
+							height: anchoPosicionConMargen * imagen.height / imagen.width,
+							width: anchoPosicionConMargen
+						}))
+					}
+					break
+				case 'U':
+					if (tipoTabla.indexOf(',') > -1) {
+						g.appendChild(crearElementoDeImagen(imagen.url, {
+							height: altoPosicionConMargen,
+							width: altoPosicionConMargen * imagen.width / imagen.height
+						}))
+					} else {
+						g.appendChild(crearElementoDeImagen(imagen.url, {
+							height: altoPosicionConMargen * 0.5 * imagen.width / imagen.height,
+							width: altoPosicionConMargen * 0.5
+						}))
+					}
+					break
+				case 'd':
+					g.appendChild(crearElementoDeImagen(imagen.url, {
+						height: altoPosicionConMargen * 1.2,
+						width: altoPosicionConMargen * 1.2 * imagen.width / imagen.height
+					}))
+					break
+				case 'c':
+					g.appendChild(crearElementoDeImagen(imagen.url, {
+						height: altoPosicionConMargen * 1.2,
+						width: altoPosicionConMargen * 1.2 * imagen.width / imagen.height
+					}))
+					break
+				default:
+					g.appendChild(crearElementoDeImagen(imagen.url, {
+						height: altoPosicionConMargen,
+						width: altoPosicionConMargen * imagen.width / imagen.height
+					}))
+					break
+			}
+		} else {
+			g.appendChild(crearElementoDeImagen(imagen.url, {
+				height: altoPosicionConMargen,
+				width: altoPosicionConMargen * imagen.width / imagen.height
+			}))
 		}
-		if(vp.mostrarSignoMas) {
-            Object.keys(vp.detalle).slice(1).forEach((x, col) => {
-                let centroX = conOperacion ? anchoPosicion * col + anchoPosicion*1.5 : anchoPosicion * col + anchoPosicion
-                container.appendChild(crearElementoDeTexto({
-                    x: centroX,
-                    y: centroY+altoTextoVP/3-3,
-                    style: 'font-family:Quicksand-Medium;',
-                    textAnchor: 'middle',
-                    fontSize: altoTextoVP,
-                    fill: '#2A8EBE'
-                }, '+'))
-            })
-        }
-        Object.keys(vp.detalle).forEach((posicion, columna) => {
-            let centroX = conOperacion ? anchoPosicion * columna + anchoPosicion : anchoPosicion * columna + anchoPosicion/2
-            container.appendChild(crearElementoDeTexto({
-                x: centroX,
-                y: centroY+altoTextoVP/3,
-                style: 'font-family:Quicksand-Medium;',
-                textAnchor: 'middle',
-                fontSize: altoTextoVP,
-                fill: '#363026'
-            }, vp.detalle[posicion]))
-        })
-        pisoActual++
-    })
+		defs.appendChild(g)
+	})
+	container.appendChild(defs)
 
-    if(mostrarVF) {
-        let centroY = altoPosicion * pisoActual + altoPosicion
-        let inicioX = conOperacion ? anchoPosicion/2 : 0
-        let finX = anchoSvg
-        let centro = (finX - inicioX) / 2 + inicioX
-        switch(formaVF) {
-            case 'llave':
-                let radio = 20
-                let inicioY = centroY - altoPosicion/2 - radio + 5
-                container.appendChild(crearElemento('path',{
-                    d: `M ${inicioX} ${inicioY}
-                        A ${radio} ${radio} 0 0 0 ${inicioX+radio} ${inicioY+radio}
-                        H ${centro-radio}
-                        A ${radio} ${radio} 0 0 1 ${centro} ${inicioY+radio*2}
-                        A ${radio} ${radio} 0 0 1 ${centro+radio} ${inicioY+radio}
-                        H ${finX-radio}
+	//setea tamaños de la tabla
+	container.setAttributeNS(null, 'height', altoSvg)
+	container.setAttributeNS(null, 'width', anchoSvg)
+	container.setAttributeNS(null, 'viewBox', `0 0 ${anchoSvg} ${altoSvg}`)
+	//dibuja tabla principal
+	container.appendChild(crearElementoDeImagen(imagenTabla.url, {
+		x: conOperacion ? anchoPosicion / 2 : 0,
+		y: 0,
+		width: conOperacion ? anchoSvg - anchoPosicion / 2 : anchoSvg,
+		height: altoImagen
+	}))
+	//inicio de relleno de pisos
+	detallePisos = detallePisos.map(x => getDetallePiso(x)).forEach((detallePiso, piso) => {
+		let centroYPiso = (piso + 1) * altoPosicion
+		switch (detallePiso.tipo) {
+			case 'numero':
+				let yNumero = centroYPiso + fontSize / 3
+				let grupoT = crearElemento('g', {
+					id: `Piso${piso + 1}`,
+					textAnchor: 'middle',
+					fontSize: fontSize,
+					fill: '#363026'
+				})
+				imagenTabla.detalle.forEach((posicion, index) => {
+					let centroXPiso = conOperacion ? anchoPosicion + index * anchoPosicion : anchoPosicion / 2 + index * anchoPosicion
+					let numero = detallePiso.detalle[posicion]
+					let moverNumeroX = conOperacion && tipoOperacion === 'resta' && canje && piso === 0 && detalleCanje[posicion]
+					let moverNumeroY = conOperacion && canje && piso === 0 && detalleCanje[posicion]
+					grupoT.appendChild(crearElementoDeTexto({
+						//si es con operacion, hay que mostrar canje, es la primera fila y hay un numero en el objeto de canje pàra la columna especifica
+						x: moverNumeroX ? centroXPiso - fontSize / 2 : centroXPiso,
+						y: moverNumeroY ? yNumero + fontSize / 4 : yNumero,
+						style: 'font-family:Quicksand-Medium;'
+					}, numero))
+				})
+				container.appendChild(grupoT)
+				break
+			case 'fichas amarillas':
+				let grupoFA = crearElemento('g', {
+					id: `Piso${piso + 1}`
+				})
+				imagenTabla.detalle.forEach((posicion, index) => {
+					let centroXPiso = conOperacion ? anchoPosicion + index * anchoPosicion : anchoPosicion / 2 + index * anchoPosicion
+					grupoFA.appendChild(crearReferenciaAElemento(
+						detallePiso.tipo.replace(' ', '-') + '-' + detallePiso.detalle[posicion], {
+						x: centroXPiso - altoPosicionConMargen / 2,
+						y: centroYPiso - altoPosicionConMargen / 2
+					}))
+				})
+				container.appendChild(grupoFA)
+				break
+			case 'fichas rojas':
+				let grupoFR = crearElemento('g', {
+					id: `Piso${piso + 1}`
+				})
+				imagenTabla.detalle.forEach((posicion, index) => {
+					let centroXPiso = conOperacion ? anchoPosicion + index * anchoPosicion : anchoPosicion / 2 + index * anchoPosicion
+					grupoFR.appendChild(crearReferenciaAElemento(
+						detallePiso.tipo.replace(' ', '-') + '-' + detallePiso.detalle[posicion], {
+						x: centroXPiso - altoPosicionConMargen / 2,
+						y: centroYPiso - altoPosicionConMargen / 2
+					}))
+				})
+				container.appendChild(grupoFR)
+				break
+			case 'bloques':
+				let grupoB = crearElemento('g', {
+					id: `Piso${piso + 1}`
+				})
+				imagenTabla.detalle.forEach((posicion, index) => {
+					if (detallePiso.detalle[posicion] > 0) {
+						let imagen = document.getElementById(detallePiso.tipo + '-' + posicion + '-' + detallePiso.detalle[posicion]).children[0]
+						let centroXPiso = conOperacion ? anchoPosicion + index * anchoPosicion : anchoPosicion / 2 + index * anchoPosicion
+						grupoB.appendChild(crearReferenciaAElemento(
+							detallePiso.tipo + '-' + posicion + '-' + detallePiso.detalle[posicion], {
+							x: centroXPiso - Number(imagen.getAttribute('width')) / 2,
+							y: centroYPiso - Number(imagen.getAttribute('height')) / 2
+						}))
+					}
+				})
+				container.appendChild(grupoB)
+				break
+			default:
+				//no soportado
+				break
+		}
+	})
+	//dibuja la operacion y los canjes
+	if (conOperacion) {
+		let simbolo = tipoOperacion === 'suma' ? '+' : '-'
+		let centroYUltimoPiso = (pisoTabla - 1) * altoPosicion
+		container.appendChild(crearElementoDeTexto({
+			x: (anchoPosicion / 2) / 2,
+			y: centroYUltimoPiso + (fontSize * 1.2) / 3,
+			style: 'font-family:Quicksand-Medium;',
+			textAnchor: 'middle',
+			fontSize: fontSize * 1.2,
+			fill: '#2A8EBE'
+		}, simbolo))
+
+		let yLineaOperacion = (pisoTabla - 1) * altoPosicion + altoPosicion / 2
+		container.appendChild(crearElemento('rect', {
+			x: 0,
+			y: yLineaOperacion - 2,
+			width: anchoSvg,
+			height: 4,
+			stroke: '#2A8EBE',
+			fill: '#2A8EBE'
+		}))
+		imagenTabla.detalle.forEach((posicion, columna) => {
+			if (detalleCanje[posicion]) {
+				let numero = regexFunctions(regex(detalleCanje[posicion], vars, vt))
+				if (numero) {
+					let centroXPiso = anchoPosicion + columna * anchoPosicion
+					if (tipoOperacion === 'resta') {
+						container.appendChild(crearElementoDeTexto({
+							x: centroXPiso + fontSize / 4,
+							y: altoPosicion + fontSize / 4,
+							style: 'font-family:Quicksand-Medium;',
+							textAnchor: 'middle',
+							fontSize: fontSize,
+							fill: '#363026'
+						}, numero))
+						container.appendChild(crearElemento('line', {
+							x1: centroXPiso - fontSize / 4,
+							y1: altoPosicion - fontSize / 4.5,
+							x2: centroXPiso - fontSize / 1.8 - fontSize / 4,
+							y2: altoPosicion + altoPosicion / 2,
+							stroke: '#363026',
+							strokeWidth: '3'
+						}))
+					} else {
+						container.appendChild(crearElementoDeTexto({
+							x: centroXPiso,
+							y: altoPosicion / 2 + fontSize / 2.3,
+							style: 'font-family:Quicksand-Medium;',
+							textAnchor: 'middle',
+							fontSize: fontSize / 2,
+							fill: '#363026'
+						}, numero))
+					}
+				}
+			}
+		})
+	}
+
+	let pisoActual = pisoTabla
+	valores.forEach(vp => {
+		let centroY = altoPosicion * pisoActual + altoPosicion
+		if (vp.mostrarFlecha) {
+			Object.keys(vp.detalle).forEach((pos, col) => {
+				let centroX = conOperacion ? anchoPosicion * col + anchoPosicion : anchoPosicion * col + anchoPosicion / 2
+				container.appendChild(crearElementoDeImagen(urlImgFlecha, {
+					x: centroX - anchoImagenFlecha / 2,
+					y: centroY - altoImagenFlecha / 2,
+					height: altoImagenFlecha,
+					width: anchoImagenFlecha
+				}))
+			})
+			pisoActual++
+			centroY += altoPosicion
+		}
+		if (vp.mostrarSignoMas) {
+			Object.keys(vp.detalle).slice(1).forEach((x, col) => {
+				let centroX = conOperacion ? anchoPosicion * col + anchoPosicion * 1.5 : anchoPosicion * col + anchoPosicion
+				container.appendChild(crearElementoDeTexto({
+					x: centroX,
+					y: centroY + altoTextoVP / 3 - 3,
+					style: 'font-family:Quicksand-Medium;',
+					textAnchor: 'middle',
+					fontSize: altoTextoVP,
+					fill: '#2A8EBE'
+				}, '+'))
+			})
+		}
+		Object.keys(vp.detalle).forEach((posicion, columna) => {
+			let centroX = conOperacion ? anchoPosicion * columna + anchoPosicion : anchoPosicion * columna + anchoPosicion / 2
+			container.appendChild(crearElementoDeTexto({
+				x: centroX,
+				y: centroY + altoTextoVP / 3,
+				style: 'font-family:Quicksand-Medium;',
+				textAnchor: 'middle',
+				fontSize: altoTextoVP,
+				fill: '#363026'
+			}, vp.detalle[posicion]))
+		})
+		pisoActual++
+	})
+
+	if (mostrarVF) {
+		let centroY = altoPosicion * pisoActual + altoPosicion
+		let inicioX = conOperacion ? anchoPosicion / 2 : 0
+		let finX = anchoSvg
+		let centro = (finX - inicioX) / 2 + inicioX
+		switch (formaVF) {
+			case 'llave':
+				let radio = 20
+				let inicioY = centroY - altoPosicion / 2 - radio + 5
+				container.appendChild(crearElemento('path', {
+					d: `M ${inicioX} ${inicioY}
+                        A ${radio} ${radio} 0 0 0 ${inicioX + radio} ${inicioY + radio}
+                        H ${centro - radio}
+                        A ${radio} ${radio} 0 0 1 ${centro} ${inicioY + radio * 2}
+                        A ${radio} ${radio} 0 0 1 ${centro + radio} ${inicioY + radio}
+                        H ${finX - radio}
                         A ${radio} ${radio} 0 0 0 ${finX} ${inicioY}`,
-                    fill: 'none',
-                    stroke: '#2A8EBE',
-                    strokeWidth: 4
-                }))
-                break
-            case 'flecha':
-                container.appendChild(crearElementoDeImagen(urlImgFlecha, {
-                    x: centro - anchoImagenFlecha/2,
-                    y: centroY - altoImagenFlecha/2,
-                    height: altoImagenFlecha,
-                    width: anchoImagenFlecha
-                }))
-                pisoActual++
-                centroY += altoPosicion
-                break
-            default: 
-                console.log('no se')
-                break
-        }
-        container.appendChild(crearElementoDeTexto({
-            x: centro,
-            y: centroY+altoTextoVP/3,
-            style: 'font-family:Quicksand-Medium;',
-            textAnchor: 'middle',
-            fontSize: altoTextoVP,
-            fill: '#363026'
-        }, regexFunctions(regex(VF, vars, vt))))
+					fill: 'none',
+					stroke: '#2A8EBE',
+					strokeWidth: 4
+				}))
+				break
+			case 'flecha':
+				container.appendChild(crearElementoDeImagen(urlImgFlecha, {
+					x: centro - anchoImagenFlecha / 2,
+					y: centroY - altoImagenFlecha / 2,
+					height: altoImagenFlecha,
+					width: anchoImagenFlecha
+				}))
+				pisoActual++
+				centroY += altoPosicion
+				break
+			default:
+				console.log('no se')
+				break
+		}
+		container.appendChild(crearElementoDeTexto({
+			x: centro,
+			y: centroY + altoTextoVP / 3,
+			style: 'font-family:Quicksand-Medium;',
+			textAnchor: 'middle',
+			fontSize: altoTextoVP,
+			fill: '#363026'
+		}, regexFunctions(regex(VF, vars, vt))))
 
-    }
+	}
 
-    if(imagenesParaPosiciones && imagenesParaPosiciones.length > 0) {
-        let imagenesCargadas = await Promise.all(imagenesParaPosiciones.map(async function(x){
-            let src = regexFunctions(regex(x.src, vars, vt)).replace(`https://desarrolloadaptatin.blob.core.windows.net/sistemaejercicios/ejercicios/Nivel-${nivelEjercicio}/`, '../../../../')
-            let imagen = await cargaImagen(src)
-            return {
-                nombre: src.split('/').pop().replace('.svg',''),
-                piso: Number(x.piso),
-                posicion: x.posicion,
-                src: src,
-                alto: Number(x.alto),
-                ancho: Number(x.alto)*imagen.width/imagen.height
-            }
-        }))
-        imagenesCargadas.forEach(imagen => {
-            let indicePosicion = tiposTabla.find(x => x.id === tipoTabla).detalle.indexOf(imagen.posicion)
-            container.appendChild(crearElementoDeImagen(imagen.src, {
-                x: indicePosicion * anchoPosicion + anchoPosicion/2 + (conOperacion ? anchoPosicion/2 : 0) - imagen.ancho/2,
-                y: imagen.piso * altoPosicion - imagen.alto/2,
-                height: imagen.alto,
-                width: imagen.ancho
-            }))
-        })
-    }
+	if (imagenesParaPosiciones && imagenesParaPosiciones.length > 0) {
+		let imagenesCargadas = await Promise.all(imagenesParaPosiciones.map(async function (x) {
+			let src = regexFunctions(regex(x.src, vars, vt)).replace(`https://desarrolloadaptatin.blob.core.windows.net/sistemaejercicios/ejercicios/Nivel-${nivelEjercicio}/`, '../../../../')
+			let imagen = await cargaImagen(src)
+			return {
+				nombre: src.split('/').pop().replace('.svg', ''),
+				piso: Number(x.piso),
+				posicion: x.posicion,
+				src: src,
+				alto: Number(x.alto),
+				ancho: Number(x.alto) * imagen.width / imagen.height
+			}
+		}))
+		imagenesCargadas.forEach(imagen => {
+			let indicePosicion = tiposTabla.find(x => x.id === tipoTabla).detalle.indexOf(imagen.posicion)
+			container.appendChild(crearElementoDeImagen(imagen.src, {
+				x: indicePosicion * anchoPosicion + anchoPosicion / 2 + (conOperacion ? anchoPosicion / 2 : 0) - imagen.ancho / 2,
+				y: imagen.piso * altoPosicion - imagen.alto / 2,
+				height: imagen.alto,
+				width: imagen.ancho
+			}))
+		})
+	}
 
-    //FUNCIONES -------------------
-    function getDetallePiso(x) {
-        let numeroCompleto = x.numeroCompleto === 'si' ? true : false
-        let detalle = {}
-        if(numeroCompleto) {
-            let numero = regexFunctions(regex(x.detalle, vars, vt)).toString().replace('.','').split('')
-            tiposTabla.find(x => x.id === tipoTabla).detalle.forEach((posicion, index) => {
-                detalle[posicion] = numero[index]
-            })
-        } else {
-            Object.keys(x.detalle).forEach(posicion => {
-                detalle[posicion] = regexFunctions(regex(x.detalle[posicion], vars, vt))
-            })
-        }
-        return {
-            tipo: x.tipo,
-            detalle
-        }
-    }
+	//FUNCIONES -------------------
+	function getDetallePiso(x) {
+		let numeroCompleto = x.numeroCompleto === 'si' ? true : false
+		let detalle = {}
+		if (numeroCompleto) {
+			let numero = regexFunctions(regex(x.detalle, vars, vt)).toString().replace('.', '').split('')
+			tiposTabla.find(x => x.id === tipoTabla).detalle.forEach((posicion, index) => {
+				detalle[posicion] = numero[index]
+			})
+		} else {
+			Object.keys(x.detalle).forEach(posicion => {
+				detalle[posicion] = regexFunctions(regex(x.detalle[posicion], vars, vt))
+			})
+		}
+		return {
+			tipo: x.tipo,
+			detalle
+		}
+	}
 
-    async function getImagenesPorCargar() {
-        let imagenes = []
-        detallePisos.forEach(piso => {
-            switch(piso.tipo) {
-                case 'bloques':
-                    Object.keys(piso.detalle).forEach(posicion => {
-                        let valor = regexFunctions(regex(piso.detalle[posicion], vars, vt))
-                        valor > 0 && imagenes.push({
-                            id: piso.tipo+'-'+posicion+'-'+valor,
-                            url: urlImagenesPosicionalesBloques.find(x => x.posicion === posicion).url.replace('#',valor)
-                        })
-                    })
-                    break
-                case 'fichas amarillas':
-                    Object.keys(piso.detalle).forEach(posicion => {
-                        let valor = regexFunctions(regex(piso.detalle[posicion], vars, vt))
-                        valor > 0 && imagenes.push({
-                            id: piso.tipo.replace(' ','-')+'-'+valor,
-                            url: urlImgsFichasAmarillas.replace('#',valor)
-                        })
-                    })
-                    break
-                case 'fichas rojas':
-                    Object.keys(piso.detalle).forEach(posicion => {
-                        let valor = regexFunctions(regex(piso.detalle[posicion], vars, vt))
-                        valor > 0 && imagenes.push({
-                            id: piso.tipo.replace(' ','-')+'-'+valor,
-                            url: urlImgsFichasRojas.replace('#',valor)
-                        })
-                    })
-                    break
-                default:
-                    //no debe ingresar texto
-                    break
-            }
-        })
-        imagenes = imagenes.reduce((acc, current) => {
-            const x = acc.find(item => item.id === current.id)
-            if (!x) {
-              return acc.concat([current])
-            } else {
-              return acc
-            }
-        }, [])
-        let imagenesCargadas = await Promise.all(imagenes.map(x => cargaImagen(x.url)))
-        imagenes = imagenes.map((x,i) => ({
-            id: x.id, 
-            url: x.url, 
-            height: imagenesCargadas[i].height,
-            width: imagenesCargadas[i].width
-        }))
-        let imagenTabla = tiposTabla.find(x => x.id === tipoTabla)
-        let imagenTablaCargada = await cargaImagen(imagenTabla.url)
-        imagenTabla = {
-            ...imagenTabla,
-            height: imagenTablaCargada.height,
-            width: imagenTablaCargada.width
-        }
-        let imagenFlecha = await cargaImagen(urlImgFlecha)
+	async function getImagenesPorCargar() {
+		let imagenes = []
+		detallePisos.forEach(piso => {
+			switch (piso.tipo) {
+				case 'bloques':
+					Object.keys(piso.detalle).forEach(posicion => {
+						let valor = regexFunctions(regex(piso.detalle[posicion], vars, vt))
+						valor > 0 && imagenes.push({
+							id: piso.tipo + '-' + posicion + '-' + valor,
+							url: urlImagenesPosicionalesBloques.find(x => x.posicion === posicion).url.replace('#', valor)
+						})
+					})
+					break
+				case 'fichas amarillas':
+					Object.keys(piso.detalle).forEach(posicion => {
+						let valor = regexFunctions(regex(piso.detalle[posicion], vars, vt))
+						valor > 0 && imagenes.push({
+							id: piso.tipo.replace(' ', '-') + '-' + valor,
+							url: urlImgsFichasAmarillas.replace('#', valor)
+						})
+					})
+					break
+				case 'fichas rojas':
+					Object.keys(piso.detalle).forEach(posicion => {
+						let valor = regexFunctions(regex(piso.detalle[posicion], vars, vt))
+						valor > 0 && imagenes.push({
+							id: piso.tipo.replace(' ', '-') + '-' + valor,
+							url: urlImgsFichasRojas.replace('#', valor)
+						})
+					})
+					break
+				default:
+					//no debe ingresar texto
+					break
+			}
+		})
+		imagenes = imagenes.reduce((acc, current) => {
+			const x = acc.find(item => item.id === current.id)
+			if (!x) {
+				return acc.concat([current])
+			} else {
+				return acc
+			}
+		}, [])
+		let imagenesCargadas = await Promise.all(imagenes.map(x => cargaImagen(x.url)))
+		imagenes = imagenes.map((x, i) => ({
+			id: x.id,
+			url: x.url,
+			height: imagenesCargadas[i].height,
+			width: imagenesCargadas[i].width
+		}))
+		let imagenTabla = tiposTabla.find(x => x.id === tipoTabla)
+		let imagenTablaCargada = await cargaImagen(imagenTabla.url)
+		imagenTabla = {
+			...imagenTabla,
+			height: imagenTablaCargada.height,
+			width: imagenTablaCargada.width
+		}
+		let imagenFlecha = await cargaImagen(urlImgFlecha)
 
-        return {
-            imagenes,
-            imagenTabla,
-            imagenFlecha
-        }
-    }
+		return {
+			imagenes,
+			imagenTabla,
+			imagenFlecha
+		}
+	}
 
-    function obtenerValorPosicional() {
-        let pisosAdicionales = 0
-        let valores = valoresPosicionales ? valoresPosicionales.map((valorPosicional => {
-            pisosAdicionales += 1 + (valorPosicional.mostrarFlecha === 'si' ? 1 : 0)
-            let detalleObj = {}
-            Object.keys(valorPosicional.detalle).forEach(posicion => {
-                detalleObj[posicion] = regexFunctions(regex(valorPosicional.detalle[posicion], vars, vt))
-            })
-            return {
+	function obtenerValorPosicional() {
+		let pisosAdicionales = 0
+		let valores = valoresPosicionales ? valoresPosicionales.map((valorPosicional => {
+			pisosAdicionales += 1 + (valorPosicional.mostrarFlecha === 'si' ? 1 : 0)
+			let detalleObj = {}
+			Object.keys(valorPosicional.detalle).forEach(posicion => {
+				detalleObj[posicion] = regexFunctions(regex(valorPosicional.detalle[posicion], vars, vt))
+			})
+			return {
 				mostrarFlecha: valorPosicional.mostrarFlecha === 'si' ? true : false,
 				mostrarSignoMas: valorPosicional.mostrarSignoMas === 'si' ? true : false,
-                detalle: detalleObj
-            }
-        })) : []
-        if(mostrarVF) {
-            
-            pisosAdicionales += 1 + (formaVF === 'flecha' ? 1 : 0)
-        }
-        return { pisosAdicionales, valores }
-    }
+				detalle: detalleObj
+			}
+		})) : []
+		if (mostrarVF) {
 
-    function crearElementoDeImagen(src, atributos) {
+			pisosAdicionales += 1 + (formaVF === 'flecha' ? 1 : 0)
+		}
+		return { pisosAdicionales, valores }
+	}
+
+	function crearElementoDeImagen(src, atributos) {
 		let element = document.createElementNS('http://www.w3.org/2000/svg', 'image')
 		element.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', src)
 		for (let p in atributos) {
-            element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
-                return '-' + m.toLowerCase()
-            }), atributos[p])
+			element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
+				return '-' + m.toLowerCase()
+			}), atributos[p])
 		}
 		return element
-    }
-    
-    function crearReferenciaAElemento(id, atributos) {
-        let element = document.createElementNS('http://www.w3.org/2000/svg', 'use')
-        element.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `#${id}`)
-        for (let p in atributos) {
-            element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
-                return '-' + m.toLowerCase()
-            }), atributos[p])
-        }
-        return element
-    }
+	}
+
+	function crearReferenciaAElemento(id, atributos) {
+		let element = document.createElementNS('http://www.w3.org/2000/svg', 'use')
+		element.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `#${id}`)
+		for (let p in atributos) {
+			element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
+				return '-' + m.toLowerCase()
+			}), atributos[p])
+		}
+		return element
+	}
 
 	function crearElemento(nombre, atributos) {
 		let element = document.createElementNS('http://www.w3.org/2000/svg', nombre)
 		for (let p in atributos) {
-		  element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
-			return '-' + m.toLowerCase()
-		  }), atributos[p])
+			element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
+				return '-' + m.toLowerCase()
+			}), atributos[p])
 		}
 		return element
 	}
@@ -4021,9 +4010,9 @@ async function tabPos(config) {
 	function crearElementoDeTexto(atributos, texto) {
 		let element = document.createElementNS('http://www.w3.org/2000/svg', 'text')
 		for (let p in atributos) {
-		  element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
-			return '-' + m.toLowerCase()
-		  }), atributos[p])
+			element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
+				return '-' + m.toLowerCase()
+			}), atributos[p])
 		}
 		let textNode = document.createTextNode(texto)
 		element.appendChild(textNode)
@@ -4937,21 +4926,21 @@ function sucesiones(config) {
 }
 
 async function tablaSecuencia(config) {
-    const { container, params, variables, versions, vt } = config
-    let vars = vt ? variables : versions
-    let {
-        tipo,
-        alto,
-        ancho,
+	const { container, params, variables, versions, vt } = config
+	let vars = vt ? variables : versions
+	let {
+		tipo,
+		alto,
+		ancho,
 		altoEncabezado,
 		altoPie,
-        colorTabla,
-        imagenes,
+		colorTabla,
+		imagenes,
 		terminos,
 		flechas
-    } = params
+	} = params
 	container.innerHTML = ''
-  	let defs = crearElemento('defs', {})
+	let defs = crearElemento('defs', {})
 	let styles = document.createElement('style')
 	styles.innerHTML = '@font-face{font-family:"Quicksand";src:url("../../../../fonts/Quicksand-Medium.ttf");}'
 	defs.appendChild(styles)
@@ -4959,36 +4948,36 @@ async function tablaSecuencia(config) {
 	altoEncabezado = Number(altoEncabezado)
 	altoPie = Number(altoPie)
 
-    imagenes = imagenes ? await Promise.all(imagenes.map(i =>  agregaImagen(i))) : []
+	imagenes = imagenes ? await Promise.all(imagenes.map(i => agregaImagen(i))) : []
 
 	terminos = terminos ? terminos.map(x => obtenerTermino(x)) : []
 
 	flechas = flechas ? flechas.map(x => obtenerFlecha(x)) : []
-	
+
 	let separacionElementos = 20
 	alto = Number(alto)
 	ancho = Number(ancho)
-    let altoTotal = alto
-    let anchoTotal = ancho * terminos.length
+	let altoTotal = alto
+	let anchoTotal = ancho * terminos.length
 
-    container.setAttributeNS(null, 'height', altoTotal)
+	container.setAttributeNS(null, 'height', altoTotal)
 	container.setAttributeNS(null, 'width', anchoTotal)
-    container.setAttributeNS(null, 'viewBox', `0 0 ${anchoTotal} ${altoTotal}`)
+	container.setAttributeNS(null, 'viewBox', `0 0 ${anchoTotal} ${altoTotal}`)
 
-    container.appendChild(defs)
-	
-	if(tipo === 'tabla') {
-		container.appendChild(crearElemento('rect',{
+	container.appendChild(defs)
+
+	if (tipo === 'tabla') {
+		container.appendChild(crearElemento('rect', {
 			x: 1,
 			y: 1,
 			height: altoTotal - altoPie - 2,
-			width: anchoTotal-2,
+			width: anchoTotal - 2,
 			fill: 'none',
 			stroke: colorTabla,
 			strokeWidth: '2'
 		}))
 
-		container.appendChild(crearElemento('line',{
+		container.appendChild(crearElemento('line', {
 			x1: 0,
 			y1: altoEncabezado,
 			x2: anchoTotal,
@@ -4997,19 +4986,19 @@ async function tablaSecuencia(config) {
 			strokeWidth: '2'
 		}))
 
-		for(let i = 0; i < terminos.length-1; i++) {
-			container.appendChild(crearElemento('line',{
-				x1: (i+1)*ancho,
+		for (let i = 0; i < terminos.length - 1; i++) {
+			container.appendChild(crearElemento('line', {
+				x1: (i + 1) * ancho,
 				y1: 0,
-				x2: (i+1)*ancho,
-				y2: altoTotal-altoPie,
+				x2: (i + 1) * ancho,
+				y2: altoTotal - altoPie,
 				stroke: colorTabla,
 				strokeWidth: '2'
 			}))
 		}
 	} else {
-		for(let i = 0; i < terminos.length; i++) {
-			container.appendChild(crearElemento('rect',{
+		for (let i = 0; i < terminos.length; i++) {
+			container.appendChild(crearElemento('rect', {
 				x: i * ancho + separacionElementos / 2 + 1,
 				y: altoEncabezado,
 				width: ancho - separacionElementos,
@@ -5022,12 +5011,12 @@ async function tablaSecuencia(config) {
 			}))
 		}
 	}
-    
+
 	terminos.forEach((termino, index) => {
 		//agrega titulo al termino
 		container.appendChild(crearElementoDeTexto({
-			x: index * ancho + ancho/2,
-			y: altoEncabezado/2+10,
+			x: index * ancho + ancho / 2,
+			y: altoEncabezado / 2 + 10,
 			fontSize: 20,
 			textAnchor: 'middle',
 			fill: '#363026',
@@ -5035,12 +5024,12 @@ async function tablaSecuencia(config) {
 		}, termino.titulo))
 		//calculos previos
 		let altoTotalRepeticion = termino.repeticiones.filter(x => x.formaRepeticion !== 'texto').reduce((total, rep) => total + rep.altoTotal, 0)
-		altoTotalRepeticion += separacionElementos * (termino.repeticiones.filter(x => x.formaRepeticion !== 'texto').length-1)
+		altoTotalRepeticion += separacionElementos * (termino.repeticiones.filter(x => x.formaRepeticion !== 'texto').length - 1)
 		let centroColumna = index * ancho + ancho / 2
-		let yStart = altoEncabezado + (alto - altoEncabezado - altoPie)/2 - altoTotalRepeticion/2
+		let yStart = altoEncabezado + (alto - altoEncabezado - altoPie) / 2 - altoTotalRepeticion / 2
 		//repeticion de imagenes
 		termino.repeticiones.forEach((repeticion, indexRepeticion) => {
-			switch(repeticion.formaRepeticion) {
+			switch (repeticion.formaRepeticion) {
 				case 'izq/der':
 					repeticionIzqDer(repeticion, centroColumna, yStart)
 					break
@@ -5064,16 +5053,16 @@ async function tablaSecuencia(config) {
 					console.log('no soportado')
 					break
 			}
-			yStart += repeticion.formaRepeticion !== 'texto' ? 
-				repeticion.altoTotal+separacionElementos : 0
+			yStart += repeticion.formaRepeticion !== 'texto' ?
+				repeticion.altoTotal + separacionElementos : 0
 		})
 	})
 
 	flechas.forEach(flecha => {
 		const { inicio, fin, colorFlecha, texto, colorTexto, direccion } = flecha
 		let yFlecha = alto - altoPie + 5
-		let puntoMedioX = inicio + (fin - inicio) /2
-		let yPuntoAltoFlecha = yFlecha + altoPie/2
+		let puntoMedioX = inicio + (fin - inicio) / 2
+		let yPuntoAltoFlecha = yFlecha + altoPie / 2
 		container.appendChild(crearElemento('path', {
 			d: `M ${inicio} ${yFlecha} C ${inicio} ${yFlecha}, ${puntoMedioX} ${yPuntoAltoFlecha} , ${fin} ${yFlecha}`,
 			stroke: colorFlecha,
@@ -5081,10 +5070,10 @@ async function tablaSecuencia(config) {
 			fill: 'transparent'
 		}))
 
-		if(texto) {
+		if (texto) {
 			container.appendChild(crearElementoDeTexto({
 				x: puntoMedioX,
-				y: yPuntoAltoFlecha+10,
+				y: yPuntoAltoFlecha + 10,
 				fontSize: 20,
 				textAnchor: 'middle',
 				fill: colorTexto,
@@ -5092,22 +5081,22 @@ async function tablaSecuencia(config) {
 			}, texto))
 		}
 
-		if(direccion === 'derecha') {
-			let pendiente = Math.atan((yPuntoAltoFlecha - yFlecha) / (puntoMedioX - fin))*180/Math.PI
-			let punta1Flecha = polarToCartesian(fin, yFlecha, 8, pendiente+30)
-			let punta2Flecha = polarToCartesian(fin, yFlecha, 8, pendiente-30)
+		if (direccion === 'derecha') {
+			let pendiente = Math.atan((yPuntoAltoFlecha - yFlecha) / (puntoMedioX - fin)) * 180 / Math.PI
+			let punta1Flecha = polarToCartesian(fin, yFlecha, 8, pendiente + 30)
+			let punta2Flecha = polarToCartesian(fin, yFlecha, 8, pendiente - 30)
 			container.appendChild(crearElemento('path', {
-				d: `M ${punta1Flecha.x} ${punta1Flecha.y } L ${fin} ${yFlecha} L ${punta2Flecha.x} ${punta2Flecha.y}`,
+				d: `M ${punta1Flecha.x} ${punta1Flecha.y} L ${fin} ${yFlecha} L ${punta2Flecha.x} ${punta2Flecha.y}`,
 				stroke: colorFlecha,
 				strokeWidth: '2',
 				fill: 'none'
 			}))
 		} else {
-			let pendiente = Math.atan((yPuntoAltoFlecha - yFlecha) / (puntoMedioX - inicio))*180/Math.PI
-			let punta1Flecha = polarToCartesian(inicio, yFlecha, 8, pendiente+210)
-			let punta2Flecha = polarToCartesian(inicio, yFlecha, 8, pendiente-210)
+			let pendiente = Math.atan((yPuntoAltoFlecha - yFlecha) / (puntoMedioX - inicio)) * 180 / Math.PI
+			let punta1Flecha = polarToCartesian(inicio, yFlecha, 8, pendiente + 210)
+			let punta2Flecha = polarToCartesian(inicio, yFlecha, 8, pendiente - 210)
 			container.appendChild(crearElemento('path', {
-				d: `M ${punta1Flecha.x} ${punta1Flecha.y } L ${inicio} ${yFlecha} L ${punta2Flecha.x} ${punta2Flecha.y}`,
+				d: `M ${punta1Flecha.x} ${punta1Flecha.y} L ${inicio} ${yFlecha} L ${punta2Flecha.x} ${punta2Flecha.y}`,
 				stroke: colorFlecha,
 				strokeWidth: '2',
 				fill: 'none'
@@ -5117,14 +5106,14 @@ async function tablaSecuencia(config) {
 
 	function repeticionIzqDer(repeticion, centroHorizontal, inicioRepeticionVertical) {
 		const { anchoTotal, limiteHorizontal, separacionX, separacionY, imagen, cantidad } = repeticion
-		for(let i = 0, acum = 0; i < cantidad; i++) {
-			let xRepeticion = centroHorizontal - anchoTotal/2 + acum * separacionX + imagen.width * acum
-			let yRepeticion = inicioRepeticionVertical + Math.floor(i/limiteHorizontal) * imagen.height + Math.floor(i/limiteHorizontal) * separacionY
+		for (let i = 0, acum = 0; i < cantidad; i++) {
+			let xRepeticion = centroHorizontal - anchoTotal / 2 + acum * separacionX + imagen.width * acum
+			let yRepeticion = inicioRepeticionVertical + Math.floor(i / limiteHorizontal) * imagen.height + Math.floor(i / limiteHorizontal) * separacionY
 			container.appendChild(crearReferenciaAElemento(imagen.id, {
 				x: xRepeticion,
 				y: yRepeticion
 			}))
-			if(acum === limiteHorizontal-1) {
+			if (acum === limiteHorizontal - 1) {
 				acum = 0
 			} else {
 				acum++
@@ -5134,8 +5123,8 @@ async function tablaSecuencia(config) {
 
 	function repeticionDiagonal(repeticion, centroHorizontal, inicioRepeticionVertical) {
 		const { imagen, cantidad, separacionX, separacionY, anchoTotal } = repeticion
-		for(let i = 0; i < cantidad; i++) {
-			let xRepeticion = centroHorizontal - anchoTotal/2 + i * separacionX
+		for (let i = 0; i < cantidad; i++) {
+			let xRepeticion = centroHorizontal - anchoTotal / 2 + i * separacionX
 			let yRepeticion = inicioRepeticionVertical + i * separacionY
 			container.appendChild(crearReferenciaAElemento(imagen.id, {
 				x: xRepeticion,
@@ -5146,10 +5135,10 @@ async function tablaSecuencia(config) {
 
 	function repeticionRectangular(repeticion, centroHorizontal, inicioRepeticionVertical) {
 		const { imagen, separacionX, separacionY, repeticionesX, repeticionesY, anchoTotal } = repeticion
-		for(let v = 0, yRepeticion; v < repeticionesY; v++) {
+		for (let v = 0, yRepeticion; v < repeticionesY; v++) {
 			yRepeticion = inicioRepeticionVertical + v * imagen.height + v * separacionY
-			for(let h = 0, xRepeticion; h < repeticionesX; h++) {
-				xRepeticion = centroHorizontal - anchoTotal/2 + h * imagen.width + h * separacionX
+			for (let h = 0, xRepeticion; h < repeticionesX; h++) {
+				xRepeticion = centroHorizontal - anchoTotal / 2 + h * imagen.width + h * separacionX
 				container.appendChild(crearReferenciaAElemento(imagen.id, {
 					x: xRepeticion,
 					y: yRepeticion
@@ -5158,23 +5147,23 @@ async function tablaSecuencia(config) {
 		}
 	}
 
-    async function agregaImagen(img) {
+	async function agregaImagen(img) {
 		let src = regexFunctions(regex(img.src, vars, vt))
 		src = src.replace(`https://desarrolloadaptatin.blob.core.windows.net/sistemaejercicios/ejercicios/Nivel-${nivelEjercicio}/`, '../../../../')
-        let imgCargada = await cargaImagen(src)
-        let height = Number(img.alto)
-        let width = height * imgCargada.width / imgCargada.height
-        let id = src.split('/').pop().replace('.svg','').replace(/%20/g,'-')
-        defs.appendChild(crearElementoDeImagen(src,{id:`${container.id}-${id}`,height,width}))
-        return {id:`${container.id}-${id}`,src,height,width}
-    }
+		let imgCargada = await cargaImagen(src)
+		let height = Number(img.alto)
+		let width = height * imgCargada.width / imgCargada.height
+		let id = src.split('/').pop().replace('.svg', '').replace(/%20/g, '-')
+		defs.appendChild(crearElementoDeImagen(src, { id: `${container.id}-${id}`, height, width }))
+		return { id: `${container.id}-${id}`, src, height, width }
+	}
 
-    function obtenerTermino(termino) {
-        return {
-            titulo: regexFunctions(regex(termino.titulo, vars, vt)),
-            repeticiones: termino.repeticiones ? termino.repeticiones.filter(x => {
+	function obtenerTermino(termino) {
+		return {
+			titulo: regexFunctions(regex(termino.titulo, vars, vt)),
+			repeticiones: termino.repeticiones ? termino.repeticiones.filter(x => {
 				console.log(x.formaRepeticion)
-				switch(x.formaRepeticion) {
+				switch (x.formaRepeticion) {
 					case 'izq/der':
 						return Number(regexFunctions(regex(x.cantidad, vars, vt))) > 0
 					case 'rectangular':
@@ -5190,22 +5179,22 @@ async function tablaSecuencia(config) {
 				let idImagen = regexFunctions(regex(x.imagen, vars, vt))
 				let imagen = x.formaRepeticion !== 'texto' ? imagenes.find(z => z.id === `${container.id}-${idImagen}`) : null
 				let anchoTotal, altoTotal, cantidad, separacionX, separacionY, repeticionesX, repeticionesY, limiteHorizontal
-				switch(x.formaRepeticion) {
+				switch (x.formaRepeticion) {
 					case 'izq/der':
 						cantidad = Number(regexFunctions(regex(x.cantidad, vars, vt)))
 						separacionX = Number(x.separacionX)
 						separacionY = Number(x.separacionY)
 						limiteHorizontal = Number(regexFunctions(regex(x.limiteHorizontal, vars, vt)))
 						anchoTotal = cantidad < limiteHorizontal ?
-							cantidad * imagen.width + (cantidad-1) * separacionX : 
-							limiteHorizontal * imagen.width + (limiteHorizontal-1) * separacionX
-						altoTotal =  Math.ceil(cantidad/limiteHorizontal) * imagen.height + (Math.ceil(cantidad/limiteHorizontal)-1) * separacionY
+							cantidad * imagen.width + (cantidad - 1) * separacionX :
+							limiteHorizontal * imagen.width + (limiteHorizontal - 1) * separacionX
+						altoTotal = Math.ceil(cantidad / limiteHorizontal) * imagen.height + (Math.ceil(cantidad / limiteHorizontal) - 1) * separacionY
 						return {
 							imagen,
-                            formaRepeticion:x.formaRepeticion,
-                            cantidad,
-                            separacionX,
-                            separacionY,
+							formaRepeticion: x.formaRepeticion,
+							cantidad,
+							separacionX,
+							separacionY,
 							limiteHorizontal,
 							anchoTotal,
 							altoTotal
@@ -5214,51 +5203,51 @@ async function tablaSecuencia(config) {
 						cantidad = Number(regexFunctions(regex(x.cantidad, vars, vt)))
 						separacionX = Number(x.separacionX)
 						separacionY = Number(x.separacionY)
-						anchoTotal = imagen.width + (cantidad-1) * separacionX
-						altoTotal = imagen.height + (cantidad-1) * separacionY
+						anchoTotal = imagen.width + (cantidad - 1) * separacionX
+						altoTotal = imagen.height + (cantidad - 1) * separacionY
 						return {
 							imagen,
-                            formaRepeticion:x.formaRepeticion,
-                            cantidad,
-                            separacionX,
+							formaRepeticion: x.formaRepeticion,
+							cantidad,
+							separacionX,
 							separacionY,
 							anchoTotal,
 							altoTotal
 						}
 					case 'rectangular':
 						repeticionesX = Number(regexFunctions(regex(x.repeticionesX, vars, vt)))
-                        repeticionesY = Number(regexFunctions(regex(x.repeticionesY, vars, vt)))
+						repeticionesY = Number(regexFunctions(regex(x.repeticionesY, vars, vt)))
 						separacionX = Number(x.separacionX)
 						separacionY = Number(x.separacionY)
-						anchoTotal = imagen.width * repeticionesX + separacionX * (repeticionesX-1)
-						altoTotal = imagen.height * repeticionesY + separacionY * (repeticionesY-1)
+						anchoTotal = imagen.width * repeticionesX + separacionX * (repeticionesX - 1)
+						altoTotal = imagen.height * repeticionesY + separacionY * (repeticionesY - 1)
 						return {
 							imagen,
-                            formaRepeticion:x.formaRepeticion,
-                            separacionX,
-                            separacionY,
-                            repeticionesX,
+							formaRepeticion: x.formaRepeticion,
+							separacionX,
+							separacionY,
+							repeticionesX,
 							repeticionesY,
 							anchoTotal,
 							altoTotal
 						}
 					case 'texto':
 						return {
-							texto:regexFunctions(regex(x.texto, vars, vt)),
-							formaRepeticion:x.formaRepeticion,
-							color:x.color,
-							alto:Number(x.alto),
+							texto: regexFunctions(regex(x.texto, vars, vt)),
+							formaRepeticion: x.formaRepeticion,
+							color: x.color,
+							alto: Number(x.alto),
 							posicionY: Number(x.posicionY)
 						}
 				}
-            }) : []
-        }
+			}) : []
+		}
 	}
-	
+
 	function obtenerFlecha(flecha) {
 		return {
-			inicio: Number(flecha.inicio) * ancho - (ancho/3)*1,
-			fin: Number(flecha.fin) * ancho - (ancho/3)*2,
+			inicio: Number(flecha.inicio) * ancho - (ancho / 3) * 1,
+			fin: Number(flecha.fin) * ancho - (ancho / 3) * 2,
 			colorFlecha: flecha.colorFlecha,
 			direccion: flecha.direccion,
 			texto: regexFunctions(regex(flecha.texto, vars, vt)),
@@ -5267,21 +5256,21 @@ async function tablaSecuencia(config) {
 	}
 
 	function polarToCartesian(centerX, centerY, radius, angleInDegrees) { // 0 grados = 9 hrs
-		let angleInRadians = (angleInDegrees-180) * Math.PI / 180.0;
-		
+		let angleInRadians = (angleInDegrees - 180) * Math.PI / 180.0;
+
 		return {
 			x: centerX + (radius * Math.cos(angleInRadians)),
 			y: centerY + (radius * Math.sin(angleInRadians))
 		}
 	}
 
-    function crearElementoDeImagen(src, atributos) {
+	function crearElementoDeImagen(src, atributos) {
 		let element = document.createElementNS('http://www.w3.org/2000/svg', 'image')
 		element.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', src)
 		for (let p in atributos) {
-		  element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
-			return '-' + m.toLowerCase()
-		  }), atributos[p])
+			element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
+				return '-' + m.toLowerCase()
+			}), atributos[p])
 		}
 		return element
 	}
@@ -5289,9 +5278,9 @@ async function tablaSecuencia(config) {
 	function crearElemento(nombre, atributos) {
 		let element = document.createElementNS('http://www.w3.org/2000/svg', nombre)
 		for (let p in atributos) {
-		  element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
-			return '-' + m.toLowerCase()
-		  }), atributos[p])
+			element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
+				return '-' + m.toLowerCase()
+			}), atributos[p])
 		}
 		return element
 	}
@@ -5299,23 +5288,23 @@ async function tablaSecuencia(config) {
 	function crearElementoDeTexto(atributos, texto) {
 		let element = document.createElementNS('http://www.w3.org/2000/svg', 'text')
 		for (let p in atributos) {
-		  element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
-			return '-' + m.toLowerCase()
-		  }), atributos[p])
+			element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
+				return '-' + m.toLowerCase()
+			}), atributos[p])
 		}
 		let textNode = document.createTextNode(texto)
 		element.appendChild(textNode)
 		return element
 	}
-	
+
 	function crearReferenciaAElemento(id, atributos) {
-        let element = document.createElementNS('http://www.w3.org/2000/svg', 'use')
-        element.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `#${id}`)
-        for (let p in atributos) {
-            element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
-                return '-' + m.toLowerCase()
-            }), atributos[p])
-        }
-        return element
-    }
+		let element = document.createElementNS('http://www.w3.org/2000/svg', 'use')
+		element.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `#${id}`)
+		for (let p in atributos) {
+			element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
+				return '-' + m.toLowerCase()
+			}), atributos[p])
+		}
+		return element
+	}
 }
