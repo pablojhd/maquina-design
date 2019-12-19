@@ -23,3 +23,21 @@
   border: 2px solid #f6b3b1 !important;
   color: #f6b3b1 !important;
 }
+/*clases para input de compraracion de tablas posicionales*/
+.comparacion {
+  text-align: center;
+  font-size: 30px !important;
+  height: 50px !important;
+}
+
+@include media-breakpoint-down(xs) {
+  .comparacion {
+    margin: 15px auto;
+  }
+}
+
+@include media-breakpoint-up(sm) {
+  .comparacion {
+    margin: auto;
+  }
+}

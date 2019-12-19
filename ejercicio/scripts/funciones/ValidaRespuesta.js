@@ -53,7 +53,11 @@ export const validaRespuesta = (validaciones, tipo) => {
                             coincidenTodas = false
                         }
                         break
-                    
+                    case 'comparacion':
+                        if(input.value !== val.valor && val.valor !== '-any-') {
+                            coincidenTodas = false
+                        }
+                        break
 				}
             })
 			if (coincidenTodas) {

@@ -98,6 +98,15 @@ function iniciaListeners() {
 			}
 		})
 	})
+	document.querySelectorAll('[data-tipoinput="comparacion"]').forEach(input => {
+		input.addEventListener('keypress', (e) => {
+			let validacion = (e.keyCode === 60 || e.keyCode === 61 || e.keyCode === 62)
+			if (!validacion) {
+				e.preventDefault();
+				return false;
+			}
+		})
+	})
 	document.querySelectorAll('[data-tipoinput="numero"]').forEach(input => {
 		input.addEventListener('keypress', (e) => {
 			var validacion = e.keyCode >= 48 && e.keyCode <= 57 //solo numero
@@ -543,13 +552,17 @@ function insertarImagen(config) {
 }
 function insertarInput(config) {
 	const { container, params, variables, versions, vt } = config,
-		{ tipoInput, maxLength, inputSize, placeholder, anchoInput,
+		{ tipoInput, maxLength, inputSize, placeholder, anchoInput, clasesInput,
 			value1, value2, value3, value4, inputType, id, colmd, colsm, col } = params
 	var vars = vt ? variables : versions;
 	if (container) {
 		switch (inputType) {
 			case 'input':
-				container.innerHTML = `<input id=${id} type="text" name="answer" maxlength="${maxLength}" autocomplete="off" class="inputTexto" style="width:${anchoInput};" placeholder="${placeholder}" data-content='${utf8_to_b64(value1)}' data-tipoinput="${tipoInput}"/>`;
+				if(tipoInput === 'comparacion' && container.tagName === 'DIV') {
+					container.style.display = 'flex'
+					container.style.height = '100%'
+				}
+				container.innerHTML = `<input id=${id} type="text" name="answer" maxlength="${maxLength}" autocomplete="off" class="inputTexto ${clasesInput}" style="width:${anchoInput};" placeholder="${placeholder}" data-content='${utf8_to_b64(value1)}' data-tipoinput="${tipoInput}"/>`;
 				break;
 			case 'radio':
 				var answers = [{
