@@ -8,6 +8,7 @@
   border-right: 1px solid;
   border-left: 1px solid;
   border-bottom: 4px solid;
+  border-radius: 16px;
 }
 
 .boton:not(:disabled) {
@@ -16,7 +17,6 @@
 
 @include media-breakpoint-down(xs) {
   .boton {
-    border-radius: 19px;
     height: 40px;
     width: 104px;
   }
@@ -24,7 +24,6 @@
 
 @include media-breakpoint-up(sm) {
   .boton {
-    border-radius: 26px;
     height: 53px;
   }
 }
