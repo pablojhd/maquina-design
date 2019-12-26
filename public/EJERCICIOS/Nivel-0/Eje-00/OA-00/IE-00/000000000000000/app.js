@@ -3465,7 +3465,8 @@ async function tabPos(config) {
 		valoresPosicionales,
 		mostrarVF,
 		formaVF,
-		VF
+		VF,
+		destacar
 	} = params
 
 	let tiposTabla = [{
@@ -3514,9 +3515,23 @@ async function tabPos(config) {
 		url: '../../../../imagenes_front/bloques_multibase/cubo_centesimo_#.svg'
 	}]
 
-	let urlImgsFichasRojas = '../../../../imagenes_front/pelotas_repeticiones/naranjo#.svg'
+	let urlImagenesPosicionalesMonedasYBilletes = [{
+        posicion: 'U',
+        url: '../../../../imagenes_front/tablas_posicionales/1_#.svg'
+    },{
+        posicion: 'D',
+        url: '../../../../imagenes_front/tablas_posicionales/10_#.svg'
+    },{
+        posicion: 'C',
+        url: '../../../../imagenes_front/tablas_posicionales/100_#.svg'
+    }, {
+        posicion: 'UM',
+        url: '../../../../imagenes_front/tablas_posicionales/1000_#.svg'
+    }]
 
-	let urlImgsFichasAmarillas = '../../../../imagenes_front/pelotas_repeticiones/amarillo#.svg'
+    let urlImgsFichasLila = '../../../../imagenes_front/pelotas_repeticiones/lila#.svg'
+
+    let urlImgsFichasCalipso = '../../../../imagenes_front/pelotas_repeticiones/calipso#.svg'
 
 	let urlImgFlecha = '../../../../imagenes_front/flechas/flecha_abajo.svg'
 
@@ -3540,6 +3555,7 @@ async function tabPos(config) {
 	let fontSize = altoPosicion * 0.8
 	let altoImagenFlecha = altoPosicion * 0.8
 	let anchoImagenFlecha = imagenFlecha.width * altoImagenFlecha / imagenFlecha.height
+	let celdasDestacadas = destacar ? regexFunctions(regex(destacar, vars, vt)).split(';').map(x => x.split(',')).map(x => ({ col: x[0], filaI: Number(x[1]), filaF: Number(x[2]), color: x[3] })) : []
 	//agrega elementos a defs
 	let defs = crearElemento('defs', {})
 	let styles = document.createElement('style')
@@ -3611,6 +3627,21 @@ async function tabPos(config) {
 	container.setAttributeNS(null, 'height', altoSvg)
 	container.setAttributeNS(null, 'width', anchoSvg)
 	container.setAttributeNS(null, 'viewBox', `0 0 ${anchoSvg} ${altoSvg}`)
+	//dibuja backgroud de destado en tablas
+    celdasDestacadas.forEach(destado => {
+        let { col, filaI, filaF, color } = destado
+        let numCol = tiposTabla.find(x => x.id === tipoTabla).detalle.indexOf(col)
+        container.appendChild(crearElemento('rect', {
+            x: numCol * anchoPosicion + (conOperacion ? anchoPosicion/2 : 0) + 2,
+            y: filaI * altoPosicion - (altoPosicion / 2),
+            height: (filaI * altoPosicion - altoPosicion / 2) + ((filaF - filaI) * altoPosicion + altoPosicion / 2) - 2,
+            width: anchoPosicion - 4,
+            fill: color,
+            fillOpacity: 0.2,
+            rx: 10,
+            ry: 10
+        }))
+    })
 	//dibuja tabla principal
 	container.appendChild(crearElementoDeImagen(imagenTabla.url, {
 		x: conOperacion ? anchoPosicion / 2 : 0,
@@ -3633,18 +3664,17 @@ async function tabPos(config) {
 				imagenTabla.detalle.forEach((posicion, index) => {
 					let centroXPiso = conOperacion ? anchoPosicion + index * anchoPosicion : anchoPosicion / 2 + index * anchoPosicion
 					let numero = detallePiso.detalle[posicion]
-					let moverNumeroX = conOperacion && tipoOperacion === 'resta' && canje && piso === 0 && detalleCanje[posicion]
 					let moverNumeroY = conOperacion && canje && piso === 0 && detalleCanje[posicion]
 					grupoT.appendChild(crearElementoDeTexto({
 						//si es con operacion, hay que mostrar canje, es la primera fila y hay un numero en el objeto de canje pàra la columna especifica
-						x: moverNumeroX ? centroXPiso - fontSize / 2 : centroXPiso,
+						x: centroXPiso,
 						y: moverNumeroY ? yNumero + fontSize / 4 : yNumero,
 						style: 'font-family:Quicksand-Medium;'
 					}, numero))
 				})
 				container.appendChild(grupoT)
 				break
-			case 'fichas amarillas':
+			case 'fichas lila':
 				let grupoFA = crearElemento('g', {
 					id: `Piso${piso + 1}`
 				})
@@ -3658,7 +3688,7 @@ async function tabPos(config) {
 				})
 				container.appendChild(grupoFA)
 				break
-			case 'fichas rojas':
+			case 'fichas calipso':
 				let grupoFR = crearElemento('g', {
 					id: `Piso${piso + 1}`
 				})
@@ -3689,6 +3719,24 @@ async function tabPos(config) {
 				})
 				container.appendChild(grupoB)
 				break
+			case 'monedas y billetes':
+				let grupoMB = crearElemento('g',{
+					id: `Piso${piso+1}`
+				})
+				imagenTabla.detalle.forEach((posicion,index)=>{
+					if(detallePiso.detalle[posicion] > 0) {
+						let imagen = document.getElementById(detallePiso.tipo.replace(/\s/g,'-')+'-'+posicion+'-'+detallePiso.detalle[posicion]).children[0]
+						let centroXPiso = conOperacion ? anchoPosicion + index*anchoPosicion : anchoPosicion/2 + index*anchoPosicion
+						grupoMB.appendChild(crearReferenciaAElemento(
+							detallePiso.tipo.replace(/\s/g,'-')+'-'+posicion+'-'+detallePiso.detalle[posicion], {
+							x: centroXPiso-Number(imagen.getAttribute('width'))/2,
+							y: centroYPiso-Number(imagen.getAttribute('height'))/2
+						}))
+					}
+					
+				})
+				container.appendChild(grupoMB)
+				break
 			default:
 				//no soportado
 				break
@@ -3698,7 +3746,7 @@ async function tabPos(config) {
 	if (conOperacion) {
 		let simbolo = tipoOperacion === 'suma' ? '+' : '-'
 		let centroYUltimoPiso = (pisoTabla - 1) * altoPosicion
-		container.appendChild(crearElementoDeTexto({
+		container.appendChild(crearElementoDeTexto({//dibuja simbolo
 			x: (anchoPosicion / 2) / 2,
 			y: centroYUltimoPiso + (fontSize * 1.2) / 3,
 			style: 'font-family:Quicksand-Medium;',
@@ -3708,7 +3756,7 @@ async function tabPos(config) {
 		}, simbolo))
 
 		let yLineaOperacion = (pisoTabla - 1) * altoPosicion + altoPosicion / 2
-		container.appendChild(crearElemento('rect', {
+		container.appendChild(crearElemento('rect', {//dibuja linea de operacion
 			x: 0,
 			y: yLineaOperacion - 2,
 			width: anchoSvg,
@@ -3716,41 +3764,32 @@ async function tabPos(config) {
 			stroke: '#2A8EBE',
 			fill: '#2A8EBE'
 		}))
-		imagenTabla.detalle.forEach((posicion, columna) => {
-			if (detalleCanje[posicion]) {
-				let numero = regexFunctions(regex(detalleCanje[posicion], vars, vt))
-				if (numero) {
-					let centroXPiso = anchoPosicion + columna * anchoPosicion
-					if (tipoOperacion === 'resta') {
-						container.appendChild(crearElementoDeTexto({
-							x: centroXPiso + fontSize / 4,
-							y: altoPosicion + fontSize / 4,
-							style: 'font-family:Quicksand-Medium;',
-							textAnchor: 'middle',
-							fontSize: fontSize,
-							fill: '#363026'
-						}, numero))
-						container.appendChild(crearElemento('line', {
-							x1: centroXPiso - fontSize / 4,
-							y1: altoPosicion - fontSize / 4.5,
-							x2: centroXPiso - fontSize / 1.8 - fontSize / 4,
-							y2: altoPosicion + altoPosicion / 2,
-							stroke: '#363026',
-							strokeWidth: '3'
-						}))
-					} else {
-						container.appendChild(crearElementoDeTexto({
-							x: centroXPiso,
-							y: altoPosicion / 2 + fontSize / 2.3,
-							style: 'font-family:Quicksand-Medium;',
-							textAnchor: 'middle',
-							fontSize: fontSize / 2,
-							fill: '#363026'
-						}, numero))
-					}
-				}
-			}
-		})
+		imagenTabla.detalle.forEach((posicion,columna)=>{
+            if(detalleCanje[posicion]) {
+                let numero = regexFunctions(regex(detalleCanje[posicion], vars, vt))
+                if(numero) {
+                    let centroXPiso = anchoPosicion + columna*anchoPosicion
+                    container.appendChild(crearElementoDeTexto({
+                        x: centroXPiso,
+                        y: altoPosicion/2+fontSize/2.3,
+                        style: 'font-family:Quicksand-Medium;',
+                        textAnchor: 'middle',
+                        fontSize: fontSize/2,
+                        fill: '#363026'
+                    }, numero))
+                    if(tipoOperacion === 'resta') {
+                        container.appendChild(crearElemento('line', {
+                            x1: centroXPiso+fontSize/4,
+                            y1: altoPosicion - fontSize/4.5,
+                            x2: centroXPiso - fontSize/4,
+                            y2: altoPosicion + altoPosicion /2,
+                            stroke: '#363026',
+                            strokeWidth: '3'
+                        }))
+                    }
+                }
+            }
+        })
 	}
 
 	let pisoActual = pisoTabla
@@ -3829,7 +3868,7 @@ async function tabPos(config) {
 				centroY += altoPosicion
 				break
 			default:
-				console.log('no se')
+				//console.log('no se')
 				break
 		}
 		container.appendChild(crearElementoDeTexto({
@@ -3849,8 +3888,8 @@ async function tabPos(config) {
 			let imagen = await cargaImagen(src)
 			return {
 				nombre: src.split('/').pop().replace('.svg', ''),
-				piso: Number(x.piso),
-				posicion: x.posicion,
+				piso: Number(regexFunctions(regex(x.piso, vars, vt))),
+                posicion: regexFunctions(regex(x.posicion, vars, vt)),
 				src: src,
 				alto: Number(x.alto),
 				ancho: Number(x.alto) * imagen.width / imagen.height
@@ -3888,71 +3927,80 @@ async function tabPos(config) {
 	}
 
 	async function getImagenesPorCargar() {
-		let imagenes = []
-		detallePisos.forEach(piso => {
-			switch (piso.tipo) {
-				case 'bloques':
-					Object.keys(piso.detalle).forEach(posicion => {
-						let valor = regexFunctions(regex(piso.detalle[posicion], vars, vt))
-						valor > 0 && imagenes.push({
-							id: piso.tipo + '-' + posicion + '-' + valor,
-							url: urlImagenesPosicionalesBloques.find(x => x.posicion === posicion).url.replace('#', valor)
-						})
-					})
-					break
-				case 'fichas amarillas':
-					Object.keys(piso.detalle).forEach(posicion => {
-						let valor = regexFunctions(regex(piso.detalle[posicion], vars, vt))
-						valor > 0 && imagenes.push({
-							id: piso.tipo.replace(' ', '-') + '-' + valor,
-							url: urlImgsFichasAmarillas.replace('#', valor)
-						})
-					})
-					break
-				case 'fichas rojas':
-					Object.keys(piso.detalle).forEach(posicion => {
-						let valor = regexFunctions(regex(piso.detalle[posicion], vars, vt))
-						valor > 0 && imagenes.push({
-							id: piso.tipo.replace(' ', '-') + '-' + valor,
-							url: urlImgsFichasRojas.replace('#', valor)
-						})
-					})
-					break
-				default:
-					//no debe ingresar texto
-					break
-			}
-		})
-		imagenes = imagenes.reduce((acc, current) => {
-			const x = acc.find(item => item.id === current.id)
-			if (!x) {
-				return acc.concat([current])
-			} else {
-				return acc
-			}
-		}, [])
-		let imagenesCargadas = await Promise.all(imagenes.map(x => cargaImagen(x.url)))
-		imagenes = imagenes.map((x, i) => ({
-			id: x.id,
-			url: x.url,
-			height: imagenesCargadas[i].height,
-			width: imagenesCargadas[i].width
-		}))
-		let imagenTabla = tiposTabla.find(x => x.id === tipoTabla)
-		let imagenTablaCargada = await cargaImagen(imagenTabla.url)
-		imagenTabla = {
-			...imagenTabla,
-			height: imagenTablaCargada.height,
-			width: imagenTablaCargada.width
-		}
-		let imagenFlecha = await cargaImagen(urlImgFlecha)
+        let imagenes = []
+        detallePisos.forEach(piso => {
+            switch(piso.tipo) {
+                case 'bloques':
+                    Object.keys(piso.detalle).forEach(posicion => {
+                        let valor = regexFunctions(regex(piso.detalle[posicion], vars, vt))
+                        valor > 0 && imagenes.push({
+                            id: piso.tipo+'-'+posicion+'-'+valor,
+                            url: urlImagenesPosicionalesBloques.find(x => x.posicion === posicion).url.replace('#',valor)
+                        })
+                    })
+                    break
+                case 'monedas y billetes':
+                    Object.keys(piso.detalle).forEach(posicion => {
+                        let valor = regexFunctions(regex(piso.detalle[posicion], vars, vt))
+                        valor > 0 && imagenes.push({
+                            id: piso.tipo.replace(/\s/g,'-')+'-'+posicion+'-'+valor,
+                            url: urlImagenesPosicionalesMonedasYBilletes.find(x => x.posicion === posicion).url.replace('#', valor)
+                        })
+                    })
+                    break
+                case 'fichas lila':
+                    Object.keys(piso.detalle).forEach(posicion => {
+                        let valor = regexFunctions(regex(piso.detalle[posicion], vars, vt))
+                        valor > 0 && imagenes.push({
+                            id: piso.tipo.replace(' ','-')+'-'+valor,
+                            url: urlImgsFichasLila.replace('#',valor)
+                        })
+                    })
+                    break
+                case 'fichas calipso':
+                    Object.keys(piso.detalle).forEach(posicion => {
+                        let valor = regexFunctions(regex(piso.detalle[posicion], vars, vt))
+                        valor > 0 && imagenes.push({
+                            id: piso.tipo.replace(' ','-')+'-'+valor,
+                            url: urlImgsFichasCalipso.replace('#',valor)
+                        })
+                    })
+                    break
+                default:
+                    //no debe ingresar texto
+                    break
+            }
+        })
+        imagenes = imagenes.reduce((acc, current) => {
+            const x = acc.find(item => item.id === current.id)
+            if (!x) {
+              return acc.concat([current])
+            } else {
+              return acc
+            }
+        }, [])
+        let imagenesCargadas = await Promise.all(imagenes.map(x => cargaImagen(x.url)))
+        imagenes = imagenes.map((x,i) => ({
+            id: x.id, 
+            url: x.url, 
+            height: imagenesCargadas[i].height,
+            width: imagenesCargadas[i].width
+        }))
+        let imagenTabla = tiposTabla.find(x => x.id === tipoTabla)
+        let imagenTablaCargada = await cargaImagen(imagenTabla.url)
+        imagenTabla = {
+            ...imagenTabla,
+            height: imagenTablaCargada.height,
+            width: imagenTablaCargada.width
+        }
+        let imagenFlecha = await cargaImagen(urlImgFlecha)
 
-		return {
-			imagenes,
-			imagenTabla,
-			imagenFlecha
-		}
-	}
+        return {
+            imagenes,
+            imagenTabla,
+            imagenFlecha
+        }
+    }
 
 	function obtenerValorPosicional() {
 		let pisosAdicionales = 0
