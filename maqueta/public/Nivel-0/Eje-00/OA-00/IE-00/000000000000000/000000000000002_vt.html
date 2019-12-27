@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link rel="stylesheet" href="../../../../css/index.css">
+	
+	<title>00002_vt</title>
+	<!-- MATHJAX NO IMPORTADO -->
+	<script>document.domain = "adaptativamente.cl";</script>
+</head>
+
+<body 
+	data-id="000000000000002"
+	data-content="{'e':[{'id':'-Lx2ZNYsknwZVQCjO7jD','date':'26/12/2019 17:43:10','name':'Tabla Posicional V2','params':{'VF':'0','active':4,'altoTextoVP':'50','canje':'si','conOperacion':'si','destacar':'/[2>3 ? \'C\' : \'D\'/],1,2,#C77AE6;U,2,2,#40D6CB','detalleCanje':{'C':'','D':'6','U':'12','UM':''},'detallePisos':[{'canje':'no','detalle':{'C':'5','D':'6','U':'3','UM':'2'},'numeroCompleto':'no','tipo':'numero'},{'canje':'no','detalle':{'C':'2','D':'3','U':'4','UM':'4'},'numeroCompleto':'no','tipo':'monedas y billetes'},{'canje':'no','detalle':{'C':'3','D':'4','U':'5','UM':'2'},'numeroCompleto':'no','tipo':'fichas lila'}],'formaVF':'llave','imagenesParaPosiciones':[{'alto':'75','piso':'1','posicion':'/[2>5 ? \'C\' : \'D\'/]','src':'https://desarrolloadaptatin.blob.core.windows.net/sistemaejercicios/ejercicios/Nivel-3/imagenes_front/figuras/rectangulo_azul_1.svg'}],'mostrarVF':'no','pisoTabla':'3','tipoOperacion':'suma','tipoTabla':'UMCDU'},'position':0,'tag':'svg','width':{'md':12,'sm':12,'xs':12}}],'r':[],'g':[]}"
+	data-version="{'id':'vt','vars':[{'var':'','val':''}]}"
+	data-habilidad="C1"
+data-tipoejercicio="respuesta breve"
+data-x="ewogICJyZXNwdWVzdGFzIjogW3sKICAgICJ2YWxpZGFjaW9uZXMiOiBbewogICAgICAiaW5wdXRJZCI6ICJpbnB1dDEiLAogICAgICAidmFsb3IiOiAiPSIKICAgIH1dLAogICAgImZlZWRiYWNrIjogIsKhTXV5IEJpZW4hIiwKICAgICJlcnJGcmVjIjogbnVsbAogIH0sewogICAgInZhbGlkYWNpb25lcyI6IFt7CiAgICAgICJpbnB1dElkIjogImlucHV0MSIsCiAgICAgICJ2YWxvciI6ICI8IiwKICAgICAgImNvbG9yIjogImJhZCIKICAgIH1dLAogICAgImZlZWRiYWNrIjogIk5vIGVzIDwiLAogICAgImVyckZyZWMiOiAiMSIKICB9LHsKICAgICJ2YWxpZGFjaW9uZXMiOiBbewogICAgICAiaW5wdXRJZCI6ICJpbnB1dDEiLAogICAgICAidmFsb3IiOiAiPiIsCiAgICAgICJjb2xvciI6ICJiYWQiCiAgICB9XSwKICAgICJmZWVkYmFjayI6ICJObyBlcyA+IiwKICAgICJlcnJGcmVjIjogIjg1IgogIH1dLAogICJmZWVkYmFja0RlZmVjdG8iOiAiTXV5IG1hbCB0b3JwZSIsCiAgImVyckZyZWNEZWZlY3RvIjogIjEiCn0="
+
+>
+	<header class="container-fluid">
+		<div class="row justify-content-center no-gutters">
+			<div class="col-11 lineasbarra">
+				<img id="cerrar" src="../../../../imagenes_front/figuras/cruz.svg" alt="cerrar" />
+				<hr class="sidelinebar d-none d-sm-block" />
+				<svg xmlns="http://www.w3.org/2000/svg" id="progressbar" version="1.1"
+					class="mx-sm-auto d-sm-block"></svg>
+				<hr class="sidelinebar d-none d-sm-block" />
+			</div>
+		</div>
+	</header>
+	<section >
+		<div id="contenedor" class="container-fluid">
+			<div id="contenido" class="row justify-content-center"></div>
+			<div id="respuesta"></div>
+		</div>
+	</section>
+	<footer class="container-fluid">
+		<div id="consulta" class="col-sm">
+			<button type="button" id="btnConsulta" onclick="pressConsulta();" class="boton boton-icon boton-animation icon-consulta">
+				<span>CONSULTA</span>
+			</button>
+		</div>
+		<div id="siguiente" class="col-sm">
+			<button type="button" id="btnResponder" class="boton boton-icon boton-animation icon-responder" disabled>
+				<span>RESPONDER</span>
+			</button>
+		</div>
+	</footer>
+	<div class="container-fluid feedback">
+		<div id="animate-zoom" class="container-fluid animate-zoom">
+			<div id="imagen-feedback">
+				<img height="120" />
+			</div>
+			<div id="center-span">
+				<span></span>
+				<p></p>
+			</div>
+			<div id="siguiente-feedback">
+				<button type="button" id="btnContinuar" class="boton boton-icon boton-animation icon-responder">
+					<span>CONTINUAR</span>
+				</button>
+			</div>
+		</div>
+	</div>
+	<div id="glosa">
+		<div class="modal-content animate-zoom-glosa">
+			<div id="contenedor-glosa" class="container-fluid">
+				<div id="explicacion" class="row no-gutters">
+					<div class="col-12 offset-sm-2 col-sm-10">
+						<h2>Solución</h2>
+					</div>
+					<div class="d-none d-sm-block col-sm-2">
+						<img id="imagenGlosa" src="" class="img-fluid" />
+					</div>
+					<div class="col-12 col-sm-10">
+						<div class="row no-gutters justify-content-center" id="contenido-glosa">
+						
+						</div>
+					</div>
+				</div>
+				<div class="row no-gutters justify-content-end">
+					<div class="col-4 col-sm-3">
+						<button type="button" id="btnCerrarGlosa" onclick="cerrarFeedGlosa()"
+							class="boton boton-icon boton-animation icon-responder">
+							<span>CONTINUAR</span>
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<input id="hiddenIntento" type="hidden" onchange="cambio(this);" />
+	<script src="../../../../js/jquery-3.3.1.slim.min.js"></script>
+	<script src="index.js"></script>
+	<script src="app.js"></script>
+	<script src="../../../../js/jsEjercicios.js"></script>
+	<script src="../../../../js/svg-pan-zoom.min.js"></script>
+	<script src="../../../../js/hammer.min.js"></script>
+</body>
+
+</html>

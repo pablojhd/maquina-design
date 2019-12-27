@@ -6,7 +6,7 @@ const devtool = mode === 'develompent' ? 'source-map' : 'inline-source-map'
 module.exports = {
     entry: './index.js',
     output: {
-        path: path.resolve(__dirname, '..', 'public', 'EJERCICIOS', 'Nivel-0', 'Eje-00', 'OA-00', 'IE-00', '000000000000000'),
+        path: path.resolve(__dirname, 'public', 'Nivel-0', 'Eje-00', 'OA-00', 'IE-00', '000000000000000'),
         filename: 'index.js'
     },
     plugins: [
@@ -40,9 +40,12 @@ module.exports = {
     },
     devServer: {
         contentBase: path.join(__dirname, 'public'),
-        publicPath: '/assets/',
+        publicPath: path.resolve(__dirname, 'public', 'Nivel-0', 'Eje-00', 'OA-00', 'IE-00', '000000000000000'),
         port: 3000,
         open: true,
+        openPage: 'Nivel-0/Eje-00/OA-00/IE-00/000000000000000/000000000000002_vt.html',
+        index: 'Nivel-0/Eje-00/OA-00/IE-00/000000000000000/000000000000002_vt.html',
+        watchContentBase: true,
         historyApiFallback: true
     },
     devtool,
