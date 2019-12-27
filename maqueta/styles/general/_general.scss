@@ -1,0 +1,25 @@
+body {
+  margin: 0;
+  height: 100vh;
+  background-color: #f9f3e9;
+}
+
+p {
+  font-family: $quicksand-medium;
+  font-size: $font-size;
+  color: $font-color;
+  text-align: justify;
+}
+
+p img {
+  padding: 0;
+}
+
+table img {
+  padding: 0;
+}
+
+.img-fluid {
+  max-width: 100%;
+  height: auto;
+}

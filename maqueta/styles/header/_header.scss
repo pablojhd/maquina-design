@@ -1,0 +1,17 @@
+header {
+  width: 100%;
+  height: $height-header;
+  z-index: 1000;
+}
+
+@include media-breakpoint-down(xs) {
+  header {
+    margin-bottom: $margin-bottom-header;
+  }
+}
+
+@include media-breakpoint-up(sm) {
+  header {
+    margin-bottom: $margin-bottom-header-md-up;
+  }
+}

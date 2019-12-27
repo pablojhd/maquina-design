@@ -1,0 +1,50 @@
+.lineasbarra {
+  display: flex;
+  align-items: center;
+  height: $height-header;
+  padding: 0 15px;
+}
+
+#cerrar {
+  padding: 0px 2px;
+  width: 15px;
+  height: 15px;
+}
+
+#progressbar {
+  width: 254px;
+  height: 40px;
+  margin-top: 5px;
+}
+
+@include media-breakpoint-down(sm) {
+  #cerrar {
+    position: absolute;
+    left: -14px;
+  }
+
+  .lineasbarra {
+    justify-content: center;
+  }
+
+  .lineasbarra hr {
+    display: block;
+    margin: auto;
+  }
+}
+
+@include media-breakpoint-up(sm) {
+  .lineasbarra {
+    align-content: center;
+    padding: 0 50px;
+  }
+
+  .lineasbarra hr {
+    display: block;
+    height: 1px;
+    border: 0;
+    color: #e7e5e5;
+    background-color: #e7e5e5;
+    width: calc(100% / 2 - 150px);
+  }
+}
