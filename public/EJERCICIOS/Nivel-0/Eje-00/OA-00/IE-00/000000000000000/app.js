@@ -3531,7 +3531,9 @@ async function tabPos(config) {
 
     let urlImgsFichasLila = '../../../../imagenes_front/pelotas_repeticiones/lila#.svg'
 
-    let urlImgsFichasCalipso = '../../../../imagenes_front/pelotas_repeticiones/calipso#.svg'
+	let urlImgsFichasCalipso = '../../../../imagenes_front/pelotas_repeticiones/calipso#.svg'
+	
+	let urlImgsFichasAzul = '../../../../imagenes_front/pelotas_repeticiones/azul#.svg'
 
 	let urlImgFlecha = '../../../../imagenes_front/flechas/flecha_abajo.svg'
 
@@ -3637,7 +3639,6 @@ async function tabPos(config) {
             height: (filaI * altoPosicion - altoPosicion / 2) + ((filaF - filaI) * altoPosicion + altoPosicion / 2) - 2,
             width: anchoPosicion - 4,
             fill: color,
-            fillOpacity: 0.2,
             rx: 10,
             ry: 10
         }))
@@ -3702,6 +3703,20 @@ async function tabPos(config) {
 				})
 				container.appendChild(grupoFR)
 				break
+			case 'fichas azul':
+                let grupoFC = crearElemento('g',{
+                    id: `Piso${piso+1}`
+                })
+                imagenTabla.detalle.forEach((posicion,index)=>{
+                    let centroXPiso = conOperacion ? anchoPosicion + index*anchoPosicion : anchoPosicion/2 + index*anchoPosicion
+                    grupoFC.appendChild(crearReferenciaAElemento(
+                        detallePiso.tipo.replace(' ','-')+'-'+detallePiso.detalle[posicion], {
+                        x: centroXPiso-altoPosicionConMargen/2,
+                        y: centroYPiso-altoPosicionConMargen/2
+                    }))
+                })
+                container.appendChild(grupoFC)
+                break
 			case 'bloques':
 				let grupoB = crearElemento('g', {
 					id: `Piso${piso + 1}`
@@ -3965,7 +3980,16 @@ async function tabPos(config) {
                             url: urlImgsFichasCalipso.replace('#',valor)
                         })
                     })
-                    break
+					break
+				case 'fichas azul':
+					Object.keys(piso.detalle).forEach(posicion => {
+						let valor = regexFunctions(regex(piso.detalle[posicion], vars, vt))
+						valor > 0 && imagenes.push({
+							id: piso.tipo.replace(' ','-')+'-'+valor,
+							url: urlImgsFichasAzul.replace('#',valor)
+						})
+					})
+					break
                 default:
                     //no debe ingresar texto
                     break
