@@ -450,15 +450,15 @@ function dibujaHtml() {
 		respuestaHtml += `<div class="row justify-content-center">`
 		contenidoRespuestas.forEach(function (item, index) {
 			let valor = regexFunctions(regex(item.params.errFrec, versionBody.vars, false)).replace(/\s/g, ' ')
-			let textoOpcion = item.params.textoOpcion ? regexFunctions(regex(item.params.textoOpcion, versionBody.vars, false)) : `Opción ${index + 1}`
+			let textoOpcion = item.params.textoOpcion ? regexFunctions(regex(item.params.textoOpcion, versionBody.vars, false)).replace('#', index+1) : null
 			respuestaHtml += `<div class="col-md-${item.params.colmd} col-sm-${item.params.colsm} col-${item.params.col}" style="margin-bottom: 5px;">
           <div class="opcionradio opcionradio-imagen">
             <input type="radio" id="radio-${index}" name="answer" value="${valor}"/>
             <label for="radio-${index}">
-              <span>${textoOpcion}</span>
+              ${textoOpcion ? `<span>${textoOpcion}</span>` : ''}
               ${item.tag != 'general' ?
 					item.tag == 'svg' ?
-						`<svg id="container-r${index}" class="img-fluid"></svg>` :
+						`<svg id="container-r${index}" class="img-fluid" ${textoOpcion ? '' : `style="padding:5px;"`}></svg>` :
 						`<canvas class="img-fluid" id="container-r${index}"></canvas>` :
 					`<div id="container-r${index}"></div>`
 				}
