@@ -19,7 +19,8 @@ const FUNCIONES = [
 			{ id: 'Tabla Posicional V2', action: tabPos },
 			{ id: 'Formador Grupos', action: formadorGrupos },
 			{ id: 'Sucesiones', action: sucesiones },
-			{ id: 'Tabla Secuencia', action: tablaSecuencia }
+			{ id: 'Tabla Secuencia', action: tablaSecuencia },
+			{ id: 'Diagrama Barra', action: diagramaBarra }
 		]
 	}, {
 		name: 'Numeracion', tag: 'numeracion', fns: [
@@ -5379,4 +5380,635 @@ async function tablaSecuencia(config) {
 		}
 		return element
 	}
+}
+
+async function diagramaBarra (config){
+    const { container, params, variables, versions, vt } = config;
+    //container.innerHTML = ''
+    //container.style.border = '1px solid #000'
+    let {
+        alto,
+        ancho,
+        separacionEntreBarras,
+        barras,
+        marcas,
+        operaciones,
+        textos,
+        imagenes
+    } = params
+    //trata de variables
+    let vars = vt ? variables : versions
+    let altoSVG = Number(alto)
+    let anchoSVG = Number(ancho)
+    separacionEntreBarras = Number(separacionEntreBarras)
+    let altoBarra = 50
+    let fontSize = 18
+    let anchoBarra = anchoSVG * 0.95
+
+    //estructura basica
+    let defs = crearElemento('defs', {})
+	let styles = document.createElement('style')
+	styles.innerHTML = '@font-face{font-family:"Quicksand";src:url("../../../../fonts/Quicksand-Medium.ttf");}'
+    defs.appendChild(styles)
+    container.appendChild(defs)
+
+    //tamano de la imagen
+    container.setAttributeNS(null, 'height', altoSVG)
+	container.setAttributeNS(null, 'width', anchoSVG)
+    container.setAttributeNS(null, 'viewBox', `0 0 ${anchoSVG} ${altoSVG}`)
+    
+    imagenes = imagenes ? await Promise.all(imagenes.map(x => getImagen(x))) : []
+    textos = textos ? textos.map(x => getTexto(x)) : []
+    operaciones = operaciones ? operaciones.map(x => getOperacion(x)) : []
+    marcas = marcas ? marcas.map(x => getMarca(x)) : []
+    barras = barras ? barras.map((x,i) => getBarra(x,i+1)) : []
+    let yInicioBarras = altoSVG/2 - (barras.length*altoBarra)/2 - (((barras.length-1)*separacionEntreBarras)/2) - (barras.filter(x => x.conOperacion).length*altoBarra)/2 - (((barras.filter(x => x.conOperacion).length)*separacionEntreBarras)/2)
+
+    let posicionDivisiones = []
+
+    barras.forEach((barra, indexBarra) => {
+        let yEsquinaSuperiorIzquierdaDivision = yInicioBarras + (indexBarra * altoBarra) + (indexBarra * separacionEntreBarras) +
+            (barra.conOperacion ? altoBarra + separacionEntreBarras : 0) + barras.slice(0, indexBarra).filter(x => x.conOperacion).length * (altoBarra + separacionEntreBarras)
+        let grupoBarra = crearElemento('g', {
+            id: `${container.id}-barra-${indexBarra+1}`,
+            stroke: '#DFD9D0',
+            strokeWidth: '3'
+        })
+        posicionDivisiones[indexBarra] = []
+        let { divisiones, divisionesPunteadas } = barra.detalle
+        switch(barra.tipo) {
+            case 'equitativa':
+                let { color, dividendo } = barra.detalle
+                if(divisiones) {
+                    let anchoDivisionBarra = anchoBarra / divisiones
+                    if(divisiones > 0) {
+                        for(let indexDivision = 0; indexDivision < divisiones; indexDivision++) {
+                            let xEsquinaSuperiorIzquierdaDivision = anchoSVG/2 - anchoBarra/2 + indexDivision * anchoDivisionBarra
+                            let delinear = {
+                                arriba: divisionesPunteadas.indexOf(indexDivision+1)>-1,
+                                abajo: divisionesPunteadas.indexOf(indexDivision+1)>-1,
+                                izquierda: divisionesPunteadas.indexOf(indexDivision+1)>-1 && indexDivision == 0,
+                                derecha: divisionesPunteadas.indexOf(indexDivision+1)>-1 && (indexDivision+1 == divisiones),
+                            }
+                            posicionDivisiones[indexBarra][indexDivision] = {
+                                inicio: xEsquinaSuperiorIzquierdaDivision,
+                                fin: xEsquinaSuperiorIzquierdaDivision+anchoDivisionBarra
+                            }
+                            dibujaDivisionBarra(grupoBarra, xEsquinaSuperiorIzquierdaDivision, yEsquinaSuperiorIzquierdaDivision, anchoDivisionBarra, delinear, indexBarra, indexDivision, color.length > 1 ? color[indexDivision] : color[0])
+                        }
+                    } else {
+                        grupoBarra.appendChild(crearElemento('rect', {
+                            x: anchoSVG/2 - anchoBarra/2,
+                            y: yEsquinaSuperiorIzquierdaDivision,
+                            width: anchoBarra,
+                            height: altoBarra,
+                            fill: color[0]
+                        }))
+                        posicionDivisiones[indexBarra][0] = {
+                            inicio: anchoSVG/2 - anchoBarra/2,
+                            fin: anchoSVG/2 - anchoBarra/2 + anchoBarra
+                        }
+                    }
+                    container.appendChild(grupoBarra)
+                } else if (dividendo) {
+                    let cociente = barra.total / dividendo
+                    if(Number.isInteger(cociente)) {
+                        let anchoDivisionBarra = anchoBarra / cociente
+                        for(let indexDivision = 0; indexDivision < cociente; indexDivision++) {
+                            let xEsquinaSuperiorIzquierdaDivision = anchoSVG/2 - anchoBarra/2 + indexDivision * anchoDivisionBarra
+                            let delinear = {
+                                arriba: divisionesPunteadas.indexOf(indexDivision+1)>-1,
+                                abajo: divisionesPunteadas.indexOf(indexDivision+1)>-1,
+                                izquierda: divisionesPunteadas.indexOf(indexDivision+1)>-1 && indexDivision == 0,
+                                derecha: divisionesPunteadas.indexOf(indexDivision+1)>-1 && (indexDivision+1 == cociente),
+                            }
+                            posicionDivisiones[indexBarra][indexDivision] = {
+                                inicio: xEsquinaSuperiorIzquierdaDivision,
+                                fin: xEsquinaSuperiorIzquierdaDivision+anchoDivisionBarra
+                            }
+                            dibujaDivisionBarra(grupoBarra, xEsquinaSuperiorIzquierdaDivision, yEsquinaSuperiorIzquierdaDivision, anchoDivisionBarra, delinear, indexBarra, indexDivision, color.length > 1 ? color[indexDivision] : color[0])
+                        }
+                    } else {
+                        divisiones = Math.trunc(cociente)
+                        let valorTotalDivisiones = divisiones * dividendo
+                        let anchoTotalDivisiones = valorTotalDivisiones * anchoBarra / barra.total
+                        let anchoDivisionBarra = anchoTotalDivisiones / divisiones
+                        for(let indexDivision = 0; indexDivision < divisiones; indexDivision++) {
+                            let xEsquinaSuperiorIzquierdaDivision = anchoSVG/2 - anchoBarra/2 + indexDivision * anchoDivisionBarra
+                            let delinear = {
+                                arriba: divisionesPunteadas.indexOf(indexDivision+1)>-1,
+                                abajo: divisionesPunteadas.indexOf(indexDivision+1)>-1,
+                                izquierda: divisionesPunteadas.indexOf(indexDivision+1)>-1 && indexDivision == 0,
+                                derecha: divisionesPunteadas.indexOf(indexDivision+1)>-1 && (indexDivision+1 == divisiones),
+                            }
+                            posicionDivisiones[indexBarra][indexDivision] = {
+                                inicio: xEsquinaSuperiorIzquierdaDivision,
+                                fin: xEsquinaSuperiorIzquierdaDivision+anchoDivisionBarra
+                            }
+                            dibujaDivisionBarra(grupoBarra, xEsquinaSuperiorIzquierdaDivision, yEsquinaSuperiorIzquierdaDivision, anchoDivisionBarra, delinear, indexBarra, indexDivision, color.length > 1 ? color[indexDivision] : color[0])
+                        }
+                        let resto = barra.total % dividendo
+                        let anchoTotalResto = resto * anchoBarra / barra.total
+                        let xEsquinaSuperiorIzquierdaDivision = anchoSVG/2 - anchoBarra/2 + divisiones * anchoDivisionBarra
+                        let delinear = {
+                            arriba: divisionesPunteadas.indexOf(divisiones+1)>-1,
+                            abajo: divisionesPunteadas.indexOf(divisiones+1)>-1,
+                            izquierda: false,
+                            derecha: divisionesPunteadas.indexOf(divisiones+1)>-1,
+                        }
+                        posicionDivisiones[indexBarra][indexDivision] = {
+                            inicio: xEsquinaSuperiorIzquierdaDivision,
+                            fin: xEsquinaSuperiorIzquierdaDivision+anchoTotalResto
+                        }
+                        dibujaDivisionBarra(grupoBarra, xEsquinaSuperiorIzquierdaDivision, yEsquinaSuperiorIzquierdaDivision, anchoTotalResto, delinear, indexBarra, divisiones+1, color.length > 1 ? color[divisiones] : color[0])
+                    }
+                    container.appendChild(grupoBarra)
+                }
+                break
+            case 'proporcional':
+                let acum = anchoSVG/2 - anchoBarra/2
+                divisiones.forEach((division, indexDivision) => {
+                    let anchoDivisionBarra = division.cantidad * anchoBarra / barra.total
+                    let delinear = {
+                        arriba: divisionesPunteadas.indexOf(indexDivision+1)>-1,
+                        abajo: divisionesPunteadas.indexOf(indexDivision+1)>-1,
+                        izquierda: divisionesPunteadas.indexOf(indexDivision+1)>-1 && indexDivision == 0,
+                        derecha: divisionesPunteadas.indexOf(indexDivision+1)>-1 && (indexDivision+1 == divisiones.length),
+                    }
+                    posicionDivisiones[indexBarra][indexDivision] = {
+                        inicio: acum,
+                        fin: acum+anchoDivisionBarra
+                    }
+                    dibujaDivisionBarra(grupoBarra, acum, yEsquinaSuperiorIzquierdaDivision, anchoDivisionBarra, delinear, indexBarra, indexDivision, division.color)
+                    acum += anchoDivisionBarra
+                })
+                container.appendChild(grupoBarra)
+                break
+        }
+    })
+
+    marcas.forEach(marca => {
+        let { tipo,barra,division,posicion,divisionesEspecificas,color,valor } = marca
+        let conOperacion = barras[barra-1].conOperacion
+        switch(division) {
+            case 'barra completa':
+                let inicioX = anchoSVG/2 - anchoBarra/2
+                let finX = anchoSVG/2 + anchoBarra/2
+                let centro = (finX - inicioX) / 2 + inicioX
+                let inicioY = posicion === 'arriba' ?
+                    yInicioBarras + (barra-1) * altoBarra + (barra-1) * separacionEntreBarras - 5 + (conOperacion ? altoBarra + separacionEntreBarras : 0) + barras.slice(0, barra-1).filter(x => x.conOperacion).length * (altoBarra + separacionEntreBarras) :
+                    yInicioBarras + barra * altoBarra + (barra-1) * separacionEntreBarras + 5 + (conOperacion ? altoBarra + separacionEntreBarras : 0) + barras.slice(0, barra-1).filter(x => x.conOperacion).length * (altoBarra + separacionEntreBarras)
+                tipo === 'llave' ? 
+                    dibujarLlave(inicioX, finX, centro, inicioY, posicion, color, valor[0]) :
+                    dibujarTramo(inicioX, finX, centro, inicioY, posicion, color, valor[0])
+                break
+            case 'todas':
+                posicionDivisiones[barra-1].forEach((div, indexDiv) => {
+                    let inicioX = div.inicio
+                    let finX = div.fin
+                    let centro = (finX - inicioX) / 2 + inicioX
+                    let inicioY = posicion === 'arriba' ?
+                        yInicioBarras + (barra-1) * altoBarra + (barra-1) * separacionEntreBarras - 5 + (conOperacion ? altoBarra + separacionEntreBarras : 0) + barras.slice(0, barra-1).filter(x => x.conOperacion).length * (altoBarra + separacionEntreBarras) :
+                        yInicioBarras + barra * altoBarra + (barra-1) * separacionEntreBarras + 5 + (conOperacion ? altoBarra + separacionEntreBarras : 0) + barras.slice(0, barra-1).filter(x => x.conOperacion).length * (altoBarra + separacionEntreBarras)
+                    tipo === 'llave' ? 
+                        dibujarLlave(inicioX, finX, centro, inicioY, posicion, color, valor.length > 1 ? valor[indexDiv] : valor[0]) :
+                        dibujarTramo(inicioX, finX, centro, inicioY, posicion, color, valor.length > 1 ? valor[indexDiv] : valor[0])
+                })
+                break
+            case 'especificas':
+                divisionesEspecificas.forEach((divEsp, indexDivEsp) => {
+                    if(divEsp.tipo === 'tramo') {
+                        let inicioX = posicionDivisiones[barra-1][divEsp.divisionInicio-1].inicio
+                        let finX = posicionDivisiones[barra-1][divEsp.divisionFin-1].fin
+                        let centro = (finX - inicioX) / 2 + inicioX
+                        let inicioY = posicion === 'arriba' ?
+                            yInicioBarras + (barra-1) * altoBarra + (barra-1) * separacionEntreBarras - 5 + (conOperacion ? altoBarra + separacionEntreBarras : 0) + barras.slice(0, barra-1).filter(x => x.conOperacion).length * (altoBarra + separacionEntreBarras):
+                            yInicioBarras + barra * altoBarra + (barra-1) * separacionEntreBarras + 5 + (conOperacion ? altoBarra + separacionEntreBarras : 0) + barras.slice(0, barra-1).filter(x => x.conOperacion).length * (altoBarra + separacionEntreBarras)
+                        tipo === 'llave' ?
+                            dibujarLlave(inicioX, finX, centro, inicioY, posicion, color, valor.length > 1 ? valor[indexDivEsp] : valor[0]) :
+                            dibujarTramo(inicioX, finX, centro, inicioY, posicion, color, valor.length > 1 ? valor[indexDivEsp] : valor[0])
+                    } else {
+                        let inicioX = posicionDivisiones[barra-1][divEsp.division-1].inicio
+                        let finX = posicionDivisiones[barra-1][divEsp.division-1].fin
+                        let centro = (finX - inicioX) / 2 + inicioX
+                        let inicioY = posicion === 'arriba' ?
+                            yInicioBarras + (barra-1) * altoBarra + (barra-1) * separacionEntreBarras - 5 + (conOperacion ? altoBarra + separacionEntreBarras : 0) + barras.slice(0, barra-1).filter(x => x.conOperacion).length * (altoBarra + separacionEntreBarras):
+                            yInicioBarras + barra * altoBarra + (barra-1) * separacionEntreBarras + 5 + (conOperacion ? altoBarra + separacionEntreBarras : 0) + barras.slice(0, barra-1).filter(x => x.conOperacion).length * (altoBarra + separacionEntreBarras)
+                        tipo === 'llave' ?
+                            dibujarLlave(inicioX, finX, centro, inicioY, posicion, color, valor.length > 1 ? valor[indexDivEsp] : valor[0]) :
+                            dibujarTramo(inicioX, finX, centro, inicioY, posicion, color, valor.length > 1 ? valor[indexDivEsp] : valor[0])
+                    }
+                })
+                break
+        }
+    })
+
+    operaciones.forEach(operacion => {
+        let { barra, division, color, marca, valor, colorMarca } = operacion
+        let inicioX = posicionDivisiones[barra-1][division-1].inicio
+        let finX = posicionDivisiones[barra-1][division-1].fin
+        let centro = (finX - inicioX) / 2 + inicioX
+        let anchoDivisionBarra = finX - inicioX
+        let inicioY = yInicioBarras + (barra-1) * altoBarra + (barra-1) * separacionEntreBarras - 5
+        container.appendChild(crearElemento('rect', {
+            x: inicioX,
+            y: inicioY,
+            width: anchoDivisionBarra,
+            height: altoBarra,
+            stroke: '#DFD9D0',
+            strokeWidth: '3',
+            fill: color
+        }))
+        if(marca === 'llave') {
+            dibujarLlave(inicioX, finX, centro, inicioY-5, 'arriba', colorMarca, valor)
+        } else if (marca === 'tramo') {
+            dibujarTramo(inicioX, finX, centro, inicioY-5, 'arriba', colorMarca, valor)
+        }
+    })
+
+    imagenes.forEach(imagen => {
+        let { id,ubicacion,alto,ancho,posicion,separacion,barra,division,x,y } = imagen
+        if(ubicacion === 'exacta') {
+            for(let i = 0; i < x.length; i++) {
+                container.appendChild(crearReferenciaAElemento(id, {
+                    x: x[i]-ancho/2,
+                    y: y[i]-alto/2
+                }))
+            }
+        } else {
+            let barrasConOperacionAnterior = barras.slice(0, barra-1).filter(x => x.conOperacion).length
+            let conOperacion = barras[barra-1].conOperacion
+            let yBarra = yInicioBarras + (barra-1) * altoBarra + (barra-1) * separacionEntreBarras + (conOperacion ? altoBarra + separacionEntreBarras : 0) + barrasConOperacionAnterior * (altoBarra + separacionEntreBarras)
+            division.forEach(div => {
+                if(div.tipo === 'tramo') {
+                    posicionDivisiones[barra-1].slice(div.divisionInicio-1, div.divisionFin-div.divisionInicio+1).forEach(pos => {
+                        let inicioX = pos.inicio
+                        let finX = pos.fin
+                        let centro = (finX - inicioX) / 2 + inicioX
+                        let xImg = centro - ancho/2
+                        let yImg
+                        if(posicion === 'arriba') {
+                            yImg = yBarra - alto - separacion
+                        } else if(posicion === 'abajo') {
+                            yImg = yBarra + altoBarra + separacion
+                        } else { //centro
+                            yImg = yBarra + altoBarra/2 - alto/2
+                        }
+                        container.appendChild(crearReferenciaAElemento(id, {
+                            x: xImg,
+                            y: yImg
+                        }))
+                    })
+                } else {
+                    let inicioX = posicionDivisiones[barra-1][div.division-1].inicio
+                    let finX = posicionDivisiones[barra-1][div.division-1].fin
+                    let centro = (finX - inicioX) / 2 + inicioX
+                    let xImg = centro - ancho/2
+                    let yImg
+                    if(posicion === 'arriba') {
+                        yImg = yBarra - alto - separacion
+                    } else if(posicion === 'abajo') {
+                        yImg = yBarra + altoBarra + separacion
+                    } else { //centro
+                        yImg = yBarra + altoBarra/2 - alto/2
+                    }
+                    container.appendChild(crearReferenciaAElemento(id, {
+                        x: xImg,
+                        y: yImg
+                    }))
+                }
+            })
+        }
+    })
+
+    textos.forEach(texto => {
+        let { texto: txt,alto,ubicacion,posicion,separacion,barra,division,x,y } = texto
+        if(ubicacion === 'exacta') {
+            for(let i = 0; i < x.length; i++) {
+                container.appendChild(crearElementoDeTexto({
+                    x: x,
+                    y: y-fontSize/2,
+                    fontSize,
+                    textAnchor: 'middle',
+                    fill: '#363026',
+                    style: 'font-family:Quicksand;'
+                }, txt))
+            }
+        } else {
+            let barrasConOperacionAnterior = barras.slice(0, barra-1).filter(x => x.conOperacion).length
+            let conOperacion = barras[barra-1].conOperacion
+            let yBarra = yInicioBarras + (barra-1) * altoBarra + (barra-1) * separacionEntreBarras + (conOperacion ? altoBarra + separacionEntreBarras : 0) + barrasConOperacionAnterior * (altoBarra + separacionEntreBarras)
+            division.forEach(div => {
+                if(div.tipo === 'tramo') {
+                    posicionDivisiones[barra-1].slice(div.divisionInicio-1, div.divisionFin-div.divisionInicio+1).forEach(pos => {
+                        let inicioX = pos.inicio
+                        let finX = pos.fin
+                        let centro = (finX - inicioX) / 2 + inicioX
+                        let yTexto
+                        if(posicion === 'arriba') {
+                            yTexto = yBarra - separacion
+                        } else if(posicion === 'abajo') {
+                            yTexto = yBarra + altoBarra + separacion + alto
+                        } else { //centro
+                            yTexto = yBarra + altoBarra/2 + alto/2
+                        }
+                        container.appendChild(crearElementoDeTexto({
+                            x: centro,
+                            y: yTexto,
+                            fontSize: alto,
+                            textAnchor: 'middle',
+                            fill: '#363026',
+                            style: 'font-family:Quicksand;'
+                        }, txt))
+                    })
+                } else {
+                    let inicioX = posicionDivisiones[barra-1][div.division-1].inicio
+                    let finX = posicionDivisiones[barra-1][div.division-1].fin
+                    let centro = (finX - inicioX) / 2 + inicioX
+                    let yTexto
+                    if(posicion === 'arriba') {
+                        yTexto = yBarra - separacion
+                    } else if(posicion === 'abajo') {
+                        yTexto = yBarra + altoBarra + separacion + alto
+                    } else { //centro
+                        yTexto = yBarra + altoBarra/2 + alto/2
+                    }
+                    container.appendChild(crearElementoDeTexto({
+                        x: centro,
+                        y: yTexto,
+                        fontSize: alto,
+                        textAnchor: 'middle',
+                        fill: '#363026',
+                        style: 'font-family:Quicksand;'
+                    }, txt))
+                }
+            })
+        }
+    })
+
+    //funciones -------
+    function dibujaDivisionBarra(grupoBarra, xEsqSupIzqBarra, yEsqSupIzqBarra, anchoDivisionBarra, delinear, indexBarra, indexDivision, color) {
+        grupoBarra.appendChild(crearElemento('line', {
+            id: `${container.id}-barra${indexBarra+1}-division${indexDivision+1}-arriba`,
+            x1: xEsqSupIzqBarra,
+            y1: yEsqSupIzqBarra,
+            x2: xEsqSupIzqBarra + anchoDivisionBarra,
+            y2: yEsqSupIzqBarra,
+            strokeDasharray: delinear.arriba ? '4' : ''
+        }))
+        grupoBarra.appendChild(crearElemento('line', {
+            id: `${container.id}-barra${indexBarra+1}-division${indexDivision+1}-derecha`,
+            x1: xEsqSupIzqBarra + anchoDivisionBarra,
+            y1: yEsqSupIzqBarra - 1.5,
+            x2: xEsqSupIzqBarra + anchoDivisionBarra,
+            y2: yEsqSupIzqBarra + altoBarra + 1.5,
+            strokeDasharray: delinear.derecha ? '4' : ''
+        }))
+        grupoBarra.appendChild(crearElemento('line', {
+            id: `${container.id}-barra${indexBarra+1}-division${indexDivision+1}-abajo`,
+            x1: xEsqSupIzqBarra + anchoDivisionBarra,
+            y1: yEsqSupIzqBarra + altoBarra,
+            x2: xEsqSupIzqBarra,
+            y2: yEsqSupIzqBarra + altoBarra,
+            strokeDasharray: delinear.abajo ? '4' : ''
+        }))
+        indexDivision === 0 && grupoBarra.appendChild(crearElemento('line', {
+            id: `${container.id}-barra${indexBarra+1}-division${indexDivision+1}-izquierda`,
+            x1: xEsqSupIzqBarra,
+            y1: yEsqSupIzqBarra + altoBarra + 1.5,
+            x2: xEsqSupIzqBarra,
+            y2: yEsqSupIzqBarra - 1.5,
+            strokeDasharray: delinear.izquierda ? '4' : ''
+        }))
+
+        if(!delinear.arriba && !delinear.abajo && !delinear.izquierda && !delinear.derecha) {
+            grupoBarra.appendChild(crearElemento('rect', {
+                id: `${container.id}-barra${indexBarra+1}-division${indexDivision+1}-relleno`,
+                x: xEsqSupIzqBarra+1.5,
+                y: yEsqSupIzqBarra+1.5,
+                width: anchoDivisionBarra-3,
+                height: altoBarra-3,
+                stroke: 'none',
+                fill: color
+            }))
+        }
+    }
+
+    function dibujarLlave(inicioX, finX, centro, inicioY, posicion, color, valor) {
+        let radio = 10
+        let llaveParaArriba = posicion === 'arriba' ? true : false
+        let inicioYMasMenosRadio = llaveParaArriba ? inicioY-radio : inicioY+radio
+        container.appendChild(crearElemento('path',{
+            d: `M ${inicioX} ${inicioY}
+                A ${radio} ${radio} 0 0 ${llaveParaArriba ? '1' : '0'} ${inicioX+radio} ${inicioYMasMenosRadio}
+                H ${centro-radio}
+                A ${radio} ${radio} 0 0 ${llaveParaArriba ? '0' : '1'} ${centro} ${inicioY + (llaveParaArriba ? radio*-2 : radio*2)}
+                A ${radio} ${radio} 0 0 ${llaveParaArriba ? '0' : '1'} ${centro+radio} ${inicioYMasMenosRadio}
+                H ${finX-radio}
+                A ${radio} ${radio} 0 0 ${llaveParaArriba ? '1' : '0'} ${finX} ${inicioY}`,
+            fill: 'none',
+            stroke: color,
+            strokeWidth: '3'
+        }))
+        if(valor) {
+            container.appendChild(crearElementoDeTexto({
+                x: centro,
+                y: inicioY + (llaveParaArriba ? (5+radio*2)*-1 : 8+fontSize+radio),
+                fontSize,
+                textAnchor: 'middle',
+                fill: '#363026',
+                style: 'font-family:Quicksand;'
+            }, valor))
+        }
+    }
+
+    function dibujarTramo(inicioX, finX, centro, inicioY, posicion, color, valor) {
+        let largolinea = 10
+        let finY = posicion === 'arriba' ? inicioY-largolinea : inicioY+largolinea
+        let altoLinea = posicion === 'arriba' ? inicioY-largolinea/2 : inicioY+largolinea/2
+        container.appendChild(crearElemento('line', {
+            x1: inicioX,
+            y1: inicioY,
+            x2: inicioX,
+            y2: finY,
+            stroke: color,
+            strokeWidth: '3'
+        }))
+        container.appendChild(crearElemento('line', {
+            x1: finX,
+            y1: inicioY,
+            x2: finX,
+            y2: finY,
+            stroke: color,
+            strokeWidth: '3'
+        }))
+        container.appendChild(crearElemento('line', {
+            x1: inicioX,
+            y1: altoLinea,
+            x2: finX,
+            y2: altoLinea,
+            stroke: color,
+            strokeWidth: '3'
+        }))
+        if(valor) {
+            container.appendChild(crearElementoDeTexto({
+                x: centro,
+                y: inicioY + (posicion === 'arriba' ? (largolinea*2)*-1 : fontSize+largolinea),
+                fontSize,
+                textAnchor: 'middle',
+                fill: '#363026',
+                style: 'font-family:Quicksand;'
+            }, valor))
+        }
+    }
+
+    function getBarra(barra, numero) {
+        return {
+            total: Number(regexFunctions(regex(barra.total, vars, vt))),
+            tipo: barra.tipo,
+            detalle: barra.tipo === "equitativa" ? {
+                color: regexFunctions(regex(barra.detalle.color, vars, vt)).split(','),
+                dividendo: barra.detalle.dividendo ? Number(regexFunctions(regex(barra.detalle.dividendo, vars, vt))) : null,
+                divisiones: barra.detalle.divisiones ? Number(regexFunctions(regex(barra.detalle.divisiones, vars, vt))) : null,
+                divisionesPunteadas: barra.detalle.divisionesPunteadas ? regexFunctions(regex(barra.detalle.divisionesPunteadas, vars, vt)).split(',').map(x => Number(x)) : []
+            } : {
+                divisiones: regexFunctions(regex(barra.detalle.divisiones, vars, vt)).split(';').map(x => ({ cantidad: Number(x.split(',')[0]), color: x.split(',')[1] })),
+                divisionesPunteadas: barra.detalle.divisionesPunteadas ? regexFunctions(regex(barra.detalle.divisionesPunteadas, vars, vt)).split(',').map(x => Number(x)) : []
+            },
+            conOperacion: operaciones.filter(x => numero === x.barra).length > 0
+        }
+    }
+
+    function getMarca(marca) {
+        return {
+            tipo: marca.tipo,
+			barra: Number(marca.barra),
+			division: marca.division,
+			posicion: marca.posicion,
+            divisionesEspecificas: marca.divisionesEspecificas ? 
+                regexFunctions(regex(marca.divisionesEspecificas, vars, vt))
+                .split(',')
+                .map(x => { 
+                    return x.indexOf('-') > -1 ? {
+                        tipo: 'tramo',
+                        divisionInicio: Number(x.split('-')[0]), 
+                        divisionFin: Number(x.split('-')[1])
+                    } : {
+                        tipo: 'especifica',
+                        division: Number(x)
+                    }
+                }) : null,
+			color: marca.color,
+			valor: regexFunctions(regex(marca.valor, vars, vt)).split(',')
+        }
+    }
+
+    function getOperacion(operacion) {
+        return {
+            barra: Number(operacion.barra),
+            division: regexFunctions(regex(operacion.division, vars, vt)).split(',').map(x => Number(x)),
+            color: operacion.color,
+            marca: operacion.marca,
+            colorMarca: operacion.colorMarca,
+			valor:  regexFunctions(regex(operacion.valor, vars, vt))
+        }
+    }
+
+    async function getImagen(imagen) {
+        let src = regexFunctions(regex(imagen.src, vars, vt)).replace(`https://desarrolloadaptatin.blob.core.windows.net/sistemaejercicios/ejercicios/Nivel-${nivelEjercicio}/`, '../../../../')
+        let imagenCargada = await cargaImagen(src)
+        let alto = Number(imagen.alto)
+        let ancho = alto * imagenCargada.width / imagenCargada.height
+        let id = container.id + '-' + src.split('/').pop().replace('.svg','').replace(/%20/g,'-')
+        defs.appendChild(crearElementoDeImagen(src,{id,height:alto,width:ancho}))
+        return { 
+            id, 
+            src, 
+            alto, 
+            ancho, 
+            ubicacion:imagen.ubicacion, 
+            posicion:imagen.posicion,
+            separacion:Number(imagen.separacion),
+            barra:Number(imagen.barra),
+            division:regexFunctions(regex(imagen.division, vars, vt)).split(',').map(x => { 
+                return x.indexOf('-') > -1 ? {
+                    tipo: 'tramo',
+                    divisionInicio: Number(x.split('-')[0]), 
+                    divisionFin: Number(x.split('-')[1])
+                } : {
+                    tipo: 'especifica',
+                    division: Number(x)
+                }
+            }),
+            x:regexFunctions(regex(imagen.x, vars, vt)).split(',').map(x => Number(x)),
+            y:regexFunctions(regex(imagen.y, vars, vt)).split(',').map(x => Number(x))
+        }
+    }
+
+    function getTexto(texto) {
+        return {
+            texto: regexFunctions(regex(texto.texto, vars, vt)),
+            alto: Number(texto.alto),
+            ubicacion: texto.ubicacion,
+            posicion: texto.posicion,
+            separacion: Number(texto.separacion),
+            barra: Number(texto.barra),
+            division: regexFunctions(regex(texto.division, vars, vt)).split(',').map(x => {
+                return x.indexOf('-') > -1 ? {
+                    tipo: 'tramo',
+                    divisionInicio: Number(x.split('-')[0]),
+                    divisionFin: Number(x.split('-')[1])
+                } : {
+                    tipo: 'especifica',
+                    division: Number(x)
+                }
+            }),
+            x:regexFunctions(regex(texto.x, vars, vt)).split(',').map(x => Number(x)),
+            y:regexFunctions(regex(texto.y, vars, vt)).split(',').map(x => Number(x))
+        }
+    }
+
+    function crearElementoDeImagen(src, atributos) {
+		let element = document.createElementNS('http://www.w3.org/2000/svg', 'image')
+		element.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', src)
+		for (let p in atributos) {
+            element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
+                return '-' + m.toLowerCase()
+            }), atributos[p])
+		}
+		return element
+    }
+    
+    function crearReferenciaAElemento(id, atributos) {
+        let element = document.createElementNS('http://www.w3.org/2000/svg', 'use')
+        element.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `#${id}`)
+        for (let p in atributos) {
+            element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
+                return '-' + m.toLowerCase()
+            }), atributos[p])
+        }
+        return element
+    }
+
+	function crearElemento(nombre, atributos) {
+		let element = document.createElementNS('http://www.w3.org/2000/svg', nombre)
+		for (let p in atributos) {
+		  element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
+			return '-' + m.toLowerCase()
+		  }), atributos[p])
+		}
+		return element
+	}
+
+	function crearElementoDeTexto(atributos, texto) {
+		let element = document.createElementNS('http://www.w3.org/2000/svg', 'text')
+		for (let p in atributos) {
+		  element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
+			return '-' + m.toLowerCase()
+		  }), atributos[p])
+		}
+		let textNode = document.createTextNode(texto)
+		element.appendChild(textNode)
+		return element
+    }
 }
