@@ -5390,6 +5390,8 @@ async function diagramaBarra (config){
         alto,
         ancho,
         separacionEntreBarras,
+        colorBordes,
+        grosorBordes,
         barras,
         marcas,
         operaciones,
@@ -5403,6 +5405,7 @@ async function diagramaBarra (config){
     separacionEntreBarras = Number(separacionEntreBarras)
     let altoBarra = 50
     let fontSize = 18
+    grosorBordes = Number(grosorBordes)
     let anchoBarra = anchoSVG * 0.95
 
     //estructura basica
@@ -5431,8 +5434,8 @@ async function diagramaBarra (config){
             (barra.conOperacion ? altoBarra + separacionEntreBarras : 0) + barras.slice(0, indexBarra).filter(x => x.conOperacion).length * (altoBarra + separacionEntreBarras)
         let grupoBarra = crearElemento('g', {
             id: `${container.id}-barra-${indexBarra+1}`,
-            stroke: '#DFD9D0',
-            strokeWidth: '3'
+            stroke: colorBordes,
+            strokeWidth: grosorBordes
         })
         posicionDivisiones[indexBarra] = []
         let { divisiones, divisionesPunteadas } = barra.detalle
@@ -5516,7 +5519,7 @@ async function diagramaBarra (config){
                             izquierda: false,
                             derecha: divisionesPunteadas.indexOf(divisiones+1)>-1,
                         }
-                        posicionDivisiones[indexBarra][indexDivision] = {
+                        posicionDivisiones[indexBarra][divisiones] = {
                             inicio: xEsquinaSuperiorIzquierdaDivision,
                             fin: xEsquinaSuperiorIzquierdaDivision+anchoTotalResto
                         }
@@ -5759,9 +5762,9 @@ async function diagramaBarra (config){
         grupoBarra.appendChild(crearElemento('line', {
             id: `${container.id}-barra${indexBarra+1}-division${indexDivision+1}-derecha`,
             x1: xEsqSupIzqBarra + anchoDivisionBarra,
-            y1: yEsqSupIzqBarra - 1.5,
+            y1: yEsqSupIzqBarra - grosorBordes/2,
             x2: xEsqSupIzqBarra + anchoDivisionBarra,
-            y2: yEsqSupIzqBarra + altoBarra + 1.5,
+            y2: yEsqSupIzqBarra + altoBarra + grosorBordes/2,
             strokeDasharray: delinear.derecha ? '4' : ''
         }))
         grupoBarra.appendChild(crearElemento('line', {
@@ -5775,19 +5778,19 @@ async function diagramaBarra (config){
         indexDivision === 0 && grupoBarra.appendChild(crearElemento('line', {
             id: `${container.id}-barra${indexBarra+1}-division${indexDivision+1}-izquierda`,
             x1: xEsqSupIzqBarra,
-            y1: yEsqSupIzqBarra + altoBarra + 1.5,
+            y1: yEsqSupIzqBarra + altoBarra + grosorBordes/2,
             x2: xEsqSupIzqBarra,
-            y2: yEsqSupIzqBarra - 1.5,
+            y2: yEsqSupIzqBarra - grosorBordes/2,
             strokeDasharray: delinear.izquierda ? '4' : ''
         }))
 
         if(!delinear.arriba && !delinear.abajo && !delinear.izquierda && !delinear.derecha) {
             grupoBarra.appendChild(crearElemento('rect', {
                 id: `${container.id}-barra${indexBarra+1}-division${indexDivision+1}-relleno`,
-                x: xEsqSupIzqBarra+1.5,
-                y: yEsqSupIzqBarra+1.5,
-                width: anchoDivisionBarra-3,
-                height: altoBarra-3,
+                x: xEsqSupIzqBarra+grosorBordes/2,
+                y: yEsqSupIzqBarra+grosorBordes/2,
+                width: anchoDivisionBarra-grosorBordes,
+                height: altoBarra-grosorBordes,
                 stroke: 'none',
                 fill: color
             }))
