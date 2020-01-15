@@ -3166,7 +3166,7 @@ async function recta(config, tipo) {
 			inicio: Number(regexFunctions(regex(arco.inicio, vars, vt))),
 			fin: Number(regexFunctions(regex(arco.fin, vars, vt))),
 			direccion: arco.direccion,
-			color: '#8B1013',
+			color: arco.color,
 			saltos: arco.saltos == 'si' ? true : false,
 			mostrarValorTramo: arco.mostrarValorTramo == 'si' ? true : false
 		}
