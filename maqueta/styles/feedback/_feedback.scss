@@ -1,24 +1,81 @@
+#_3gDW- {
+  flex-basis: 120px;
+  position: fixed;
+  margin: 0px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+}
+
+#_2f9Fr_1sntG_1yRbM_3ZpB4 {
+  bottom: 0;
+  position: absolute;
+  min-height: 120px;
+  overflow: hidden;
+  width: 100%;
+}
+
+#_1_XY0_3wVKa {
+  align-items: center;
+  grid-auto-rows: auto;
+  grid-template-columns: repeat(5,1fr);
+  grid-template-rows: 100%;
+  grid-gap: 8px 16px;
+  justify-content: space-between;
+  display: grid;
+  justify-items: stretch;
+  grid-auto-rows: 1fr;
+  grid-gap: 8px 16px;
+  justify-items: stretch;
+  position: relative;
+  min-height: 120px;
+  padding: 0 12%;
+  width: 100%;
+}
+
+#KekRP_3Txod_1yRbM {
+display: flex;
+flex-direction: column;
+grid-column: 1/5;
+margin: 0;
+min-height: 120px;
+position: relative;
+bottom: 0;
+left: 0;
+right: 0;
+}
+
+#_2npwn {
+  display: flex;
+  flex: 1 1 auto;
+}
+
+._3P3SL {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  width: 100%;
+  padding: 0px;
+}
+
 .feedback {
   display: none;
 }
 
-.feedback span {
+.feedback-span {
   font-family: $quicksand-medium;
   font-size: $font-size;
   font-weight: bold;
   text-transform: uppercase;
 }
 
-.feedback p {
+.feedback-p {
   color: inherit !important;
   text-align: left;
   margin: 0px;
 }
 
-// #btnContinuar {
-//   color: white;
-//   border: none;
-// }
 /* FEEDBACK PARA RESPUESTA CORRECTA */
 .feedback-correcto {
   background-color: #b2e675;
@@ -54,7 +111,7 @@
   color: #f9f3e9;
   border-color: #f92219;
 }
-
+/*
 #animate-zoom {
   position: fixed;
   margin: 0px;
@@ -77,20 +134,16 @@
   -ms-flex-pack: justify;
   justify-content: space-between;
 }
+*/
 
 #imagen-feedback {
-  padding: 0px;
+  padding-right: 16px;
   height: 120px;
 }
 
-#animate-zoom img {
-  text-align: center;
-  padding: 0px;
-}
-
 #siguiente-feedback {
-  grid-column: 3 / auto;
-  justify-self: end;
+  grid-column: 5 / auto;
+  justify-self: center;
   text-align: center;
   padding: 0px;
 }
@@ -101,13 +154,12 @@
     position: fixed;
     z-index: 1030;
     left: 0;
-    top: 0;
+    top: 30%;
     width: 100vw;
     height: 100vh;
     overflow: auto;
-    background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
   }
-
+/*
   .feedback .container-fluid {
     margin: 0;
     position: absolute;
@@ -115,8 +167,8 @@
     -ms-transform: translateY(-50%);
     transform: translateY(-50%);
   }
-
-  #animate-zoom {
+*/
+  .animate-zoom {
     border-radius: 20px;
     justify-content: space-around;
     border: 4px;
@@ -154,13 +206,5 @@
     to {
       transform: scale(1);
     }
-  }
-}
-
-@include media-breakpoint-up(sm) {
-  /*ESTAS CLASES MUESTRAN EL FEEDBACK AL PIE DE PAGINA*/
-  .feedback {
-    height: 120px;
-    z-index: 1030;
   }
 }

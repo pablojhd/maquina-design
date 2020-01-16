@@ -23,6 +23,7 @@
 .feedback-correcto {
   background-color: #b2e675;
   color: #529b00;
+  height: 120px;
 }
 
 .feedback-correcto #btnContinuar {
@@ -95,7 +96,7 @@
   padding: 0px;
 }
 
-@include media-breakpoint-down(xs) {
+@include media-breakpoint-down(sm) {
   /*ESTAS CLASES MUESTRAN EL FEEDBACK COMO MODAL*/
   .feedback {
     position: fixed;
@@ -117,11 +118,27 @@
   }
 
   #animate-zoom {
+    display: flex;
+    flex-direction: column;
+    position: relative;
     border-radius: 20px;
     justify-content: space-around;
-    border: 4px;
-    grid: unset;
-    height: 160px;
+    min-height: 180px;
+    padding: 7%;
+    height: auto;
+  }
+
+  #center-span {
+    align-self: flex-start;
+    margin-bottom: 30px;
+  }
+
+  .feedback p {
+    margin-top: 6px;
+  }
+
+  #siguiente-feedback {
+    align-self: flex-end;
   }
 
   #imagen-feedback {
@@ -154,13 +171,5 @@
     to {
       transform: scale(1);
     }
-  }
-}
-
-@include media-breakpoint-up(sm) {
-  /*ESTAS CLASES MUESTRAN EL FEEDBACK AL PIE DE PAGINA*/
-  .feedback {
-    height: 120px;
-    z-index: 1030;
   }
 }
