@@ -1,0 +1,68 @@
+#contenedor-glosa {
+  height: inherit;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow-y: scroll;
+}
+
+#contenedor-glosa::-webkit-scrollbar {
+  width: 8px;
+}
+/* Track */
+#contenedor-glosa::-webkit-scrollbar-track {
+  color: transparent;
+}
+/* Handle */
+#contenedor-glosa::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 10px;
+}
+/* Handle on hover */
+#contenedor-glosa::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+#glosa {
+  display: none;
+  position: fixed;
+  z-index: 1030;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  padding: 15px;
+}
+
+#glosa h2 {
+  font-family: $quicksand-medium;
+  margin: 0 0 15px 0;
+}
+
+#glosa .modal-content {
+  background-color: #fff;
+  border-radius: 26px;
+  padding: 15px 0;
+  height: 100%;
+  width: 100%;
+}
+
+#btnCerrarGlosa {
+  background: #1a8dc6;
+  color: #fff;
+  border: none;
+}
+
+.animate-zoom-glosa {
+  animation: animatezoom 0.6s;
+}
+
+@keyframes animatezoom {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}

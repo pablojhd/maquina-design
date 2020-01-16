@@ -9,7 +9,7 @@ const FUNCIONES = [
 		name: 'General', tag: 'general', fns: [
 			{ id: 'Insertar Texto', action: insertarTexto },
 			{ id: 'Insertar Input', action: insertarInput },
-			{ id: 'Insertar Input Fraccion', action: insertarInputFraccion },
+			{ id: 'Insertar Input Fracción', action: insertarInputFraccion },
 			{ id: 'Insertar Tabla', action: insertarTabla },
 			{ id: 'Insertar Imagen', action: insertarImagen }
 		]
@@ -23,15 +23,15 @@ const FUNCIONES = [
 			{ id: 'Diagrama Barra', action: diagramaBarra }
 		]
 	}, {
-		name: 'Numeracion', tag: 'numeracion', fns: [
-			{ id: 'Repeticion Bidimensional', action: repeticionBidimensional },
-			{ id: 'Multiplicacion Pictoricos', action: multiplicacionPic },
-			{ id: 'Abaco', action: abaco },
-			{ id: 'Multiplicacion Elementos', action: multiplicacionElem },
+		name: 'Numeración', tag: 'numeracion', fns: [
+			{ id: 'Repetición Bidimensional', action: repeticionBidimensional },
+			{ id: 'Multiplicación Pictóricos', action: multiplicacionPic },
+			{ id: 'Ábaco', action: abaco },
+			{ id: 'Multiplicacin Elementos', action: multiplicacionElem },
 			{ id: 'Repetición Pictóricos V2', action: repeticionPicV2 }
 		]
 	}, {
-		name: 'Medicion', tag: 'medicion', fns: [
+		name: 'Medición', tag: 'medicion', fns: [
 		]
 	}
 ]

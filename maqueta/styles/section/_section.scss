@@ -1,0 +1,89 @@
+section {
+  box-sizing: inherit;
+  align-items: stretch;
+  position: relative;
+  width: 100%;
+  height: calc(100% - 120px - 70px);
+  height: -moz-calc(100% - 120px - 70px);
+  height: -webkit-calc(100% - 120px - 70px);
+  display: flex;
+  overflow-y: auto;
+}
+
+#contenedor {
+  margin: auto;
+}
+
+#padre-referencia {
+  box-sizing: inherit;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  padding: 12px;
+}
+
+#padre-referencia span {
+  align-self: center;
+  font-size: 0.9rem;
+}
+
+#padre-referencia img {
+  padding: 10px;
+}
+
+ul {
+  list-style-type: none;
+  display: flex;
+  flex-direction: row;
+  padding: 12px;
+  margin: 0px;
+}
+
+#tabla {
+  margin: 5px;
+}
+
+.texto {
+  margin: 5px;
+}
+
+.texto p {
+  margin: 0px;
+}
+
+.tarjetas {
+  height: 100%;
+  border: 1px solid;
+  border-radius: 5px;
+}
+
+@include media-breakpoint-down(xs) {
+  #padre-referencia {
+    display: flex;
+    flex-direction: row;
+    padding: 0px;
+  }
+
+  ul {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .tarjetas {
+    margin: 10px;
+  }
+}
+
+@include media-breakpoint-up(sm) {
+  ul {
+    justify-content: space-around;
+  }
+}
+
+@include media-breakpoint-up(xl) {
+  #contenedor {
+    width: 900px;
+    padding: 0px;
+  }
+}
