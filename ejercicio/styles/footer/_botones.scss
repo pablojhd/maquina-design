@@ -58,8 +58,13 @@
 }
 
 #btnResponder:disabled {
-  background-color: #1ab5e9;
-  color: #f9f3e9;
+  background-color: #e5e5e5;
+  color: #3C3C3C;
+  border: none;
+}
+
+#btnResponder span {
+  font-weight: 500;
 }
 
 /*--- CLASES PARA BOTONES EN MOBILE---*/
