@@ -91,3 +91,17 @@ if(hiddenBarraDatos) {
 	tmpTotal = localStorage.getItem('tmpTotal') ?
 		Number(localStorage.getItem('tmpTotal')) : 0
 }
+
+export let feedPositivos = [
+	'¡Muy bien!',
+	'¡Lo has logrado!',
+	'¡Genial!',
+	'¡Así se hace!'
+]
+
+export let feedNegativos = [
+	'¡Atención!',
+	'¡Algo anda mal!',
+	'¡Vuelve a intentarlo!',
+	'¡Ten cuidado!'
+]

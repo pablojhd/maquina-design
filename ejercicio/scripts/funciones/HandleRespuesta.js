@@ -6,7 +6,9 @@ import {
   tmpProgreso,
   srcImgRespuestaCorrecta,
   srcImgRespuestaIncorrecta,
-  srcImgGlosa
+  srcImgGlosa, 
+  feedPositivos,
+  feedNegativos
 } from "./Variables";
 import { validaRespuesta } from "./ValidaRespuesta";
 import { continuarEjercicio } from "./ContinuarEjercicio";
@@ -26,7 +28,7 @@ export const handleRespuesta = () => {
     //respuesta correcta
     feedbackElement.style.display = "block";
     feedbackElement.classList.add("feedback-correcto");
-    feedbackStrong.innerHTML = "¡Muy Bien!";
+    feedbackStrong.innerHTML = feedRandomIndex(true);
     let racha = rachaCorrectas();
     if (racha) {
       feedbackText.innerHTML = `Tienes una racha de <b>${rachaCorrectas()}</b> respuestas correctas.`;
@@ -46,7 +48,7 @@ export const handleRespuesta = () => {
       );
       feedbackElement.style.display = "block";
       feedbackElement.classList.add("feedback-incorrecto");
-      feedbackStrong.innerHTML = "¡Ten Cuidado!";
+      feedbackStrong.innerHTML = feedRandomIndex(false);
       feedbackText.innerHTML = feedback;
       document.getElementById("btnContinuar").addEventListener("click", continuarEjercicio);
       siguienteIntento();
@@ -71,6 +73,14 @@ const imgRandomIndex = esCorrecta => {
     return Math.floor(Math.random() * srcImgRespuestaIncorrecta.length);
   }
 };
+
+const feedRandomIndex = esCorrecta => {
+  if(esCorrecta) {
+    return feedPositivos[Math.floor(Math.random() * feedPositivos.length)]
+  } else {
+    return feedNegativos[Math.floor(Math.random() * feedNegativos.length)]
+  }
+}
 
 const rachaCorrectas = () => {
   var correctos = 0;
