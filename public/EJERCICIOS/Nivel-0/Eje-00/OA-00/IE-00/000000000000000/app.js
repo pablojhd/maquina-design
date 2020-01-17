@@ -3471,6 +3471,18 @@ async function tabPos(config) {
 	} = params
 
 	let tiposTabla = [{
+        id:'UMiCMDMUMCDU',
+        detalle: ['UMi','CM','DM','UM','C','D','U'],
+        url: `../../../../imagenes_front/tablas_posicionales/UMiCMDMUMCDU${pisoTabla}.svg`
+    },{
+        id:'CMDMUMCDU',
+        detalle: ['CM','DM','UM','C','D','U'],
+        url: `../../../../imagenes_front/tablas_posicionales/CMDMUMCDU${pisoTabla}.svg`
+    },{
+        id:'DMUMCDU',
+        detalle: ['DM','UM','C','D','U'],
+        url: `../../../../imagenes_front/tablas_posicionales/DMUMCDU${pisoTabla}.svg`
+    },{
 		id: 'UMCDU',
 		detalle: ['UM', 'C', 'D', 'U'],
 		url: `../../../../imagenes_front/tablas_posicionales/UMCDU${pisoTabla}.svg`
