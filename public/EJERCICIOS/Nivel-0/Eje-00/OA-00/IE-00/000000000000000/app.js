@@ -21,7 +21,8 @@ const FUNCIONES = [
 			{ id: 'Sucesiones', action: sucesiones },
 			{ id: 'Tabla Secuencia', action: tablaSecuencia },
 			{ id: 'Diagrama Barra', action: diagramaBarra },
-			{ id:'Patrones', action: patrones }
+			{ id:'Patrones', action: patrones },
+			{ id:'Tarjeta', action: tarjeta }
 		]
 	}, {
 		name: 'Numeración', tag: 'numeracion', fns: [
@@ -6191,7 +6192,7 @@ async function patrones(config) {
 			if(termino.texto) {
 				container.appendChild(crearElementoDeTexto({
 					x: xInicio + anchoCuadro/2,
-					y: centro+termino.altoTexto/2 ,
+					y: termino.yTexto,
 					fontSize: termino.altoTexto,
 					textAnchor: 'middle',
 					fill: '#363026',
@@ -6522,7 +6523,8 @@ async function patrones(config) {
 				anchoImagen: termino.imagen !== 'Seleccione' ? imagen.ancho : 0,
 				rotacion: termino.rotacion,
 				texto: termino.texto ? regexFunctions(regex(termino.texto, vars, vt)) : null,
-				altoTexto: Number(termino.altoTexto)
+				altoTexto: Number(termino.altoTexto),
+				yTexto: Number(termino.yTexto)
 			}
 		}
 		
@@ -6599,6 +6601,398 @@ async function patrones(config) {
 		}
 		return element
 	}
+
+	function crearElementoDeTexto(atributos, texto) {
+		let element = document.createElementNS('http://www.w3.org/2000/svg', 'text')
+		for (let p in atributos) {
+			element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
+				return '-' + m.toLowerCase()
+			}), atributos[p])
+		}
+		let textNode = document.createTextNode(texto)
+		element.appendChild(textNode)
+		return element
+	}
+}
+
+async function tarjeta(config){
+    const { container, params, variables, versions, vt } = config
+	//container.innerHTML = ''
+	//container.style.border = '1px solid #000'
+    let tarjetaFrontal = await cargaImagen('../../../../imagenes_front/cartas/cartavacia.svg')
+    let {
+		alto,
+        ancho,
+        altoTarjeta,
+        randomizar,
+        imagenes,
+        cartas,
+        separacioncartas,
+        orden
+    } = params
+    //trata de variables
+    let vars = vt ? variables : versions
+    alto = Number(alto)
+	ancho = Number(ancho)
+    altoTarjeta = Number(altoTarjeta)
+    randomizar = randomizar === 'si' ? true : false
+    let anchoTarjeta = altoTarjeta * tarjetaFrontal.width / tarjetaFrontal.height
+	//defs para imagenes y fuentes
+	let defs = crearElemento('defs', {})
+	let styles = document.createElement('style')
+	styles.innerHTML = '@font-face{font-family:"Quicksand";src:url("../../../../fonts/Quicksand-Medium.ttf")}'
+    defs.appendChild(styles)
+    defs.appendChild(crearElementoDeImagen('../../../../imagenes_front/cartas/cartavacia.svg', {
+        id: 'cartavacia',
+        height: altoTarjeta,
+        width: anchoTarjeta
+    }))
+    defs.appendChild(crearElementoDeImagen('../../../../imagenes_front/cartas/reversocarta.svg', {
+        id: 'reversocarta',
+        height: altoTarjeta,
+        width: anchoTarjeta
+    }))
+    container.appendChild(defs)
+
+    imagenes = imagenes ? await Promise.all(imagenes.map(x => getImagen(x))) : []
+    cartas = cartas ? cartas.map(x => getcartas(x)) : []
+    let posicionesCartas = cartas.map(carta => ({ x: carta.x, y: carta.y, rotacion: carta.rotacion }))
+    if(randomizar) {
+        cartas = cartas.sort(() => .5 - Math.random())
+    } 
+    let anchoTotal = anchoTarjeta * cartas.length + separacioncartas * (cartas.length - 1)
+	//define tamaño del canvas
+	container.setAttribute('height', alto)
+	container.setAttribute('width', ancho)
+    container.setAttribute('viewBox', `0 0 ${ancho} ${alto}`)
+
+    cartas.forEach((carta, indexCarta) => {
+        let xTarjeta = ancho /2 - anchoTotal / 2 + indexCarta * separacioncartas + indexCarta * anchoTarjeta
+        let yTarjeta = alto / 2 - altoTarjeta / 2
+        let g = crearElemento('g', {
+            id: `${container.id}-carta-${indexCarta}`
+        })
+        if(orden === 'desordenado') {
+            g.setAttributeNS(null, 'transform', `rotate(${posicionesCartas[indexCarta].rotacion} ${xTarjeta+anchoTarjeta/2} ${yTarjeta+altoTarjeta/2}) translate(${posicionesCartas[indexCarta].x} ${posicionesCartas[indexCarta].y})`)
+        }
+        switch(carta.tipo) {
+            case 'adaptativamente':
+                if (carta.idImagen) {
+                    g.appendChild(crearReferenciaAElemento(carta.idImagen, {
+                        x: xTarjeta+anchoTarjeta/2-carta.anchoImagen/2,
+                        y: alto/2-carta.altoImagen/2
+                    }))
+                }
+                g.appendChild(crearElemento('rect', {//agrega rectangulo para poner fondo de color
+                    x: xTarjeta+1,
+                    y: yTarjeta+1,
+                    width: anchoTarjeta-2,
+                    height: altoTarjeta-2,
+                    rx: '5',
+                    ry: '5',
+                    stroke: 'none',
+                    fill: carta.colorFondo
+                }))
+                g.appendChild(crearReferenciaAElemento('cartavacia', {//agrega imagen de carta
+                    x: xTarjeta,
+                    y: yTarjeta
+                }))
+                if (carta.idImagen) {
+                    g.appendChild(crearReferenciaAElemento(carta.idImagen, {
+                        x: xTarjeta+anchoTarjeta/2-carta.anchoImagen/2,
+                        y: alto/2-carta.altoImagen/2
+                    }))
+                }
+                if (carta.conrepeticion && carta.repeticiones.length > 0) {
+                    let altoTotalRepeticiones = carta.repeticiones.reduce((total, rep) => total + rep.altoTotal, 0)
+                    altoTotalRepeticiones = altoTotalRepeticiones+(carta.repeticiones.length-1)*10
+                    let yStart = alto / 2 - altoTotalRepeticiones / 2
+                    carta.repeticiones.forEach(repeticion => {
+                        switch(repeticion.formaRepeticion) {
+                            case 'izq/der':
+                                repeticionIzqDer(g, repeticion, xTarjeta+anchoTarjeta/2, yStart)
+                                break
+                            case 'diagonal':
+                                repeticionDiagonal(g, repeticion, xTarjeta+anchoTarjeta/2, yStart)
+                                break
+                            case 'rectangular':
+                                repeticionRectangular(g, repeticion, xTarjeta+anchoTarjeta/2, yStart)
+                                break
+                            default:
+                                console.log('no soportado')
+                                break
+                        }
+                        yStart += repeticion.altoTotal + 10
+                    })
+                }
+                break
+            case 'naipe ingles':
+                g.appendChild(crearElemento('rect', {//agrega rectangulo para poner fondo de color
+                    x: xTarjeta+1,
+                    y: yTarjeta+1,
+                    width: anchoTarjeta-2,
+                    height: altoTarjeta-2,
+                    rx: '5',
+                    ry: '5',
+                    stroke: 'none',
+                    fill: carta.colorFondo
+                }))
+                g.appendChild(crearElementoDeImagen(`../../../../imagenes_front/cartas/${carta.pinta}_${carta.numero}.svg`, {
+                    id: `${tarjeta.pinta}_${tarjeta.numero}`,
+                    x: xTarjeta,
+                    y: yTarjeta,
+                    height: altoTarjeta,
+                    width: anchoTarjeta
+                }))
+                break
+            case 'borde':
+                g.appendChild(crearElemento('rect', {//agrega rectangulo para poner fondo de color
+                    x: xTarjeta + carta.grosorBorde/2,
+                    y: yTarjeta + carta.grosorBorde/2,
+                    width: anchoTarjeta - carta.grosorBorde,
+                    height: altoTarjeta - carta.grosorBorde,
+                    rx: '5',
+                    ry: '5',
+                    stroke: carta.colorBorde,
+                    fill: carta.colorFondo,
+                    strokeWidth: carta.grosorBorde
+                }))
+                if(carta.idImagen) {
+                    g.appendChild(crearReferenciaAElemento(carta.idImagen, {
+                        x: xTarjeta+anchoTarjeta/2-carta.anchoImagen/2,
+                        y: alto/2-carta.altoImagen/2
+                    }))
+                }
+                if (carta.conrepeticion && carta.repeticiones.length > 0) {
+                    let altoTotalRepeticiones = carta.repeticiones.reduce((total, rep) => total + rep.altoTotal, 0)
+                    altoTotalRepeticiones = altoTotalRepeticiones+(carta.repeticiones.length-1)*10
+                    let yStart = alto / 2 - altoTotalRepeticiones / 2
+                    carta.repeticiones.forEach(repeticion => {
+                        switch(repeticion.formaRepeticion) {
+                            case 'izq/der':
+                                repeticionIzqDer(g, repeticion, xTarjeta+anchoTarjeta/2, yStart)
+                                break
+                            case 'diagonal':
+                                repeticionDiagonal(g, repeticion, xTarjeta+anchoTarjeta/2, yStart)
+                                break
+                            case 'rectangular':
+                                repeticionRectangular(g, repeticion, xTarjeta+anchoTarjeta/2, yStart)
+                                break
+                            default:
+                                console.log('no soportado')
+                                break
+                        }
+                        yStart += repeticion.altoTotal + 10
+                    })
+                }
+                break
+            case 'invertida':
+                g.appendChild(crearReferenciaAElemento('reversocarta', {
+                    x: xTarjeta,
+                    y: yTarjeta
+                }))
+                break
+        }
+        if(carta.texto) {
+            g.appendChild(crearElementoDeTexto({
+                x: xTarjeta+anchoTarjeta/2,
+                y: carta.yTexto,
+                fontSize: carta.altoFuente,
+                textAnchor: 'middle',
+                fill: carta.colorTexto,
+                style: 'font-family:Quicksand;'
+            }, carta.texto))
+        }
+        container.appendChild(g)
+    })
+    
+    function getcartas(carta) {
+        let nombreImagen = regex(carta.imagen, vars, vt)
+        let idImagen = carta.imagen !== 'Seleccione' ? `${container.id}-${nombreImagen}` : null
+        let imagen = carta.imagen !== 'Seleccione' ? imagenes.find(img => img.id === idImagen) : null
+        return {
+            imagen: nombreImagen,
+            idImagen,
+            altoImagen: carta.imagen !== 'Seleccione' ? imagen.alto : 0,
+            anchoImagen: carta.imagen !== 'Seleccione' ? imagen.ancho : 0,
+            tipo: carta.tipo,
+            colorBorde: carta.colorBorde,
+            grosorBorde: Number(carta.grosorBorde),
+            frontal: carta.frontal === 'si' ? true : false,
+            texto: carta.texto ? regexFunctions(regex(carta.texto, vars, vt)) : '',
+            colorTexto: carta.colorTexto,
+            altoFuente: Number(carta.altoFuente),
+            yTexto: Number(carta.yTexto),
+            pinta: carta.pinta ? regexFunctions(regex(carta.pinta, vars, vt)) : '',
+            numero: carta.numero ? regexFunctions(regex(carta.numero, vars, vt)) : '',
+            colorFondo: carta.colorFondo,
+            conrepeticion: carta.conrepeticion === 'si' ? true : false,
+            repeticiones: (carta.repeticiones && carta.conrepeticion === 'si') ? carta.repeticiones.map((x, indexRepeticion) => {
+                let nombreImagen = regex(x.imagen, vars, vt)
+                let idImagen = `${container.id}-${nombreImagen}`
+                let imagen = x.imagen !== 'Seleccione' ? imagenes.find(img => img.id === idImagen) : null
+                let anchoTotal, altoTotal, cantidad, separacionX, separacionY, repeticionX, repeticionY, limite
+                switch(x.formaRepeticion) {
+                        case 'izq/der':
+                            cantidad = Number(regexFunctions(regex(x.cantidad, vars, vt)))
+                            separacionX = Number(x.separacionX)
+                            separacionY = Number(x.separacionY)
+                            limite = Number(regexFunctions(regex(x.limite, vars, vt)))
+                            anchoTotal = cantidad < limite ?
+                                cantidad * imagen.ancho + (cantidad-1) * separacionX : 
+                                limite * imagen.ancho + (limite-1) * separacionX
+                            altoTotal =  Math.ceil(cantidad/limite) * imagen.alto + (Math.ceil(cantidad/limite)-1) * separacionY
+                            return {
+                                imagen,
+                                formaRepeticion:x.formaRepeticion,
+                                cantidad,
+                                separacionX,
+                                separacionY,
+                                limite,
+                                anchoTotal,
+                                altoTotal
+                            }
+                        case 'diagonal':
+                            cantidad = Number(regexFunctions(regex(x.cantidad, vars, vt)))
+                            separacionX = Number(x.separacionX)
+                            separacionY = Number(x.separacionY)
+                            anchoTotal = imagen.ancho + (cantidad-1) * separacionX
+                            altoTotal = imagen.alto + (cantidad-1) * separacionY
+                            return {
+                                imagen,
+                                formaRepeticion:x.formaRepeticion,
+                                cantidad,
+                                separacionX,
+                                separacionY,
+                                anchoTotal,
+                                altoTotal
+                            }
+                        case 'rectangular':
+                            repeticionX = Number(regexFunctions(regex(x.repeticionX, vars, vt)))
+                            repeticionY = Number(regexFunctions(regex(x.repeticionY, vars, vt)))
+                            separacionX = Number(x.separacionX)
+                            separacionY = Number(x.separacionY)
+                            anchoTotal = imagen.ancho * repeticionX + separacionX * (repeticionX-1)
+                            altoTotal = imagen.alto * repeticionY + separacionY * (repeticionY-1)
+                            return {
+                                imagen,
+                                formaRepeticion:x.formaRepeticion,
+                                separacionX,
+                                separacionY,
+                                repeticionX,
+                                repeticionY,
+                                anchoTotal,
+                                altoTotal
+                            }
+                    }
+                }) : [],
+            x: Number(carta.x),
+            y: Number(carta.y),
+            rotacion: Number(carta.rotacion)
+        }
+    }
+
+
+    async function getImagen(imagen) {
+		let src = regexFunctions(regex(imagen.src, vars, vt)).replace(`https://desarrolloadaptatin.blob.core.windows.net/sistemaejercicios/ejercicios/Nivel-${nivelEjercicio}/`, '../../../../')
+        let imagenCargada = await cargaImagen(src)
+        let alto = Number(imagen.alto)
+        let ancho = alto * imagenCargada.width / imagenCargada.height
+        let id = container.id + '-' + src.split('/').pop().replace('.svg','').replace(/%20/g,'-')
+		defs.appendChild(crearElementoDeImagen(src,{id,height:alto,width:ancho}))
+		return {
+			id, 
+            src, 
+            alto, 
+            ancho
+		}
+    }
+    
+    function repeticionIzqDer(grupo, repeticion, centroHorizontal, inicioRepeticionVertical) {
+		const { anchoTotal, limite, separacionX, separacionY, imagen, cantidad } = repeticion
+		for(let i = 0, acum = 0; i < cantidad; i++) {
+			let xRepeticion = centroHorizontal - anchoTotal/2 + acum * separacionX + imagen.ancho * acum
+			let yRepeticion = inicioRepeticionVertical + Math.floor(i/limite) * imagen.alto + Math.floor(i/limite) * separacionY
+			grupo.appendChild(crearReferenciaAElemento(imagen.id, {
+				x: xRepeticion,
+				y: yRepeticion
+			}))
+			if(acum === limite-1) {
+				acum = 0
+			} else {
+				acum++
+			}
+		}
+	}
+
+	function repeticionDiagonal(grupo, repeticion, centroHorizontal, inicioRepeticionVertical) {
+		const { imagen, cantidad, separacionX, separacionY, anchoTotal } = repeticion
+		for(let i = 0; i < cantidad; i++) {
+			let xRepeticion = centroHorizontal - anchoTotal/2 + i * separacionX
+			let yRepeticion = inicioRepeticionVertical + i * separacionY
+			grupo.appendChild(crearReferenciaAElemento(imagen.id, {
+				x: xRepeticion,
+				y: yRepeticion
+			}))
+		}
+	}
+
+	function repeticionRectangular(grupo, repeticion, centroHorizontal, inicioRepeticionVertical) {
+		const { imagen, separacionX, separacionY, repeticionX, repeticionY, anchoTotal } = repeticion
+		for(let v = 0, yRepeticion; v < repeticionY; v++) {
+			yRepeticion = inicioRepeticionVertical + v * imagen.alto + v * separacionY
+			for(let h = 0, xRepeticion; h < repeticionX; h++) {
+				xRepeticion = centroHorizontal - anchoTotal/2 + h * imagen.ancho + h * separacionX
+				grupo.appendChild(crearReferenciaAElemento(imagen.id, {
+					x: xRepeticion,
+					y: yRepeticion
+				}))
+			}
+		}
+	}
+
+    function crearElementoDeImagen(src, atributos) {
+		let element = document.createElementNS('http://www.w3.org/2000/svg', 'image')
+		element.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', src)
+		for (let p in atributos) {
+			element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
+				return '-' + m.toLowerCase()
+			}), atributos[p])
+		}
+		return element
+	}
+
+	function crearReferenciaAElemento(id, atributos) {
+		let element = document.createElementNS('http://www.w3.org/2000/svg', 'use')
+		element.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `#${id}`)
+		for (let p in atributos) {
+			element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
+				return '-' + m.toLowerCase()
+			}), atributos[p])
+		}
+		return element
+	}
+
+	function crearElemento(nombre, atributos) {
+		let element = document.createElementNS('http://www.w3.org/2000/svg', nombre)
+		for (let p in atributos) {
+			element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
+				return '-' + m.toLowerCase()
+			}), atributos[p])
+		}
+		return element
+    }
+    
+    function crearElementoSymbol(viewBox, atributos) {
+        let element = document.createElementNS('http://www.w3.org/2000/svg', 'symbol')
+        element.setAttributeNS(null, 'viewBox', viewBox)
+        for (let p in atributos) {
+			element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
+				return '-' + m.toLowerCase()
+			}), atributos[p])
+        }
+        return element
+    }
 
 	function crearElementoDeTexto(atributos, texto) {
 		let element = document.createElementNS('http://www.w3.org/2000/svg', 'text')
