@@ -6794,14 +6794,18 @@ async function tarjeta(config){
                 break
         }
         if(carta.texto) {
-            g.appendChild(crearElementoDeTexto({
+            let textolmnt = crearElementoDeTexto({
                 x: xTarjeta+anchoTarjeta/2,
                 y: carta.yTexto,
                 fontSize: carta.altoFuente,
                 textAnchor: 'middle',
                 fill: carta.colorTexto,
                 style: 'font-family:Quicksand;'
-            }, carta.texto))
+            }, carta.texto)
+            if(carta.texto === '6' || carta.texto === '9') {
+                textolmnt.setAttributeNS(null, 'text-decoration', 'underline')
+            }
+            g.appendChild(textolmnt)
         }
         container.appendChild(g)
     })
