@@ -6051,7 +6051,9 @@ async function patrones(config) {
 		terminosMarcados,
 		ocultarTerminos,
 		separacionimagenes,
-		separacionpatrones
+		separacionpatrones,
+		separador,
+		altoSeparador
 	} = params
 	//defs para imagenes y fuentes
 	let defs = crearElemento('defs', {})
@@ -6072,6 +6074,7 @@ async function patrones(config) {
 	patron = patron ? patron.map(x => getPatron(x)) : []
 	llaves = llaves ? llaves.map(x => getLLave(x)) : []
 	flechas = flechas ? flechas.map(x => getFlecha(x)) : []
+	separador = regexFunctions(regex(separador, vars, vt))
 	terminosMarcados = terminosMarcados ? 
 		regexFunctions(regex(terminosMarcados, vars, vt)).split(';').map(x => ({ numTerm: Number(x.split(',')[0]), color: x.split(',')[1] })) : []
 	ocultarTerminos = ocultarTerminos ?
@@ -6154,10 +6157,10 @@ async function patrones(config) {
 			} else if (despliegue === 'recuadro termino') {
 				container.appendChild(crearElemento('rect', {
 					id: `${container.id}-termino-${numeroTermino}`,
-					x: xInicio - separacionimagenes/3,
-					y: altoSVG/2-altoCuadro/2-separacionimagenes/3,
-					width: anchoCuadro + separacionimagenes*2/3,
-					height: altoCuadro + separacionimagenes*2/3,
+					x: xInicio,
+					y: altoSVG/2-altoCuadro/2,
+					width: anchoCuadro,
+					height: altoCuadro,
 					rx: '15',
 					ry: '15',
 					stroke: '#1F8EBE',
@@ -6176,6 +6179,16 @@ async function patrones(config) {
 					stroke: 'none',
 					fill: esMarcado ? esMarcado.color : 'none'
 				}))
+			}
+			if(separador && !((indexPatron+1 === patron.length) && i+1 === repeticiones)) {
+				container.appendChild(crearElementoDeTexto({
+					x: xInicio + anchoCuadro + separacionimagenes/2,
+					y: altoSeparador,
+					fontSize: 20,
+					textAnchor: 'middle',
+					fill: '#363026',
+					style: 'font-family:Quicksand;'
+				}, separador))
 			}
 			if(textoTermino) {
 				container.appendChild(crearElementoDeTexto({
