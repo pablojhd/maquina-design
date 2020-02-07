@@ -4620,377 +4620,440 @@ async function formadorGrupos(config) {
 	}
 }
 
-function sucesiones(config) {
-	const { container, params, variables, versions, vt } = config
-	let vars = vt ? variables : versions
-	let {
-		alto, ancho, grosorGrilla, colorGrilla, radioBorde, colorFondo, colorUnion,
-		filas, columnas, inicio, patron, ocultarYReemplazar,
-		secuencias, flechas, llaves
-	} = params
-	//conversion de variables
-	alto = Number(alto)
-	ancho = Number(ancho)
-	filas = Number(regexFunctions(regex(filas, vars, vt)))
-	columnas = Number(regexFunctions(regex(columnas, vars, vt)))
-	inicio = Number(regexFunctions(regex(inicio, vars, vt)))
-	patron = Number(regexFunctions(regex(patron, vars, vt)))
-	grosorGrilla = Number(grosorGrilla)
-	let terminosTotales = filas * columnas
-	let fin = inicio + (patron * (terminosTotales - 1))
-	let altoTotal = alto * (filas + 1)
-	let anchoTotal = ancho * (columnas + 1)
-	let diferenciaGrosor = grosorGrilla / 2
-	secuencias = secuencias ? secuencias.map(x => obtenerSecuencia(x)) : []
-	flechas = flechas ? flechas.map(x => obtenerFlecha(x)) : []
-	llaves = llaves ? llaves.map(x => obtenerLLave(x)) : []
-	ocultarYReemplazar = regexFunctions(regex(ocultarYReemplazar, vars, vt)).split(';').map(x => ({
-		numero: Number(x.split(',')[0]),
-		reemplazo: x.split(',')[1]
-	}))
-	let altoSvg = altoTotal + (llaves.length > 0 ? 30 : 0)
-	// diseño de la sucesion
-	container.setAttributeNS(null, 'height', altoSvg)
-	container.setAttributeNS(null, 'width', anchoTotal)
-	container.setAttributeNS(null, 'viewBox', `0 0 ${anchoTotal} ${altoSvg}`)
-	container.innerHTML = ''
-	//container.style.border = `${grosorGrilla}px solid ${colorGrilla}`
-	//container.style.borderRadius = `${radioBorde}px`
-	//container.style.backgroundColor = colorFondo
-	container.appendChild(crearElemento('rect', {
-		x: ancho / 2,
-		y: alto / 2,
-		height: altoTotal - alto,
-		width: anchoTotal - ancho,
-		stroke: colorGrilla,
-		strokeWidth: grosorGrilla,
-		fill: colorFondo,
-		rx: radioBorde,
-		ry: radioBorde
-	}))
-	let defs = crearElemento('defs', {})
+async function sucesiones(config) {
+    const { container, params, variables, versions, vt } = config
+    container.innerHTML = ''
+    let vars = vt ? variables : versions
+    let { 
+        alto,ancho,grosorGrilla,colorGrilla,radioBorde,colorFondo,colorUnion,
+        filas,columnas,inicio,patron,patronAbaj,ocultarYReemplazar,
+        secuencias, flechas, llaves, imagenes
+    } = params
+    //conversion de variables
+    let defs = crearElemento('defs', {})
 	let styles = document.createElement('style')
-	styles.innerHTML = `@font-face{font-family:"Open-Sans-Reg";src:url("../../../../fonts/Quicksand-Medium.ttf");}`
-	defs.appendChild(styles)
-	container.appendChild(defs)
-	//dibuja las lineas de la tabla
-	let grilla = crearElemento('g', {
-		id: 'tabla',
-		stroke: colorGrilla,
-		strokeWidth: grosorGrilla
-	})
-	for (let colIterator = 0; colIterator < columnas - 1; colIterator++) {
-		grilla.appendChild(crearElemento('line', {
-			x1: ancho / 2 + ancho * (colIterator + 1) + diferenciaGrosor,
-			y1: alto / 2,
-			x2: ancho / 2 + ancho * (colIterator + 1) + diferenciaGrosor,
-			y2: altoTotal - alto / 2
-		}))
-	}
-	for (let rowIterator = 0; rowIterator < filas - 1; rowIterator++) {
-		grilla.appendChild(crearElemento('line', {
-			x1: ancho / 2,
-			y1: alto / 2 + alto * (rowIterator + 1) + diferenciaGrosor,
-			x2: anchoTotal - ancho / 2,
-			y2: alto / 2 + alto * (rowIterator + 1) + diferenciaGrosor
-		}))
-	}
-	container.appendChild(grilla)
+	styles.innerHTML = '@font-face{font-family:"Quicksand-Medium";src:url("../../../../fonts/Quicksand-Medium.ttf");}'
+    defs.appendChild(styles)
+    imagenes = imagenes ? await Promise.all(imagenes.map(x => getImagen(x))) : []
+    container.appendChild(defs)
 
-	//dibuja numeros
-	let numeros = crearElemento('g', {
-		id: 'numeros',
-		fontSize: 20,
-		textAnchor: 'middle',
-		fill: '#000'
-	})
-	for (let iteradorNumero = 0, filaActual = 0, columnaActual = 0, valor = inicio; iteradorNumero < terminosTotales; iteradorNumero++) {
-		if (iteradorNumero === 0) {
-			dibujaNumero(valor, filaActual, columnaActual)
-		} else {
-			valor += patron
-			dibujaNumero(valor, filaActual, columnaActual)
-		}
-		for (let flecha of flechas) {
-			let index = flecha.arreglo.indexOf(valor)
-			if (index === 0) {
-				flecha.filaValorAnterior = filaActual
-				flecha.columnaValorAnterior = columnaActual
-			} else if (index > 0) {
-				if (flecha.filaValorAnterior == filaActual) { // no hay salto de fila
-					let xInicial = flecha.columnaValorAnterior * ancho + ancho + 5
-					let yInicial = flecha.filaValorAnterior * alto + alto - 12
-					let xFinal = columnaActual * ancho + ancho - 5
-					let yFinal = filaActual * alto + alto - 12
-					let puntoMedioX = xInicial + (xFinal - xInicial) / 2
-					container.appendChild(crearElemento('path', {
-						d: `M ${xInicial} ${yInicial} C ${xInicial} ${yInicial}, ${puntoMedioX} ${yInicial - 25} , ${xFinal} ${yFinal}`,
-						stroke: flecha.color,
-						strokeWidth: '2',
-						fill: 'transparent'
-					}))
-					if (flecha.texto) {
-						numeros.appendChild(crearElementoDeTexto({
-							x: puntoMedioX,
-							y: yInicial - 13,
-							style: 'font-family:Open-Sans-Reg;',
-							fontSize: 15,
-							textAnchor: 'middle',
-							fill: flecha.colorTexto
-						}, flecha.texto))
-					}
-					if (flecha.direccion === 'derecha') {
-						let pendiente = Math.atan((yFinal - yInicial + 25) / (xFinal - puntoMedioX)) * 180 / Math.PI
-						let punta1Flecha = polarToCartesian(xFinal, yFinal, 8, pendiente + 30)
-						let punta2Flecha = polarToCartesian(xFinal, yFinal, 8, pendiente - 30)
-						container.appendChild(crearElemento('path', {
-							d: `M ${punta1Flecha.x} ${punta1Flecha.y} L ${xFinal} ${yFinal} L ${punta2Flecha.x} ${punta2Flecha.y}`,
-							stroke: flecha.color,
-							strokeWidth: '2',
-							fill: 'none'
-						}))
-					} else {
-						let pendiente = Math.atan((yInicial - 25 - yFinal) / (puntoMedioX - xInicial)) * 180 / Math.PI
-						let punta1Flecha = polarToCartesian(xInicial, yInicial, 8, pendiente + 210)
-						let punta2Flecha = polarToCartesian(xInicial, yInicial, 8, pendiente - 210)
-						container.appendChild(crearElemento('path', {
-							d: `M ${punta1Flecha.x} ${punta1Flecha.y} L ${xInicial} ${yFinal} L ${punta2Flecha.x} ${punta2Flecha.y}`,
-							stroke: flecha.color,
-							strokeWidth: '2',
-							fill: 'none'
-						}))
-					}
+    alto = Number(alto)
+    ancho = Number(ancho)
+    filas = Number(regexFunctions(regex(filas, vars, vt)))
+    columnas = Number(regexFunctions(regex(columnas, vars, vt)))
+    inicio = Number(regexFunctions(regex(inicio, vars, vt)))
+    patron = Number(regexFunctions(regex(patron, vars, vt)))
+    patronAbaj = patronAbaj ? Number(regexFunctions(regex(patronAbaj, vars, vt))) : null
+    grosorGrilla = Number(grosorGrilla)
+    let terminosTotales = filas * columnas
+    let fin = patronAbaj ? inicio + (patron * columnas) + (patronAbaj * filas) : inicio + (patron * (terminosTotales-1))
+    let altoTotal = alto * (filas+1)
+    let anchoTotal = ancho * (columnas+1)
+    let diferenciaGrosor = grosorGrilla/2
+    secuencias = secuencias ? secuencias.map(x => obtenerSecuencia(x)) : []
+    flechas = flechas ? flechas.map(x => obtenerFlecha(x)) : []
+    llaves = llaves ? llaves.map(x => obtenerLLave(x)) : []
+    ocultarYReemplazar = ocultarYReemplazar ? obtenerReemplazos(ocultarYReemplazar) : []
 
-				} else { // hay salto de fila :c
-					let xInicial1 = flecha.columnaValorAnterior * ancho + ancho + 5
-					let yFlecha1 = flecha.filaValorAnterior * alto + alto - 12
-					let diferenciaEnColumnas = ((columnas - 1) - flecha.columnaValorAnterior) + columnaActual + 1
-					let xFinal1 = (flecha.columnaValorAnterior + diferenciaEnColumnas) * ancho + ancho - 5
-					let puntoMedioX1 = xInicial1 + (xFinal1 - xInicial1) / 2
-					container.appendChild(crearElemento('path', {
-						d: `M ${xInicial1} ${yFlecha1} C ${xInicial1} ${yFlecha1}, ${puntoMedioX1} ${yFlecha1 - 25} , ${xFinal1} ${yFlecha1}`,
-						stroke: flecha.color,
-						strokeWidth: '2',
-						fill: 'transparent'
-					}))
-					let xInicial2 = (columnaActual - diferenciaEnColumnas) * ancho + ancho + 5
-					let yFlecha2 = filaActual * alto + alto - 12
-					let xFinal2 = columnaActual * ancho + ancho - 5
-					let puntoMedioX2 = xInicial2 + (xFinal2 - xInicial2) / 2
-					container.appendChild(crearElemento('path', {
-						d: `M ${xInicial2} ${yFlecha2} C ${xInicial2} ${yFlecha2}, ${puntoMedioX2} ${yFlecha2 - 25} , ${xFinal2} ${yFlecha2}`,
-						stroke: flecha.color,
-						strokeWidth: '2',
-						fill: 'transparent'
-					}))
+    let altoSvg = altoTotal + (llaves.length > 0 ? 30 : 0)
+    // diseño de la sucesion
+    container.setAttributeNS(null, 'height', altoSvg)
+	container.setAttributeNS(null, 'width', anchoTotal)
+    container.setAttributeNS(null, 'viewBox', `0 0 ${anchoTotal} ${altoSvg}`)
 
-					if (flecha.direccion === 'derecha') {
-						let pendiente = Math.atan((yFlecha2 - yFlecha2 + 25) / (xFinal2 - puntoMedioX2)) * 180 / Math.PI
-						let punta1Flecha = polarToCartesian(xFinal2, yFlecha2, 8, pendiente + 30)
-						let punta2Flecha = polarToCartesian(xFinal2, yFlecha2, 8, pendiente - 30)
-						container.appendChild(crearElemento('path', {
-							d: `M ${punta1Flecha.x} ${punta1Flecha.y} L ${xFinal2} ${yFlecha2} L ${punta2Flecha.x} ${punta2Flecha.y}`,
-							stroke: flecha.color,
-							strokeWidth: '2',
-							fill: 'none'
-						}))
-					} else {
-						let pendiente = Math.atan((yFlecha1 - yFlecha1 + 25) / (xInicial1 - puntoMedioX1)) * 180 / Math.PI
-						let punta1Flecha = polarToCartesian(xInicial1, yFlecha1, 8, pendiente + 210)
-						let punta2Flecha = polarToCartesian(xInicial1, yFlecha1, 8, pendiente - 210)
-						container.appendChild(crearElemento('path', {
-							d: `M ${punta1Flecha.x} ${punta1Flecha.y} L ${xInicial1} ${yFlecha1} L ${punta2Flecha.x} ${punta2Flecha.y}`,
-							stroke: flecha.color,
-							strokeWidth: '2',
-							fill: 'none'
-						}))
-					}
-					if (flecha.texto) {
-						numeros.appendChild(crearElementoDeTexto({
-							x: flecha.direccion === 'derecha' ? ancho / 4 : anchoTotal - (ancho / 4),
-							y: flecha.direccion === 'derecha' ? yFlecha2 - 13 : yFlecha1 - 13,
-							style: 'font-family:Open-Sans-Reg;',
-							fontSize: 15,
-							textAnchor: 'middle',
-							fill: flecha.color
-						}, flecha.colorTexto))
-					}
-				}
-				flecha.filaValorAnterior = filaActual
-				flecha.columnaValorAnterior = columnaActual
-			}
-		}
-		if (columnaActual == columnas - 1) {
-			columnaActual = 0
-			filaActual++
-		} else {
-			columnaActual++
-		}
-	}
-	container.appendChild(numeros)
+    container.appendChild(crearElemento('rect', {
+        x: ancho/2,
+        y: alto/2,
+        height: altoTotal - alto,
+        width: anchoTotal - ancho,
+        stroke: colorGrilla,
+        strokeWidth: grosorGrilla,
+        fill: colorFondo,
+        rx: radioBorde,
+        ry: radioBorde
+    }))
+    //dibuja las lineas de la tabla
+    let grilla = crearElemento('g', {
+        id: 'tabla',
+        stroke: colorGrilla,
+        strokeWidth: grosorGrilla
+    })
+    for(let colIterator = 0; colIterator < columnas-1; colIterator++) {
+        grilla.appendChild(crearElemento('line', {
+            x1: ancho/2+ancho*(colIterator+1)+diferenciaGrosor,
+            y1: alto/2,
+            x2: ancho/2+ancho*(colIterator+1)+diferenciaGrosor,
+            y2: altoTotal-alto/2
+        }))
+    }
+    for(let rowIterator = 0; rowIterator < filas-1; rowIterator++) {
+        grilla.appendChild(crearElemento('line', {
+            x1: ancho/2,
+            y1: alto/2+alto*(rowIterator+1)+diferenciaGrosor,
+            x2: anchoTotal-ancho/2,
+            y2: alto/2+alto*(rowIterator+1)+diferenciaGrosor
+        }))
+    }
+    container.appendChild(grilla)
 
-	llaves.forEach(llave => {
-		let inicioX = ancho / 2 + ancho * (llave.colInicio - 1) + grosorGrilla / 2
-		let finX = ancho / 2 + ancho * llave.colFin + grosorGrilla / 2
-		let centro = (finX - inicioX) / 2 + inicioX
-		let inicioY = altoTotal - alto / 3
-		let radio = 10
-		container.appendChild(crearElemento('path', {
-			d: `M ${inicioX} ${inicioY}
-            A ${radio} ${radio} 0 0 0 ${inicioX + radio} ${inicioY + radio}
-            H ${centro - radio}
-            A ${radio} ${radio} 0 0 1 ${centro} ${inicioY + radio * 2}
-            A ${radio} ${radio} 0 0 1 ${centro + radio} ${inicioY + radio}
-            H ${finX - radio}
-            A ${radio} ${radio} 0 0 0 ${finX} ${inicioY}`,
-			fill: 'none',
-			stroke: llave.color,
-			strokeWidth: 2
-		}))
-		if (llave.texto) {
-			container.appendChild(crearElementoDeTexto({
-				fontSize: 20,
-				textAnchor: 'middle',
-				fill: llave.colorTexto,
-				style: 'font-family:Open-Sans-Reg;',
-				x: centro,
-				y: inicioY + radio * 2 + 20
-			}, llave.texto))
-		}
-	})
+    //dibuja numeros
+    let numeros = crearElemento('g', {
+        id:'numeros',
+        fontSize: 20,
+        textAnchor: 'middle',
+        fill: '#000'
+    })
+    for(let iteradorNumero = 0, filaActual = 0, columnaActual = 0, valor = inicio; iteradorNumero < terminosTotales; iteradorNumero++) {
+        if(iteradorNumero === 0) {
+            dibujaNumero(valor, filaActual, columnaActual)
+        } else {
+            valor = (patronAbaj && columnaActual === 0 && filaActual > 0) ? inicio + (filaActual * patronAbaj) : valor + patron
+            dibujaNumero(valor, filaActual, columnaActual)
+        }
+        for(let flecha of flechas) {
+            let index = flecha.arreglo.indexOf(valor)
+            if(index === 0) {
+                flecha.filaValorAnterior = filaActual
+                flecha.columnaValorAnterior = columnaActual
+            } else if (index > 0) {
+                if(flecha.filaValorAnterior == filaActual) { // no hay salto de fila
+                    let xInicial = flecha.columnaValorAnterior * ancho + ancho + 5
+                    let yInicial = flecha.filaValorAnterior * alto + alto - 12
+                    let xFinal = columnaActual * ancho + ancho - 5
+                    let yFinal = filaActual * alto + alto - 12
+                    let puntoMedioX = xInicial + (xFinal - xInicial) /2
+                    container.appendChild(crearElemento('path', {
+                        d: `M ${xInicial} ${yInicial} C ${xInicial} ${yInicial}, ${puntoMedioX} ${yInicial - 25} , ${xFinal} ${yFinal}`,
+                        stroke: flecha.color,
+                        strokeWidth: '2',
+                        fill: 'transparent'
+                    }))
+                    if(flecha.texto) {
+                        numeros.appendChild(crearElementoDeTexto({
+                            x: puntoMedioX,
+                            y: yInicial - 13,
+                            style: 'font-family:Quicksand-Medium;',
+                            fontSize: 15,
+                            textAnchor: 'middle',
+                            fill: flecha.colorTexto
+                        },  flecha.texto))
+                    }
+                    if(flecha.direccion === 'derecha') {
+                        let pendiente = Math.atan((yFinal - yInicial + 25) / (xFinal - puntoMedioX))*180/Math.PI
+                        let punta1Flecha = polarToCartesian(xFinal, yFinal, 8, pendiente+30)
+                        let punta2Flecha = polarToCartesian(xFinal, yFinal, 8, pendiente-30)
+                        container.appendChild(crearElemento('path', {
+                            d: `M ${punta1Flecha.x} ${punta1Flecha.y } L ${xFinal} ${yFinal} L ${punta2Flecha.x} ${punta2Flecha.y}`,
+                            stroke: flecha.color,
+                            strokeWidth: '2',
+                            fill: 'none'
+                        }))
+                    } else {
+                        let pendiente = Math.atan((yInicial - 25 - yFinal) / (puntoMedioX - xInicial))*180/Math.PI
+                        let punta1Flecha = polarToCartesian(xInicial, yInicial, 8, pendiente+210)
+                        let punta2Flecha = polarToCartesian(xInicial, yInicial, 8, pendiente-210)
+                        container.appendChild(crearElemento('path', {
+                            d: `M ${punta1Flecha.x} ${punta1Flecha.y } L ${xInicial} ${yFinal} L ${punta2Flecha.x} ${punta2Flecha.y}`,
+                            stroke: flecha.color,
+                            strokeWidth: '2',
+                            fill: 'none'
+                        }))
+                    }
+                    
+                } else { // hay salto de fila :c
+                    let xInicial1 = flecha.columnaValorAnterior * ancho + ancho + 5
+                    let yFlecha1 = flecha.filaValorAnterior * alto + alto - 12
+                    let diferenciaEnColumnas = ((columnas-1) - flecha.columnaValorAnterior)+columnaActual+1
+                    let xFinal1 = (flecha.columnaValorAnterior + diferenciaEnColumnas) * ancho + ancho - 5
+                    let puntoMedioX1 = xInicial1 + (xFinal1 - xInicial1)/2
+                    container.appendChild(crearElemento('path', {
+                        d: `M ${xInicial1} ${yFlecha1} C ${xInicial1} ${yFlecha1}, ${puntoMedioX1} ${yFlecha1 - 25} , ${xFinal1} ${yFlecha1}`,
+                        stroke: flecha.color,
+                        strokeWidth: '2',
+                        fill: 'transparent'
+                    }))
+                    let xInicial2 = (columnaActual - diferenciaEnColumnas) * ancho + ancho + 5
+                    let yFlecha2 = filaActual * alto + alto - 12
+                    let xFinal2 = columnaActual * ancho + ancho - 5
+                    let puntoMedioX2 = xInicial2 + (xFinal2 - xInicial2)/2
+                    container.appendChild(crearElemento('path', {
+                        d: `M ${xInicial2} ${yFlecha2} C ${xInicial2} ${yFlecha2}, ${puntoMedioX2} ${yFlecha2 - 25} , ${xFinal2} ${yFlecha2}`,
+                        stroke: flecha.color,
+                        strokeWidth: '2',
+                        fill: 'transparent'
+                    }))
 
-	function dibujaNumero(valor, fila, columna) {
-		let match = 0, color
-		for (let secuencia of secuencias) {
-			if (secuencia.arreglo[valor]) {
-				color = secuencia.arreglo[valor]
-				match++
-			}
-		}
-		if (match > 0) {
-			color = match === 1 ? color : colorUnion
-			let modificacorX, modificadorY, modificadorWidth = 0, modificadorHeight = 0
-			if (columna === 0) {
-				modificacorX = diferenciaGrosor
-			} else {
-				modificacorX = grosorGrilla
-			}
-			if (fila === 0) {
-				modificadorY = diferenciaGrosor
-			} else {
-				modificadorY = grosorGrilla
-			}
-			if (columna === (columnas - 1)) {
-				modificadorWidth = diferenciaGrosor
-			}
-			if (fila === (filas - 1)) {
-				modificadorHeight = diferenciaGrosor
-			}
-			container.appendChild(crearElemento('rect', {
-				x: ancho / 2 + ancho * columna + modificacorX,
-				y: alto / 2 + fila * alto + modificadorY,
-				width: ancho - modificacorX - modificadorWidth,
-				height: alto - modificadorY - modificadorHeight,
-				fill: color,
-				rx: radioBorde,
-				ry: radioBorde
-			}))
-		}
-		let index = ocultarYReemplazar.map(x => x.numero).indexOf(valor)
-		if (index >= 0) {
-			numeros.appendChild(crearElementoDeTexto({
-				x: ancho / 2 + columna * ancho + (ancho / 2),
-				y: alto / 2 + fila * alto + (alto / 2) + 8,
-				style: 'font-family:Open-Sans-Reg;'
-			}, ocultarYReemplazar[index].reemplazo || ''))
-		} else {
-			numeros.appendChild(crearElementoDeTexto({
-				x: ancho / 2 + columna * ancho + (ancho / 2),
-				y: alto / 2 + fila * alto + (alto / 2) + 8,
-				style: 'font-family:Open-Sans-Reg;'
-			}, valor.toString()))
-		}
+                    if(flecha.direccion === 'derecha') {
+                        let pendiente = Math.atan((yFlecha2 - yFlecha2 + 25) / (xFinal2 - puntoMedioX2))*180/Math.PI
+                        let punta1Flecha = polarToCartesian(xFinal2, yFlecha2, 8, pendiente+30)
+                        let punta2Flecha = polarToCartesian(xFinal2, yFlecha2, 8, pendiente-30)
+                        container.appendChild(crearElemento('path', {
+                            d: `M ${punta1Flecha.x} ${punta1Flecha.y} L ${xFinal2} ${yFlecha2} L ${punta2Flecha.x} ${punta2Flecha.y}`,
+                            stroke: flecha.color,
+                            strokeWidth: '2',
+                            fill: 'none'
+                        }))
+                    } else {
+                        let pendiente = Math.atan((yFlecha1 - yFlecha1 + 25) / (xInicial1 - puntoMedioX1))*180/Math.PI
+                        let punta1Flecha = polarToCartesian(xInicial1, yFlecha1, 8, pendiente+210)
+                        let punta2Flecha = polarToCartesian(xInicial1, yFlecha1, 8, pendiente-210)
+                        container.appendChild(crearElemento('path', {
+                            d: `M ${punta1Flecha.x} ${punta1Flecha.y} L ${xInicial1} ${yFlecha1} L ${punta2Flecha.x} ${punta2Flecha.y}`,
+                            stroke: flecha.color,
+                            strokeWidth: '2',
+                            fill: 'none'
+                        }))
+                    }
+                    if(flecha.texto) {
+                        numeros.appendChild(crearElementoDeTexto({
+                            x: flecha.direccion === 'derecha' ? ancho/4 : anchoTotal-(ancho/4),
+                            y: flecha.direccion === 'derecha' ? yFlecha2 - 13 : yFlecha1 - 13,
+                            style: 'font-family:Quicksand-Medium;',
+                            fontSize: 15,
+                            textAnchor: 'middle',
+                            fill: flecha.color
+                        },  flecha.colorTexto))
+                    }
+                }
+                flecha.filaValorAnterior = filaActual
+                flecha.columnaValorAnterior = columnaActual
+            }
+        }
+        if(columnaActual == columnas-1) {
+            columnaActual = 0
+            filaActual++
+        } else {
+            columnaActual++
+        }
+    }
+    container.appendChild(numeros)
 
-	}
+    //dibuja llaves al final de secuencia
+    llaves.forEach(llave => {
+        let inicioX = ancho/2 + ancho * (llave.colInicio - 1) + grosorGrilla/2
+        let finX = ancho/2 + ancho * llave.colFin + grosorGrilla/2
+        let centro = (finX - inicioX) / 2 + inicioX
+        let inicioY = altoTotal - alto / 3
+        let radio = 10
+        container.appendChild(crearElemento('path',{
+            d: `M ${inicioX} ${inicioY}
+                A ${radio} ${radio} 0 0 0 ${inicioX+radio} ${inicioY+radio}
+                H ${centro-radio}
+                A ${radio} ${radio} 0 0 1 ${centro} ${inicioY+radio*2}
+                A ${radio} ${radio} 0 0 1 ${centro+radio} ${inicioY+radio}
+                H ${finX-radio}
+                A ${radio} ${radio} 0 0 0 ${finX} ${inicioY}`,
+            fill: 'none',
+            stroke: llave.color,
+            strokeWidth: 2
+        }))
+        if(llave.texto) {
+            container.appendChild(crearElementoDeTexto({
+                fontSize: 20,
+                textAnchor: 'middle',
+                fill: llave.colorTexto,
+                style: 'font-family:Quicksand-Medium;',
+                x: centro,
+                y: inicioY+radio*2+20
+            }, llave.texto))
+        }
+    })
 
-	function obtenerSecuencia(secuencia) {
-		let inicio = Number(regexFunctions(regex(secuencia.inicio, vars, vt)))
-		let patron = Number(regexFunctions(regex(secuencia.patron, vars, vt)))
-		let terminos = secuencia.terminos === 'todos' ? 'todos' : Number(regexFunctions(regex(secuencia.terminos, vars, vt)))
-		let arreglo = {}
-		if (terminos === 'todos') {
-			let numero = inicio
-			while (numero <= fin) {
-				arreglo[numero.toString()] = secuencia.color
-				numero += patron
-			}
-		} else {
-			for (let i = 0, numero = inicio; i < terminos; i++) {
-				arreglo[numero.toString()] = secuencia.color
-				numero += patron
-			}
-		}
+    function dibujaNumero(valor, fila, columna) {
+        let match = 0, color
+        for(let secuencia of secuencias) {
+            if(secuencia.arreglo[valor]) {
+                color = secuencia.arreglo[valor]
+                match++
+            }
+        }
+        if(match > 0) {
+            color = match === 1 ? color : colorUnion
+            let modificacorX, modificadorY, modificadorWidth = 0, modificadorHeight = 0
+            if(columna === 0) {
+                modificacorX = diferenciaGrosor
+            } else {
+                modificacorX = grosorGrilla
+            }
+            if(fila === 0) {
+                modificadorY = diferenciaGrosor
+            } else {
+                modificadorY = grosorGrilla
+            }
+            if(columna === (columnas-1)) {
+                modificadorWidth = diferenciaGrosor
+            }
+            if(fila === (filas-1)) {
+                modificadorHeight = diferenciaGrosor
+            }
+            container.appendChild(crearElemento('rect', {
+                x: ancho/2 + ancho * columna + modificacorX,
+                y: alto/2 + fila * alto + modificadorY,
+                width: ancho - modificacorX - modificadorWidth,
+                height: alto - modificadorY - modificadorHeight,
+                fill: color,
+                rx: radioBorde,
+                ry: radioBorde
+            }))
+        }
+        imagenes.forEach(imagen => {
+            let indexImagen = imagen.posiciones.indexOf(valor)
+            if(indexImagen >= 0) {
+                container.appendChild(crearReferenciaAElemento(imagen.id, {
+                    x: ancho + columna * ancho - imagen.ancho/2,
+                    y: alto + fila * alto - imagen.alto/2
+                }))
+            }
+        })
+        let index = ocultarYReemplazar.map(x => x.numero).indexOf(valor)
+        if(index >= 0 ) {
+            numeros.appendChild(crearElementoDeTexto({
+                x: ancho/2 + columna * ancho + (ancho/2),
+                y: alto/2 + fila * alto + (alto /2) + 8,
+                style: 'font-family:Quicksand-Medium;'
+            }, ocultarYReemplazar[index].reemplazo || '' ))
+        } else {
+            numeros.appendChild(crearElementoDeTexto({
+                x: ancho/2+ columna * ancho + (ancho/2),
+                y: alto/2 + fila * alto + (alto /2) + 8,
+                style: 'font-family:Quicksand-Medium;'
+            }, valor.toString()))
+        }
+        
+    }
+
+    function obtenerSecuencia(secuencia) {
+        let inicio = Number(regexFunctions(regex(secuencia.inicio, vars, vt)))
+        let patron = Number(regexFunctions(regex(secuencia.patron, vars, vt)))
+        let terminos = secuencia.terminos === 'todos' ? 'todos' : Number(regexFunctions(regex(secuencia.terminos, vars, vt)))
+        let arreglo = {}
+        if(terminos === 'todos') {
+            let numero = inicio
+            while(numero <= fin) {
+                arreglo[numero.toString()] = secuencia.color
+                numero+=patron
+            }
+        } else {
+            for(let i = 0, numero = inicio; i < terminos; i++) {
+                arreglo[numero.toString()] = secuencia.color
+                numero+=patron
+            }
+        }
+        return {
+            inicio,
+            patron,
+            terminos,
+            arreglo,
+            color: secuencia.color
+        }
+    }
+
+    function obtenerFlecha(flecha) {
+        let inicio = Number(regexFunctions(regex(flecha.inicio, vars, vt)))
+        let patron = Number(regexFunctions(regex(flecha.patron, vars, vt)))
+        let terminos = flecha.terminos === 'todos' ? 'todos' : Number(regexFunctions(regex(flecha.terminos, vars, vt)))
+        let texto = regexFunctions(regex(flecha.texto, vars, vt))
+        let arreglo = []
+        arreglo.push(inicio)
+        if(terminos === 'todos') {
+            let numero = inicio
+            while(numero <= fin) {
+                numero+=patron
+                arreglo.push(numero)
+            }
+        } else {
+            for(let i = 0, numero = inicio; i < terminos; i++) {
+                numero+=patron
+                arreglo.push(numero)
+            }
+        }
+        return {
+            inicio,
+            patron,
+            terminos,
+            arreglo,
+            direccion: flecha.direccion,
+            color: flecha.color,
+            texto,
+            colorTexto: flecha.colorTexto
+        }
+    }
+
+    function obtenerReemplazos(valor) {
+        if(valor.length > 0) {
+            let valoresReemplazados = regexFunctions(regex(ocultarYReemplazar, vars, vt))
+            let splitPuntoYComa = valoresReemplazados.split(';')
+            let splitComa = splitPuntoYComa.map(x => ({
+                numero: Number(x.split(',')[0]),
+                reemplazo: x.split(',')[1]
+            }))
+            return splitComa
+        } else {
+            return []
+        }
+    }
+
+    function obtenerLLave(llave) {
+        return {
+            colInicio: Number(regexFunctions(regex(llave.colInicio, vars, vt))),
+            colFin: Number(regexFunctions(regex(llave.colFin, vars, vt))),
+            color: llave.color,
+            texto: regexFunctions(regex(llave.texto, vars, vt)),
+            colorTexto: llave.colorTexto
+        }
+    }
+
+    async function getImagen(imagen) {
+		let src = regexFunctions(regex(imagen.src, vars, vt)).replace(`https://desarrolloadaptatin.blob.core.windows.net/sistemaejercicios/ejercicios/Nivel-${nivelEjercicio}/`, '../../../../')
+        let imagenCargada = await cargaImagen(src)
+        let alto = Number(imagen.alto)
+        let ancho = alto * imagenCargada.width / imagenCargada.height
+        let id = container.id + '-' + src.split('/').pop().replace('.svg','').replace(/%20/g,'-')
+        defs.appendChild(crearElementoDeImagen(src,{id,height:alto,width:ancho}))
+        let posiciones = regexFunctions(regex(imagen.posiciones, vars, vt)).split(',').map(x => Number(x))
 		return {
-			inicio,
-			patron,
-			terminos,
-			arreglo,
-			color: secuencia.color
-		}
-	}
+			id,
+            src,
+            alto,
+            ancho,
+            posiciones
+        }
+    }
 
-	function obtenerFlecha(flecha) {
-		let inicio = Number(regexFunctions(regex(flecha.inicio, vars, vt)))
-		let patron = Number(regexFunctions(regex(flecha.patron, vars, vt)))
-		let terminos = flecha.terminos === 'todos' ? 'todos' : Number(regexFunctions(regex(flecha.terminos, vars, vt)))
-		let texto = regexFunctions(regex(flecha.texto, vars, vt))
-		let arreglo = []
-		arreglo.push(inicio)
-		if (terminos === 'todos') {
-			let numero = inicio
-			while (numero <= fin) {
-				numero += patron
-				arreglo.push(numero)
-			}
-		} else {
-			for (let i = 0, numero = inicio; i < terminos; i++) {
-				numero += patron
-				arreglo.push(numero)
-			}
-		}
-		return {
-			inicio,
-			patron,
-			terminos,
-			arreglo,
-			direccion: flecha.direccion,
-			color: flecha.color,
-			texto,
-			colorTexto: flecha.colorTexto
-		}
-	}
-
-	function obtenerLLave(llave) {
-		return {
-			colInicio: Number(regexFunctions(regex(llave.colInicio, vars, vt))),
-			colFin: Number(regexFunctions(regex(llave.colFin, vars, vt))),
-			color: llave.color,
-			texto: regexFunctions(regex(llave.texto, vars, vt)),
-			colorTexto: llave.colorTexto
-		}
-	}
-
-	function polarToCartesian(centerX, centerY, radius, angleInDegrees) { // 0 grados = 9 hrs
-		let angleInRadians = (angleInDegrees - 180) * Math.PI / 180.0;
-
+    function polarToCartesian(centerX, centerY, radius, angleInDegrees) { // 0 grados = 9 hrs
+		let angleInRadians = (angleInDegrees-180) * Math.PI / 180.0;
+		
 		return {
 			x: centerX + (radius * Math.cos(angleInRadians)),
 			y: centerY + (radius * Math.sin(angleInRadians))
 		}
 	}
-
+    
 	function crearElemento(nombre, atributos) {
 		let element = document.createElementNS('http://www.w3.org/2000/svg', nombre)
+		for (let p in atributos) {
+		  element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
+			return '-' + m.toLowerCase()
+		  }), atributos[p])
+		}
+		return element
+	}
+
+	function crearElementoDeTexto(atributos, texto) {
+		let element = document.createElementNS('http://www.w3.org/2000/svg', 'text')
+		for (let p in atributos) {
+		  element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
+			return '-' + m.toLowerCase()
+		  }), atributos[p])
+		}
+		let textNode = document.createTextNode(texto)
+		element.appendChild(textNode)
+		return element
+    }
+
+    function crearElementoDeImagen(src, atributos) {
+		let element = document.createElementNS('http://www.w3.org/2000/svg', 'image')
+		element.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', src)
 		for (let p in atributos) {
 			element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
 				return '-' + m.toLowerCase()
@@ -4999,15 +5062,14 @@ function sucesiones(config) {
 		return element
 	}
 
-	function crearElementoDeTexto(atributos, texto) {
-		let element = document.createElementNS('http://www.w3.org/2000/svg', 'text')
+	function crearReferenciaAElemento(id, atributos) {
+		let element = document.createElementNS('http://www.w3.org/2000/svg', 'use')
+		element.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `#${id}`)
 		for (let p in atributos) {
 			element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
 				return '-' + m.toLowerCase()
 			}), atributos[p])
 		}
-		let textNode = document.createTextNode(texto)
-		element.appendChild(textNode)
 		return element
 	}
 }
