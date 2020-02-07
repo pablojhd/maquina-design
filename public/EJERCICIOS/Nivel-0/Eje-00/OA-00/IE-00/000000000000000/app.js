@@ -5325,7 +5325,7 @@ async function tablaSecuencia(config) {
 						return false
 				}
 			}).map(x => {
-				let idImagen = regexFunctions(regex(x.imagen, vars, vt))
+				let idImagen = x.imagen ? regexFunctions(regex(x.imagen, vars, vt)) : ''
 				let imagen = x.formaRepeticion !== 'texto' ? imagenes.find(z => z.id === `${container.id}-${idImagen}`) : null
 				let anchoTotal, altoTotal, cantidad, separacionX, separacionY, repeticionesX, repeticionesY, limiteHorizontal
 				switch (x.formaRepeticion) {
