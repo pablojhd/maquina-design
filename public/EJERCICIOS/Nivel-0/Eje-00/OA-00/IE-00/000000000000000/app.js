@@ -164,6 +164,10 @@ function iniciaListeners() {
 	})
 }
 
+function convertirARutaRelativa(rutaAbsoluta) {
+	return rutaAbsoluta.replace(`https://desarrolloadaptatin.blob.core.windows.net/sistemaejercicios/ejercicios/Nivel-${nivelEjercicio}/`, '../../../../')
+}
+
 function capitalize(a) {
 	return a.charAt(0).toUpperCase() + a.slice(1)
 }
@@ -4108,492 +4112,530 @@ async function tabPos(config) {
 }
 
 async function formadorGrupos(config) {
-	const { container, params, variables, versions, vt } = config
-	container.innerHTML = ''
-	//console.log(container.innerHTML)
-	let {
-		altoViewPort, anchoViewPort, bordeViewPort,
-		altoGrupos, anchoGrupos, bordeGrupos,
-		conFlecha, flecha,
-		grupos,
-		imagenes
-	} = params
-	let vars = vt ? variables : versions
-	//conversion de variables numericas
-	altoViewPort = Number(altoViewPort)
-	anchoViewPort = Number(anchoViewPort)
-	altoGrupos = Number(altoGrupos)
-	anchoGrupos = Number(anchoGrupos)
-	bordeGrupos = bordeGrupos.split(',')
-	conFlecha = conFlecha === 'si' ? true : false
-	flecha = flecha.replace('%20', '-')
-	//dimensiones del svg y estilos
-	container.setAttributeNS(null, 'height', altoViewPort)
+    const { container, params, variables, versions, vt } = config
+    let { 
+        altoViewPort,anchoViewPort,bordeViewPort,
+        altoGrupos,anchoGrupos,bordeGrupos,
+        conFlecha,flecha,
+        grupos,
+        imagenes
+    } = params
+    let vars = vt ? variables : versions
+    //conversion de variables numericas
+    altoViewPort = Number(altoViewPort)
+    anchoViewPort = Number(anchoViewPort)
+    altoGrupos = Number(altoGrupos)
+    anchoGrupos = Number(anchoGrupos)
+    bordeGrupos = bordeGrupos.split(',')
+    conFlecha = conFlecha === 'si' ? true : false
+    flecha = flecha.replace('%20', '-')
+    //dimensiones del svg y estilos
+    container.setAttributeNS(null, 'height', altoViewPort)
 	container.setAttributeNS(null, 'width', anchoViewPort)
-	container.setAttributeNS(null, 'viewBox', `0 0 ${anchoViewPort} ${altoViewPort}`)
-	container.style.border = bordeViewPort
-	//defs y lector de datos
-	let defs = crearElemento('defs', {})
+    container.setAttributeNS(null, 'viewBox', `0 0 ${anchoViewPort} ${altoViewPort}`)
+    //defs y lector de datos
+    let defs = crearElemento('defs', {})
 	let styles = document.createElement('style')
-	styles.innerHTML = '@font-face{font-family:"Open-Sans-Reg";src:url("../../../../fonts/Quicksand-Medium.ttf");}'
-	defs.appendChild(styles)
-	//definicion de constantes
-	const anchoDiviciones = anchoViewPort / grupos.length
-	const marginTop = 20
-	const margenDivisores = 10
-	const sepReps = 5
-	//lee los datos
-	imagenes = imagenes ? await Promise.all(imagenes.map(i => agregaImagen(i))) : []
-	grupos = grupos ? grupos.map(x => getData(x)) : []
-	container.appendChild(defs)
-	//console.log(grupos)
-	//dibuja grupos
-	grupos.forEach((grupo, index) => {
-		let centro = anchoDiviciones / 2 + index * anchoDiviciones
-		let xDividendo = centro - anchoGrupos / 2
-		if (grupo.titulo.length > 0) {
-			container.appendChild(crearElementoDeTexto({
-				x: centro,
-				y: marginTop - 5,
-				fontSize: 20,
-				textAnchor: 'middle',
-				fill: '#000',
-				style: 'font-family:Open-Sans-Reg;'
-			}, grupo.titulo))
-		}
+	styles.innerHTML = '@font-face{font-family:"Quicksand-Medium";src:url("../../../../fonts/Quicksand-Medium.ttf");}'
+    defs.appendChild(styles)
+    //definicion de constantes
+    const anchoDiviciones = anchoViewPort / grupos.length
+    const marginTop = 20
+    const margenDivisores = 10
+    const sepReps = 5
+    //lee los datos
+    imagenes = imagenes ? await Promise.all(imagenes.map(i =>  agregaImagen(i))) : []
+    grupos = grupos ? grupos.map(x => getData(x)) : []
+    container.appendChild(defs)
+    //console.log(grupos)
+    //dibuja grupos
+    grupos.forEach((grupo, index) => {
+        let centro = anchoDiviciones/2 + index * anchoDiviciones
+        let xDividendo = centro-anchoGrupos/2
+        if(grupo.titulo.length>0) {
+            container.appendChild(crearElementoDeTexto({
+                x: centro,
+                y: marginTop-5,
+                fontSize: 20,
+                textAnchor: 'middle',
+                fill: '#363026',
+                style: 'font-family:Quicksand-Medium;'
+            }, grupo.titulo))
+        }
 
-		container.appendChild(crearElemento('rect', {
-			x: xDividendo,
-			y: marginTop,
-			width: anchoGrupos,
-			height: altoGrupos,
-			fill: 'none',
-			stroke: bordeGrupos[1],
-			strokeWidth: bordeGrupos[0],
-			rx: '10',
-			ry: '10'
-		}))
+        if(grupo.texto) {
+            container.appendChild(crearElementoDeTexto({
+                x: centro,
+                y: grupo.yTexto,
+                fontSize: grupo.altoTexto,
+                textAnchor: 'middle',
+                fill: ' #363026',
+                style: 'font-family:Quicksand-Medium;'
+            }, grupo.texto))
+        }
 
-		if (conFlecha && (index + 1 != grupos.length)) {
-			let imagen = imagenes.find(x => x.id === flecha)
-			container.appendChild(crearReferenciaAElemento(flecha, {
-				x: anchoDiviciones * (index + 1) - imagen.width / 2,
-				y: marginTop + altoGrupos / 2 - imagen.height / 2
-			}))
-		}
-		let arrayGrupo = grupo.tipo === 'suma' ? grupo.total : grupo.repDividendos
-		if (arrayGrupo.length > 0) {
-			let centroYDividendo = marginTop + altoGrupos / 2
-			let altoTotalRep = arrayGrupo.reduce((total, rep) => total + rep.altoTotal, 0)
-			altoTotalRep = altoTotalRep + (arrayGrupo.length - 1) * 10
-			let inicioRepeticion = centroYDividendo - altoTotalRep / 2
+        container.appendChild(crearElemento('rect',{
+            x: xDividendo,
+            y: marginTop,
+            width: anchoGrupos,
+            height: altoGrupos,
+            fill: 'none',
+            stroke: bordeGrupos[1],
+            strokeWidth: bordeGrupos[0],
+            rx: '10',
+            ry: '10'
+        }))
 
-			arrayGrupo.forEach((repeticion, indiceRep) => {
-				switch (repeticion.formaRep) {
-					case 'izq/der':
-						for (let i = 0, acum = 0; i < repeticion.cantidad; i++) {
-							let xRepeticion = centro - repeticion.anchoTotal / 2 + acum * sepReps + repeticion.anchoImagen * acum
-							let yRepeticion = inicioRepeticion + Math.floor(i / repeticion.limite) * repeticion.altoImagen + Math.floor(i / repeticion.limite) * sepReps
-							container.appendChild(crearReferenciaAElemento(repeticion.imagen, {
-								x: xRepeticion,
-								y: yRepeticion
-							}))
-							if (acum === repeticion.limite - 1) {
-								acum = 0
-							} else {
-								acum++
-							}
-						}
-						break
-					case 'rectangular':
-						for (let v = 0, yImg; v < repeticion.vertical; v++) {
-							yImg = inicioRepeticion + v * repeticion.altoImagen + v * sepReps
-							for (let h = 0, xImg; h < repeticion.horizontal; h++) {
-								xImg = centro - repeticion.anchoTotal / 2 + h * repeticion.anchoImagen + h * sepReps
-								container.appendChild(crearReferenciaAElemento(repeticion.imagen, {
-									x: xImg,
-									y: yImg
-								}))
-							}
-						}
-						break
-					default:
-						console.log('esto no es bueno :c')
-						break
-				}
-				inicioRepeticion += repeticion.altoTotal + (indiceRep + 1) * 10
-			})
-		}
+        if(conFlecha && (index+1 != grupos.length)) {
+            let imagen = imagenes.find(x => x.id === flecha)
+            container.appendChild(crearReferenciaAElemento(flecha, {
+                x: anchoDiviciones * (index+1)-imagen.width/2,
+                y: marginTop+altoGrupos/2-imagen.height/2
+            }))
+        }
+        let arrayGrupo = grupo.tipo === 'suma' ? grupo.total : grupo.repDividendos
+        if(arrayGrupo.length > 0) {
+            let centroYDividendo = marginTop + altoGrupos/2
+            let altoTotalRep = arrayGrupo.reduce((total, rep) => total + rep.altoTotal, 0)
+            altoTotalRep = altoTotalRep+(arrayGrupo.length-1)*10
+            let inicioRepeticion = centroYDividendo - altoTotalRep/2
 
-		switch (grupo.tipo) {
-			case 'division':
-				if (grupo.divisor > 0) {
-					let anchoTotalDivisores = grupo.divisor * grupo.anchoDivisores + margenDivisores * (grupo.divisor - 1)
-					let divicionAnchoDividendo = anchoGrupos / (grupo.divisor + 1)
-					let altoTotalRepDivisores = grupo.repDivisores.reduce((total, rep) => total + rep.altoTotal, 0)
-					altoTotalRepDivisores = altoTotalRepDivisores + (grupo.repDivisores.length - 1) * 10
-					let anchoMaximoRepDivisores = Math.max(...grupo.repDivisores.map(x => x.anchoTotal))
-					for (let i = 0; i < grupo.divisor; i++) {
-						let xDivisor = centro - anchoTotalDivisores / 2 + i * grupo.anchoDivisores + i * margenDivisores
-						let yDivisor = marginTop * 2 + altoGrupos
-						container.appendChild(crearElemento('rect', {
-							x: xDivisor,
-							y: yDivisor,
-							width: grupo.anchoDivisores,
-							height: grupo.altoDivisores,
-							fill: (i === 0 && grupo.marcarPrimero) ? 'yellow' : 'none',
-							stroke: grupo.bordeDivisores[1],
-							strokeWidth: grupo.bordeDivisores[0],
-							rx: '10',
-							ry: '10'
-						}))
-						container.appendChild(crearElemento('line', {
-							x1: xDivisor + grupo.anchoDivisores / 2,
-							y1: yDivisor,
-							x2: xDividendo + divicionAnchoDividendo * (i + 1),
-							y2: marginTop + altoGrupos,
-							stroke: grupo.bordeDivisores[1],
-							strokeWidth: grupo.bordeDivisores[0]
-						}))
-						if (grupo.repDivisores.length > 0) {
-							if (i === 0) {
-								let symbol = crearElementoSymbol(`${container.id}-divisor-grupo-${index}`, anchoMaximoRepDivisores, altoTotalRepDivisores)
-								let inicio = 0
-								grupo.repDivisores.forEach((repDivisor, indiceRepDiv) => {
-									if (repDivisor.formaRep === 'izq/der') {
-										for (let i = 0, acum = 0; i < repDivisor.cantidad; i++) {
-											let xRepDivisor = anchoMaximoRepDivisores / 2 - repDivisor.anchoTotal / 2 + acum * sepReps + repDivisor.anchoImagen * acum
-											let yRepDivisor = inicio + Math.floor(i / repDivisor.limite) * repDivisor.altoImagen + Math.floor(i / repDivisor.limite) * sepReps
+            arrayGrupo.forEach((repeticion, indiceRep) => {
+                switch(repeticion.formaRep) {
+                    case 'izq/der':
+                        for(let i = 0, acum = 0; i < repeticion.cantidad; i++) {
+                            let xRepeticion= centro - repeticion.anchoTotal/2 + acum * sepReps + repeticion.anchoImagen * acum
+                            let yRepeticion = inicioRepeticion + Math.floor(i/repeticion.limite) * repeticion.altoImagen + Math.floor(i/repeticion.limite) * sepReps
+                            container.appendChild(crearReferenciaAElemento(repeticion.imagen, {
+                                x: xRepeticion,
+                                y: yRepeticion
+                            }))
+                            if(acum === repeticion.limite-1) {
+                                acum = 0
+                            } else {
+                                acum++
+                            }
+                        }
+                        break
+                    case 'rectangular':
+                        for(let v = 0, yImg; v < repeticion.vertical; v++) {
+                            yImg = inicioRepeticion + v * repeticion.altoImagen + v * sepReps
+                            for(let h = 0, xImg; h < repeticion.horizontal; h++) {
+                                xImg = centro - repeticion.anchoTotal/2 + h * repeticion.anchoImagen + h * sepReps
+                                container.appendChild(crearReferenciaAElemento(repeticion.imagen, {
+                                    x: xImg,
+                                    y: yImg
+                                }))
+                            }
+                        }
+                        break
+                    default:
+                        console.log('esto no es bueno :c')
+                        break
+                }
+                inicioRepeticion+=repeticion.altoTotal+(indiceRep+1)*10
+            })
+        }
 
-											symbol.appendChild(crearReferenciaAElemento(repDivisor.imagen, {
-												x: xRepDivisor,
-												y: yRepDivisor
-											}))
+        switch(grupo.tipo) {
+            case 'division':
+                if(grupo.divisor > 0) {
+                    let anchoTotalDivisores = grupo.divisor * grupo.anchoDivisores + margenDivisores * (grupo.divisor-1)
+                    let divicionAnchoDividendo = anchoGrupos / (grupo.divisor+1)
+                    let altoTotalRepDivisores = grupo.repDivisores.reduce((total, rep) => total + rep.altoTotal, 0)
+                    altoTotalRepDivisores = altoTotalRepDivisores + (grupo.repDivisores.length-1)*10
+                    let anchoMaximoRepDivisores = Math.max(...grupo.repDivisores.map(x => x.anchoTotal))
+                    for(let i = 0; i < grupo.divisor; i++) {
+                        let xDivisor = centro-anchoTotalDivisores/2+i*grupo.anchoDivisores+i*margenDivisores
+                        let yDivisor = marginTop*2+altoGrupos
+                        if(grupo.textoDividendo) {
+                            container.appendChild(crearElementoDeTexto({
+                                x: xDivisor + grupo.anchoDivisores/2,
+                                y: grupo.yTextoDividendo,
+                                fontSize: grupo.altoTextoDividendo,
+                                textAnchor: 'middle',
+                                fill: ' #363026',
+                                style: 'font-family:Quicksand-Medium;'
+                            }, grupo.textoDividendo))
+                        }
+                        container.appendChild(crearElemento('rect', {
+                            x: xDivisor,
+                            y: yDivisor,
+                            width: grupo.anchoDivisores,
+                            height: grupo.altoDivisores,
+                            fill: (i === 0 && grupo.marcarPrimero) ? 'yellow' : 'none',
+                            stroke: grupo.bordeDivisores[1],
+                            strokeWidth: grupo.bordeDivisores[0],
+                            rx: '10',
+                            ry: '10'
+                        }))
+                        container.appendChild(crearElemento('line', {
+                            x1: xDivisor+grupo.anchoDivisores/2,
+                            y1: yDivisor,
+                            x2: xDividendo+divicionAnchoDividendo*(i+1),
+                            y2: marginTop+altoGrupos,
+                            stroke: grupo.bordeDivisores[1],
+                            strokeWidth: grupo.bordeDivisores[0]
+                        }))
+                        if(grupo.repDivisores.length > 0) {
+                            if(i === 0) {
+                                let symbol = crearElementoSymbol(`${container.id}-divisor-grupo-${index}`, anchoMaximoRepDivisores, altoTotalRepDivisores)
+                                let inicio = 0
+                                grupo.repDivisores.forEach((repDivisor, indiceRepDiv) => {
+                                    if(repDivisor.formaRep === 'izq/der') {
+                                        for(let i = 0, acum = 0; i < repDivisor.cantidad; i++) {
+                                            let xRepDivisor = anchoMaximoRepDivisores/2 - repDivisor.anchoTotal/2 + acum * sepReps + repDivisor.anchoImagen * acum
+                                            let yRepDivisor = inicio + Math.floor(i/repDivisor.limite) * repDivisor.altoImagen + Math.floor(i/repDivisor.limite) * sepReps
+                                            
+                                            symbol.appendChild(crearReferenciaAElemento(repDivisor.imagen, {
+                                                x: xRepDivisor,
+                                                y: yRepDivisor
+                                            }))
+                    
+                                            if(acum === repDivisor.limite-1) {
+                                                acum = 0
+                                            } else {
+                                                acum++
+                                            }
+                                        }
+                                        inicio+=repDivisor.altoTotal+(indiceRepDiv+1)*10
+                                    } else {
+                                        for(let v = 0, yImg; v < repDivisor.vertical; v++) {
+                                            yImg = inicio + v * repDivisor.altoImagen + v * sepReps
+                                            for(let h = 0, xImg; h < repDivisor.horizontal; h++) {
+                                                xImg = anchoMaximoRepDivisores/2 - repDivisor.anchoTotal/2 + h * repDivisor.anchoImagen + h * sepReps
+                                                symbol.appendChild(crearReferenciaAElemento(repDivisor.imagen, {
+                                                    x: xImg,
+                                                    y: yImg
+                                                }))
+                    
+                                            }
+                                        }
+                                        inicio+=repDivisor.altoTotal+(indiceRepDiv+1)*10
+                                    }
+                                })
+                                defs.appendChild(symbol)
+                                container.appendChild(crearReferenciaAElemento(`${container.id}-divisor-grupo-${index}`, {
+                                    x: xDivisor + grupo.anchoDivisores/2 - anchoMaximoRepDivisores/2,
+                                    y: yDivisor + grupo.altoDivisores/2 - altoTotalRepDivisores/2
+                                }))
+                            } else {
+                                container.appendChild(crearReferenciaAElemento(`${container.id}-divisor-grupo-${index}`, {
+                                    x: xDivisor + grupo.anchoDivisores/2 - anchoMaximoRepDivisores/2,
+                                    y: yDivisor + grupo.altoDivisores/2 - altoTotalRepDivisores/2
+                                }))
+                            }
+                        }
+                    }
+                }
+                break
+            case 'suma':
+                if(grupo.descomposiciones.length > 0) {
+                    let anchoTotalSuma = grupo.descomposiciones.reduce((total, rep) => total + rep.ancho, 0) + margenDivisores * (grupo.descomposiciones.length-1)
+                    let divicionAnchoDescomposicion = anchoGrupos / (grupo.descomposiciones.length+1)
+                    let xinicio = centro-anchoTotalSuma/2
+                    grupo.descomposiciones.forEach((descomposicion, indexDesc) => {
+                        let xDescomposicion = xinicio
+                        let yDescomposicion = marginTop*2+altoGrupos
+                        container.appendChild(crearElemento('rect', {
+                            x: xDescomposicion,
+                            y: yDescomposicion,
+                            width: descomposicion.ancho,
+                            height: descomposicion.alto,
+                            fill: 'none',
+                            stroke: descomposicion.borde[1],
+                            strokeWidth: descomposicion.borde[0],
+                            rx: '10',
+                            ry: '10'
+                        }))
+                        container.appendChild(crearElemento('line', {
+                            x1: xDescomposicion+descomposicion.ancho/2,
+                            y1: yDescomposicion,
+                            x2: xDividendo+divicionAnchoDescomposicion*(indexDesc+1),
+                            y2: marginTop+altoGrupos,
+                            stroke: descomposicion.borde[1],
+                            strokeWidth: descomposicion.borde[0]
+                        }))
+                        if(descomposicion.texto) {
+                            container.appendChild(crearElementoDeTexto({
+                                x: xDescomposicion+descomposicion.ancho/2,
+                                y: descomposicion.yTexto,
+                                fontSize: descomposicion.altoTexto,
+                                textAnchor: 'middle',
+                                fill: '#363026',
+                                style: 'font-family:Quicksand-Medium;'
+                            }, descomposicion.texto))
+                        }
+                        let altoTotalRepDesc = descomposicion.repeticiones.reduce((total, rep) => total + rep.altoTotal, 0)
+                        altoTotalRepDesc = altoTotalRepDesc + (descomposicion.repeticiones.length-1)*10
+                        let inicio = yDescomposicion + descomposicion.alto/2 - altoTotalRepDesc/2
+                        descomposicion.repeticiones.forEach((repDesc, indexRep) => {
+                            if(repDesc.formaRep === 'izq/der') {
+                                for(let i = 0, acum = 0; i < repDesc.cantidad; i++) {
+                                    let xRepDivisor = xDescomposicion+descomposicion.ancho/2-repDesc.anchoTotal/2 + acum * sepReps + repDesc.anchoImagen * acum
+                                    let yRepDivisor = inicio + Math.floor(i/repDesc.limite) * repDesc.altoImagen + Math.floor(i/repDesc.limite) * sepReps
+                                    
+                                    container.appendChild(crearReferenciaAElemento(repDesc.imagen, {
+                                        x: xRepDivisor,
+                                        y: yRepDivisor
+                                    }))
+            
+                                    if(acum === repDesc.limite-1) {
+                                        acum = 0
+                                    } else {
+                                        acum++
+                                    }
+                                }
+                            } else {
+                                for(let v = 0, yImg; v < repDesc.vertical; v++) {
+                                    yImg = inicio + v * repDesc.altoImagen + v * sepReps
+                                    for(let h = 0, xImg; h < repDesc.horizontal; h++) {
+                                        xImg = xDescomposicion+descomposicion.ancho/2- repDesc.anchoTotal/2 + h * repDesc.anchoImagen + h * sepReps
+                                        container.appendChild(crearReferenciaAElemento(repDesc.imagen, {
+                                            x: xImg,
+                                            y: yImg
+                                        }))
+                                    }
+                                }
+                                
+                            }
+                            inicio+=repDesc.altoTotal+(indexRep+1)*10
+                        })
+                        xinicio += descomposicion.ancho + margenDivisores
+                    })
+                }
+                break
+            default:
+                console.log('esto es muy malo :c')
+                break
+        }
+    })
 
-											if (acum === repDivisor.limite - 1) {
-												acum = 0
-											} else {
-												acum++
-											}
-										}
-										inicio += repDivisor.altoTotal + (indiceRepDiv + 1) * 10
-									} else {
-										for (let v = 0, yImg; v < repDivisor.vertical; v++) {
-											yImg = inicio + v * repDivisor.altoImagen + v * sepReps
-											for (let h = 0, xImg; h < repDivisor.horizontal; h++) {
-												xImg = anchoMaximoRepDivisores / 2 - repDivisor.anchoTotal / 2 + h * repDivisor.anchoImagen + h * sepReps
-												symbol.appendChild(crearReferenciaAElemento(repDivisor.imagen, {
-													x: xImg,
-													y: yImg
-												}))
+    function getData(obj) {
+        switch(obj.tipo) {
+            case 'division':
+                return {
+                    tipo: obj.tipo,
+                    divisor: Number(regexFunctions(regex(obj.divisor, vars, vt))),
+                    marcarPrimero: obj.marcarPrimero === 'si' ? true : false,
+                    titulo: regexFunctions(regex(obj.titulo, vars, vt)),
+                    texto: regexFunctions(regex(obj.texto, vars, vt)),
+                    yTexto: obj.yTexto,
+                    altoTexto: obj.altoTexto,
+                    textoDividendo: regexFunctions(regex(obj.textoDividendo, vars, vt)),
+                    yTextoDividendo: obj.yTextoDividendo,
+                    altoTextoDividendo: obj.altoTextoDividendo,
+                    altoDivisores: Number(obj.altoDivisores),
+                    anchoDivisores: Number(obj.anchoDivisores),
+                    bordeDivisores: obj.bordeDivisores.split(','),
+                    repDividendos: obj.repDividendos ? obj.repDividendos.map(x => {
+                        let imagen = imagenes.find(q => q.id === x.imagen)
+                        let anchoTotal, altoTotal
+                        if(x.formaRep === 'izq/der') {
+                            let cantidad = Number(regexFunctions(regex(x.cantidad,vars,vt)))
+                            let limite = Number(regexFunctions(regex(x.limite, vars, vt)))
+                            anchoTotal = cantidad < limite ?
+                                imagen.width * cantidad + sepReps * (cantidad-1) :
+                                imagen.width * limite + sepReps * (limite-1)
+                            altoTotal = Math.ceil(cantidad/limite) * imagen.height + (Math.ceil(cantidad/limite)-1) * sepReps
+                            return {
+                                formaRep: x.formaRep,
+                                imagen: x.imagen,
+                                cantidad,
+                                limite,
+                                altoTotal,
+                                anchoTotal,
+                                altoImagen: imagen.height,
+                                anchoImagen: imagen.width
+                            }
+                        } else {
+                            let horizontal = Number(regexFunctions(regex(x.horizontal,vars,vt)))
+                            let vertical = Number(regexFunctions(regex(x.vertical, vars, vt)))
+                            anchoTotal = horizontal * imagen.width + (horizontal-1) * sepReps
+                            altoTotal = vertical * imagen.height + (vertical-1) * sepReps
+                            return {
+                                formaRep: x.formaRep,
+                                imagen: x.imagen,
+                                horizontal,
+                                vertical,
+                                altoTotal,
+                                anchoTotal,
+                                altoImagen: imagen.height,
+                                anchoImagen: imagen.width
+                            }
+                        }
+                    }) : [],
+                    repDivisores: obj.repDivisores ? obj.repDivisores.map(x => {
+                        let imagen = imagenes.find(q => q.id === x.imagen)
+                        let anchoTotal, altoTotal
+                        if(x.formaRep === 'izq/der') {
+                            let cantidad = Number(regexFunctions(regex(x.cantidad,vars,vt)))
+                            let limite = Number(regexFunctions(regex(x.limite, vars, vt)))
+                            anchoTotal = cantidad < limite ?
+                                imagen.width * cantidad + sepReps * (cantidad-1) :
+                                imagen.width * limite + sepReps * (limite-1)
+                            altoTotal = Math.ceil(cantidad/limite) * imagen.height + (Math.ceil(cantidad/limite)-1) * sepReps
+                            return {
+                                formaRep: x.formaRep,
+                                imagen: x.imagen,
+                                cantidad,
+                                limite,
+                                altoTotal,
+                                anchoTotal,
+                                altoImagen: imagen.height,
+                                anchoImagen: imagen.width
+                            }
+                        } else {
+                            let horizontal = Number(regexFunctions(regex(x.horizontal,vars,vt)))
+                            let vertical = Number(regexFunctions(regex(x.vertical, vars, vt)))
+                            anchoTotal = horizontal * imagen.width + (horizontal-1) * sepReps
+                            altoTotal = vertical * imagen.height + (vertical-1) * sepReps
+                            return {
+                                formaRep: x.formaRep,
+                                imagen: x.imagen,
+                                horizontal,
+                                vertical,
+                                altoTotal,
+                                anchoTotal,
+                                altoImagen: imagen.height,
+                                anchoImagen: imagen.width
+                            }
+                        }
+                    }) : []
+                }
+            case 'suma':
+                return {
+                    tipo: obj.tipo,
+                    titulo: regexFunctions(regex(obj.titulo, vars, vt)),
+                    texto: regexFunctions(regex(obj.texto, vars, vt)),
+                    yTexto: obj.yTexto,
+                    altoTexto: obj.altoTexto,
+                    total: obj.total ? obj.total.map(x => {
+                        let imagen = imagenes.find(q => q.id === x.imagen)
+                        let anchoTotal, altoTotal
+                        if(x.formaRep === 'izq/der') {
+                            let cantidad = Number(regexFunctions(regex(x.cantidad,vars,vt)))
+                            let limite = Number(regexFunctions(regex(x.limite, vars, vt)))
+                            anchoTotal = cantidad < limite ?
+                                imagen.width * cantidad + sepReps * (cantidad-1) :
+                                imagen.width * limite + sepReps * (limite-1)
+                            altoTotal = Math.ceil(cantidad/limite) * imagen.height + (Math.ceil(cantidad/limite)-1) * sepReps
+                            return {
+                                formaRep: x.formaRep,
+                                imagen: x.imagen,
+                                cantidad,
+                                limite,
+                                altoTotal,
+                                anchoTotal,
+                                altoImagen: imagen.height,
+                                anchoImagen: imagen.width
+                            }
+                        } else {
+                            let horizontal = Number(regexFunctions(regex(x.horizontal,vars,vt)))
+                            let vertical = Number(regexFunctions(regex(x.vertical, vars, vt)))
+                            anchoTotal = horizontal * imagen.width + (horizontal-1) * sepReps
+                            altoTotal = vertical * imagen.height + (vertical-1) * sepReps
+                            return {
+                                formaRep: x.formaRep,
+                                imagen: x.imagen,
+                                horizontal,
+                                vertical,
+                                altoTotal,
+                                anchoTotal,
+                                altoImagen: imagen.height,
+                                anchoImagen: imagen.width
+                            }
+                        }
+                    }) : [],
+                    descomposiciones: obj.descomposiciones ? obj.descomposiciones.map(x => {
+                        return {
+                            alto: Number(x.alto),
+                            ancho: Number(x.ancho),
+                            texto: regexFunctions(regex(x.texto, vars, vt)),
+                            yTexto: x.yTexto,
+                            altoTexto: x.altoTexto,
+                            borde: x.borde.split(','),
+                            repeticiones: x.repeticiones ? x.repeticiones.map(y => {
+                                let imagen = imagenes.find(q => q.id === y.imagen)
+                                let anchoTotal, altoTotal
+                                if(y.formaRep === 'izq/der') {
+                                    let cantidad = Number(regexFunctions(regex(y.cantidad,vars,vt)))
+                                    let limite = Number(regexFunctions(regex(y.limite, vars, vt)))
+                                    anchoTotal = cantidad < limite ?
+                                        imagen.width * cantidad + sepReps * (cantidad-1) :
+                                        imagen.width * limite + sepReps * (limite-1)
+                                    altoTotal = Math.ceil(cantidad/limite) * imagen.height + (Math.ceil(cantidad/limite)-1) * sepReps
+                                    return {
+                                        formaRep: y.formaRep,
+                                        imagen: y.imagen,
+                                        cantidad,
+                                        limite,
+                                        altoTotal,
+                                        anchoTotal,
+                                        altoImagen: imagen.height,
+                                        anchoImagen: imagen.width
+                                    }
+                                } else {
+                                    let horizontal = Number(regexFunctions(regex(y.horizontal,vars,vt)))
+                                    let vertical = Number(regexFunctions(regex(y.vertical, vars, vt)))
+                                    anchoTotal = horizontal * imagen.width + (horizontal-1) * sepReps
+                                    altoTotal = vertical * imagen.height + (vertical-1) * sepReps
+                                    return {
+                                        formaRep: y.formaRep,
+                                        imagen: y.imagen,
+                                        horizontal,
+                                        vertical,
+                                        altoTotal,
+                                        anchoTotal,
+                                        altoImagen: imagen.height,
+                                        anchoImagen: imagen.width
+                                    }
+                                }
+                            }) : []
+                        }
+                    }) : []
+                }
+        }
+    }
 
-											}
-										}
-										inicio += repDivisor.altoTotal + (indiceRepDiv + 1) * 10
-									}
-								})
-								defs.appendChild(symbol)
-								container.appendChild(crearReferenciaAElemento(`${container.id}-divisor-grupo-${index}`, {
-									x: xDivisor + grupo.anchoDivisores / 2 - anchoMaximoRepDivisores / 2,
-									y: yDivisor + grupo.altoDivisores / 2 - altoTotalRepDivisores / 2
-								}))
-							} else {
-								container.appendChild(crearReferenciaAElemento(`${container.id}-divisor-grupo-${index}`, {
-									x: xDivisor + grupo.anchoDivisores / 2 - anchoMaximoRepDivisores / 2,
-									y: yDivisor + grupo.altoDivisores / 2 - altoTotalRepDivisores / 2
-								}))
-							}
-						}
-					}
-				}
-				break
-			case 'suma':
-				if (grupo.descomposiciones.length > 0) {
-					let anchoTotalSuma = grupo.descomposiciones.reduce((total, rep) => total + rep.ancho, 0) + margenDivisores * (grupo.descomposiciones.length - 1)
-					let divicionAnchoDescomposicion = anchoGrupos / (grupo.descomposiciones.length + 1)
-					let xinicio = centro - anchoTotalSuma / 2
-					grupo.descomposiciones.forEach((descomposicion, indexDesc) => {
-						let xDescomposicion = xinicio
-						let yDescomposicion = marginTop * 2 + altoGrupos
-						container.appendChild(crearElemento('rect', {
-							x: xDescomposicion,
-							y: yDescomposicion,
-							width: descomposicion.ancho,
-							height: descomposicion.alto,
-							fill: 'none',
-							stroke: descomposicion.borde[1],
-							strokeWidth: descomposicion.borde[0],
-							rx: '10',
-							ry: '10'
-						}))
-						container.appendChild(crearElemento('line', {
-							x1: xDescomposicion + descomposicion.ancho / 2,
-							y1: yDescomposicion,
-							x2: xDividendo + divicionAnchoDescomposicion * (indexDesc + 1),
-							y2: marginTop + altoGrupos,
-							stroke: descomposicion.borde[1],
-							strokeWidth: descomposicion.borde[0]
-						}))
-						let altoTotalRepDesc = descomposicion.repeticiones.reduce((total, rep) => total + rep.altoTotal, 0)
-						altoTotalRepDesc = altoTotalRepDesc + (descomposicion.repeticiones.length - 1) * 10
-						let inicio = yDescomposicion + descomposicion.alto / 2 - altoTotalRepDesc / 2
-						descomposicion.repeticiones.forEach((repDesc, indexRep) => {
-							if (repDesc.formaRep === 'izq/der') {
-								for (let i = 0, acum = 0; i < repDesc.cantidad; i++) {
-									let xRepDivisor = xDescomposicion + descomposicion.ancho / 2 - repDesc.anchoTotal / 2 + acum * sepReps + repDesc.anchoImagen * acum
-									let yRepDivisor = inicio + Math.floor(i / repDesc.limite) * repDesc.altoImagen + Math.floor(i / repDesc.limite) * sepReps
+    async function agregaImagen(img) {
+        let src = convertirARutaRelativa(regexFunctions(regex(img.src, vars, vt)))
+        let imgCargada = await cargaImagen(src)
+        let height = Number(img.height)
+        let width = height * imgCargada.width / imgCargada.height
+        let id = src.split('/').pop().replace('.svg', '').replace('%20','-')
+        defs.appendChild(crearElementoDeImagen(src,{id,height,width}))
+        return {id,src,height,width}
+    }
 
-									container.appendChild(crearReferenciaAElemento(repDesc.imagen, {
-										x: xRepDivisor,
-										y: yRepDivisor
-									}))
-
-									if (acum === repDesc.limite - 1) {
-										acum = 0
-									} else {
-										acum++
-									}
-								}
-							} else {
-								for (let v = 0, yImg; v < repDesc.vertical; v++) {
-									yImg = inicio + v * repDesc.altoImagen + v * sepReps
-									for (let h = 0, xImg; h < repDesc.horizontal; h++) {
-										xImg = xDescomposicion + descomposicion.ancho / 2 - repDesc.anchoTotal / 2 + h * repDesc.anchoImagen + h * sepReps
-										container.appendChild(crearReferenciaAElemento(repDesc.imagen, {
-											x: xImg,
-											y: yImg
-										}))
-									}
-								}
-
-							}
-							inicio += repDesc.altoTotal + (indexRep + 1) * 10
-						})
-						xinicio += descomposicion.ancho + margenDivisores
-					})
-
-				}
-				break
-			default:
-				console.log('esto es muy malo :c')
-				break
-		}
-	})
-
-	function getData(obj) {
-		switch (obj.tipo) {
-			case 'division':
-				return {
-					tipo: obj.tipo,
-					divisor: Number(regexFunctions(regex(obj.divisor, vars, vt))),
-					marcarPrimero: obj.marcarPrimero === 'si' ? true : false,
-					titulo: regexFunctions(regex(obj.titulo, vars, vt)),
-					altoDivisores: Number(obj.altoDivisores),
-					anchoDivisores: Number(obj.anchoDivisores),
-					bordeDivisores: obj.bordeDivisores.split(','),
-					repDividendos: obj.repDividendos ? obj.repDividendos.map(x => {
-						let imagen = imagenes.find(q => q.id === x.imagen)
-						let anchoTotal, altoTotal
-						if (x.formaRep === 'izq/der') {
-							let cantidad = Number(regexFunctions(regex(x.cantidad, vars, vt)))
-							let limite = Number(regexFunctions(regex(x.limite, vars, vt)))
-							anchoTotal = cantidad < limite ?
-								imagen.width * cantidad + sepReps * (cantidad - 1) :
-								imagen.width * limite + sepReps * (limite - 1)
-							altoTotal = Math.ceil(cantidad / limite) * imagen.height + (Math.ceil(cantidad / limite) - 1) * sepReps
-							return {
-								formaRep: x.formaRep,
-								imagen: x.imagen,
-								cantidad,
-								limite,
-								altoTotal,
-								anchoTotal,
-								altoImagen: imagen.height,
-								anchoImagen: imagen.width
-							}
-						} else {
-							let horizontal = Number(regexFunctions(regex(x.horizontal, vars, vt)))
-							let vertical = Number(regexFunctions(regex(x.vertical, vars, vt)))
-							anchoTotal = horizontal * imagen.width + (horizontal - 1) * sepReps
-							altoTotal = vertical * imagen.height + (vertical - 1) * sepReps
-							return {
-								formaRep: x.formaRep,
-								imagen: x.imagen,
-								horizontal,
-								vertical,
-								altoTotal,
-								anchoTotal,
-								altoImagen: imagen.height,
-								anchoImagen: imagen.width
-							}
-						}
-					}) : [],
-					repDivisores: obj.repDivisores ? obj.repDivisores.map(x => {
-						let imagen = imagenes.find(q => q.id === x.imagen)
-						let anchoTotal, altoTotal
-						if (x.formaRep === 'izq/der') {
-							let cantidad = Number(regexFunctions(regex(x.cantidad, vars, vt)))
-							let limite = Number(regexFunctions(regex(x.limite, vars, vt)))
-							anchoTotal = cantidad < limite ?
-								imagen.width * cantidad + sepReps * (cantidad - 1) :
-								imagen.width * limite + sepReps * (limite - 1)
-							altoTotal = Math.ceil(cantidad / limite) * imagen.height + (Math.ceil(cantidad / limite) - 1) * sepReps
-							return {
-								formaRep: x.formaRep,
-								imagen: x.imagen,
-								cantidad,
-								limite,
-								altoTotal,
-								anchoTotal,
-								altoImagen: imagen.height,
-								anchoImagen: imagen.width
-							}
-						} else {
-							let horizontal = Number(regexFunctions(regex(x.horizontal, vars, vt)))
-							let vertical = Number(regexFunctions(regex(x.vertical, vars, vt)))
-							anchoTotal = horizontal * imagen.width + (horizontal - 1) * sepReps
-							altoTotal = vertical * imagen.height + (vertical - 1) * sepReps
-							return {
-								formaRep: x.formaRep,
-								imagen: x.imagen,
-								horizontal,
-								vertical,
-								altoTotal,
-								anchoTotal,
-								altoImagen: imagen.height,
-								anchoImagen: imagen.width
-							}
-						}
-					}) : []
-				}
-			case 'suma':
-				return {
-					tipo: obj.tipo,
-					titulo: regexFunctions(regex(obj.titulo, vars, vt)),
-					total: obj.total ? obj.total.map(x => {
-						let imagen = imagenes.find(q => q.id === x.imagen)
-						let anchoTotal, altoTotal
-						if (x.formaRep === 'izq/der') {
-							let cantidad = Number(regexFunctions(regex(x.cantidad, vars, vt)))
-							let limite = Number(regexFunctions(regex(x.limite, vars, vt)))
-							anchoTotal = cantidad < limite ?
-								imagen.width * cantidad + sepReps * (cantidad - 1) :
-								imagen.width * limite + sepReps * (limite - 1)
-							altoTotal = Math.ceil(cantidad / limite) * imagen.height + (Math.ceil(cantidad / limite) - 1) * sepReps
-							return {
-								formaRep: x.formaRep,
-								imagen: x.imagen,
-								cantidad,
-								limite,
-								altoTotal,
-								anchoTotal,
-								altoImagen: imagen.height,
-								anchoImagen: imagen.width
-							}
-						} else {
-							let horizontal = Number(regexFunctions(regex(x.horizontal, vars, vt)))
-							let vertical = Number(regexFunctions(regex(x.vertical, vars, vt)))
-							anchoTotal = horizontal * imagen.width + (horizontal - 1) * sepReps
-							altoTotal = vertical * imagen.height + (vertical - 1) * sepReps
-							return {
-								formaRep: x.formaRep,
-								imagen: x.imagen,
-								horizontal,
-								vertical,
-								altoTotal,
-								anchoTotal,
-								altoImagen: imagen.height,
-								anchoImagen: imagen.width
-							}
-						}
-					}) : [],
-					descomposiciones: obj.descomposiciones ? obj.descomposiciones.map(x => {
-						return {
-							alto: Number(x.alto),
-							ancho: Number(x.ancho),
-							borde: x.borde.split(','),
-							repeticiones: x.repeticiones ? x.repeticiones.map(y => {
-								let imagen = imagenes.find(q => q.id === y.imagen)
-								let anchoTotal, altoTotal
-								if (y.formaRep === 'izq/der') {
-									let cantidad = Number(regexFunctions(regex(y.cantidad, vars, vt)))
-									let limite = Number(regexFunctions(regex(y.limite, vars, vt)))
-									anchoTotal = cantidad < limite ?
-										imagen.width * cantidad + sepReps * (cantidad - 1) :
-										imagen.width * limite + sepReps * (limite - 1)
-									altoTotal = Math.ceil(cantidad / limite) * imagen.height + (Math.ceil(cantidad / limite) - 1) * sepReps
-									return {
-										formaRep: y.formaRep,
-										imagen: y.imagen,
-										cantidad,
-										limite,
-										altoTotal,
-										anchoTotal,
-										altoImagen: imagen.height,
-										anchoImagen: imagen.width
-									}
-								} else {
-									let horizontal = Number(regexFunctions(regex(y.horizontal, vars, vt)))
-									let vertical = Number(regexFunctions(regex(y.vertical, vars, vt)))
-									anchoTotal = horizontal * imagen.width + (horizontal - 1) * sepReps
-									altoTotal = vertical * imagen.height + (vertical - 1) * sepReps
-									return {
-										formaRep: y.formaRep,
-										imagen: y.imagen,
-										horizontal,
-										vertical,
-										altoTotal,
-										anchoTotal,
-										altoImagen: imagen.height,
-										anchoImagen: imagen.width
-									}
-								}
-							}) : []
-						}
-					}) : []
-				}
-		}
-	}
-
-	async function agregaImagen(img) {
-		let src = regexFunctions(regex(img.src, vars, vt))
-		src = src.replace(`https://desarrolloadaptatin.blob.core.windows.net/sistemaejercicios/ejercicios/Nivel-${nivelEjercicio}/`, '../../../../')
-		let imgCargada = await cargaImagen(src)
-		let height = Number(img.height)
-		let width = height * imgCargada.width / imgCargada.height
-		let id = src.split('/').pop().replace('.svg', '').replace('%20', '-')
-		defs.appendChild(crearElementoDeImagen(src, { id, height, width }))
-		return { id, src, height, width }
-	}
-
-	function crearElementoDeImagen(src, atributos) {
+    function crearElementoDeImagen(src, atributos) {
 		let element = document.createElementNS('http://www.w3.org/2000/svg', 'image')
 		element.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', src)
 		for (let p in atributos) {
-			element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
-				return '-' + m.toLowerCase()
-			}), atributos[p])
+            element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
+                return '-' + m.toLowerCase()
+            }), atributos[p])
 		}
 		return element
-	}
-
-	function crearReferenciaAElemento(id, atributos) {
-		let element = document.createElementNS('http://www.w3.org/2000/svg', 'use')
-		element.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `#${id}`)
-		for (let p in atributos) {
-			element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
-				return '-' + m.toLowerCase()
-			}), atributos[p])
-		}
-		return element
-	}
+    }
+    
+    function crearReferenciaAElemento(id, atributos) {
+        let element = document.createElementNS('http://www.w3.org/2000/svg', 'use')
+        element.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `#${id}`)
+        for (let p in atributos) {
+            element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
+                return '-' + m.toLowerCase()
+            }), atributos[p])
+        }
+        return element
+    }
 
 	function crearElemento(nombre, atributos) {
 		let element = document.createElementNS('http://www.w3.org/2000/svg', nombre)
 		for (let p in atributos) {
-			element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
-				return '-' + m.toLowerCase()
-			}), atributos[p])
+		  element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
+			return '-' + m.toLowerCase()
+		  }), atributos[p])
 		}
 		return element
 	}
@@ -4601,23 +4643,23 @@ async function formadorGrupos(config) {
 	function crearElementoDeTexto(atributos, texto) {
 		let element = document.createElementNS('http://www.w3.org/2000/svg', 'text')
 		for (let p in atributos) {
-			element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
-				return '-' + m.toLowerCase()
-			}), atributos[p])
+		  element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
+			return '-' + m.toLowerCase()
+		  }), atributos[p])
 		}
 		let textNode = document.createTextNode(texto)
 		element.appendChild(textNode)
 		return element
-	}
-
-	function crearElementoSymbol(id, width, height) {
-		let element = document.createElementNS('http://www.w3.org/2000/svg', 'symbol')
-		element.setAttributeNS(null, 'id', id)
-		element.setAttributeNS(null, 'width', width)
-		element.setAttributeNS(null, 'height', height)
-		element.setAttributeNS(null, 'viewBox', `0 0 ${width} ${height}`)
-		return element
-	}
+    }
+    
+    function crearElementoSymbol(id, width, height) {
+        let element = document.createElementNS('http://www.w3.org/2000/svg', 'symbol')
+        element.setAttributeNS(null,'id', id)
+        element.setAttributeNS(null,'width', width)
+        element.setAttributeNS(null,'height', height)
+        element.setAttributeNS(null,'viewBox', `0 0 ${width} ${height}`)
+        return element
+    }
 }
 
 async function sucesiones(config) {  
