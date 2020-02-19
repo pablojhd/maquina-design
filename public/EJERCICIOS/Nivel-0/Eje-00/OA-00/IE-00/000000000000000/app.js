@@ -22,7 +22,8 @@ const FUNCIONES = [
 			{ id: 'Tabla Secuencia', action: tablaSecuencia },
 			{ id: 'Diagrama Barra', action: diagramaBarra },
 			{ id:'Patrones', action: patrones },
-			{ id:'Tarjeta', action: tarjeta }
+			{ id:'Tarjeta', action: tarjeta },
+			{ id:'Balanza', action: balanza }
 		]
 	}, {
 		name: 'Numeración', tag: 'numeracion', fns: [
@@ -7277,6 +7278,481 @@ async function tarjeta(config){
         }
         return element
     }
+
+	function crearElementoDeTexto(atributos, texto) {
+		let element = document.createElementNS('http://www.w3.org/2000/svg', 'text')
+		for (let p in atributos) {
+			element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
+				return '-' + m.toLowerCase()
+			}), atributos[p])
+		}
+		let textNode = document.createTextNode(texto)
+		element.appendChild(textNode)
+		return element
+	}
+}
+
+async function balanza(config) {
+	const { container, params, variables, versions, vt } = config;
+	let {
+		altoSVG,
+		anchoSVG,
+		altoBalanza,
+		valorDerecho,
+		valorIzquierdo,
+		brazoDerecho,
+		brazoIzquierdo,
+		conBalanza,
+		imagenes,
+		anchoCuadro,
+		altoCuadro,
+		altoBolsa,
+		textoDerecho,
+		textoIzquierdo,
+		textoSuperiorIzquierdo,
+		textoSuperiorDerecho
+	} = params
+
+	let vars = vt ? variables : versions
+
+	container.setAttributeNS(null, 'height', altoSVG)
+	container.setAttributeNS(null, 'width', anchoSVG)
+	container.setAttributeNS(null, 'viewBox', `0 0 ${anchoSVG} ${altoSVG}`)
+
+	let defs = crearElemento('defs', {})
+	let styles = document.createElement('style')
+	styles.innerHTML = '@font-face{font-family:"Quicksand";src:url("../../../../fonts/Quicksand-Medium.ttf");}'
+	defs.appendChild(styles)
+	altoBolsa = Number(altoBolsa)
+	let imgSrcBolsa = `../../../../imagenes_front/bolsa/Bolsa.svg`
+	let imgBolsa = await cargaImagen(imgSrcBolsa)
+	let anchoBolsa = altoBolsa * imgBolsa.width / imgBolsa.height
+	defs.appendChild(crearElementoDeImagen(imgSrcBolsa, {
+		id: `${container.id}-bolsa`,
+		height: altoBolsa,
+		width: anchoBolsa
+	}))
+	container.appendChild(defs)
+	
+	altoSVG = Number(altoSVG)
+	anchoSVG = Number(anchoSVG)
+	altoBalanza = Number(altoBalanza)
+	anchoCuadro = Number(anchoCuadro)
+	altoCuadro = Number(altoCuadro)
+	textoDerecho = regexFunctions(regex(textoDerecho, vars, vt))
+	textoIzquierdo = regexFunctions(regex(textoIzquierdo, vars, vt))
+	textoSuperiorIzquierdo = regexFunctions(regex(textoSuperiorIzquierdo, vars, vt))
+	textoSuperiorDerecho = regexFunctions(regex(textoSuperiorDerecho, vars, vt))
+	conBalanza = conBalanza === 'si' ? true : false
+	valorDerecho = Number(regexFunctions(regex(valorDerecho, vars, vt)))
+	valorIzquierdo = Number(regexFunctions(regex(valorIzquierdo, vars, vt)))
+	imagenes = imagenes ? await Promise.all(imagenes.map(x => getImagen(x))) : []
+	brazoDerecho = brazoDerecho ? brazoDerecho.map(x => getOpcion(x)) : []
+	brazoIzquierdo = brazoIzquierdo ? brazoIzquierdo.map(x => getOpcion(x)) : []
+
+	let anchoTotalBrazoDerecho = brazoDerecho.reduce((total, rep) => total + rep.anchoTotal, 0)
+	let anchoTotalBrazoIzquierdo = brazoIzquierdo.reduce((total, rep) => total + rep.anchoTotal, 0)
+	
+	let altoMaximoBrazoIzquierdo = Math.max(...brazoIzquierdo.map(x => x.altoTotal))
+	let altoMaximoBrazoDerecho = Math.max(...brazoDerecho.map(x => x.altoTotal))
+	let estadoBalanza = valorIzquierdo > valorDerecho ? 'Pesada_Izquierda' : valorIzquierdo < valorDerecho ? 'Pesada_Derecha' : 'Equilibrada'
+
+	if(conBalanza) { 
+		let imgSrcBalanza = `../../../../imagenes_front/balanzas/Balanza_${estadoBalanza}.svg`
+		let imgBalanza = await cargaImagen(imgSrcBalanza)
+		let anchoBalanza = altoBalanza * imgBalanza.width / imgBalanza.height
+		let xBalanza = anchoSVG/2 - anchoBalanza/2
+		let yBalanza = altoSVG - altoBalanza
+		container.appendChild(crearElementoDeImagen(imgSrcBalanza, {
+			x: xBalanza,
+			y: yBalanza,
+			width: anchoBalanza,
+			height: altoBalanza
+		}))
+
+		brazoIzquierdo.length > 0 && creaSymbolDeBrazo(`${container.id}-braIzq`, brazoIzquierdo, anchoTotalBrazoIzquierdo, altoMaximoBrazoIzquierdo)
+		brazoDerecho.length > 0 && creaSymbolDeBrazo(`${container.id}-braDer`, brazoDerecho, anchoTotalBrazoDerecho, altoMaximoBrazoDerecho)
+
+		let anchoBrazoBalanza = anchoBalanza * 0.335
+
+		let xCentroBrazoIzquierdo = xBalanza + anchoBrazoBalanza / 2
+		let xCentroBrazoDerecho = xBalanza + anchoBalanza - anchoBrazoBalanza / 2
+		let yBrazoIzquierdo, yBrazoDerecho, yBrazos
+
+		switch(estadoBalanza) {
+			case 'Pesada_Izquierda':
+				yBrazoIzquierdo = altoSVG - altoBalanza * 0.60
+				yBrazoDerecho = yBalanza
+				container.appendChild(crearReferenciaAElemento(`${container.id}-braIzq`, {
+					x: xCentroBrazoIzquierdo-anchoTotalBrazoIzquierdo/2,
+					y: yBrazoIzquierdo-altoMaximoBrazoIzquierdo,
+					width: anchoTotalBrazoIzquierdo,
+					height: altoMaximoBrazoIzquierdo
+				}))
+				container.appendChild(crearReferenciaAElemento(`${container.id}-braDer`, {
+					x: xCentroBrazoDerecho-anchoTotalBrazoDerecho/2,
+					y: yBrazoDerecho-altoMaximoBrazoDerecho,
+					width: anchoTotalBrazoDerecho,
+					height: altoMaximoBrazoDerecho
+				}))
+				
+				break
+			case 'Pesada_Derecha':
+				yBrazoIzquierdo = yBalanza
+				yBrazoDerecho = altoSVG - altoBalanza * 0.60
+				container.appendChild(crearReferenciaAElemento(`${container.id}-braIzq`, {
+					x: xCentroBrazoIzquierdo-anchoTotalBrazoIzquierdo/2,
+					y: yBrazoIzquierdo-altoMaximoBrazoIzquierdo,
+					width: anchoTotalBrazoIzquierdo,
+					height: altoMaximoBrazoIzquierdo
+				}))
+				container.appendChild(crearReferenciaAElemento(`${container.id}-braDer`, {
+					x: xCentroBrazoDerecho-anchoTotalBrazoDerecho/2,
+					y: yBrazoDerecho-altoMaximoBrazoDerecho,
+					width: anchoTotalBrazoDerecho,
+					height: altoMaximoBrazoDerecho
+				}))
+				break
+			case 'Equilibrada':
+				yBrazos = altoSVG - altoBalanza * 0.7857
+				container.appendChild(crearReferenciaAElemento(`${container.id}-braIzq`, {
+					x: xCentroBrazoIzquierdo-anchoTotalBrazoIzquierdo/2,
+					y: yBrazos-altoMaximoBrazoIzquierdo,
+					width: anchoTotalBrazoIzquierdo,
+					height: altoMaximoBrazoIzquierdo
+				}))
+				container.appendChild(crearReferenciaAElemento(`${container.id}-braDer`, {
+					x: xCentroBrazoDerecho-anchoTotalBrazoDerecho/2,
+					y: yBrazos-altoMaximoBrazoDerecho,
+					width: anchoTotalBrazoDerecho,
+					height: altoMaximoBrazoDerecho
+				}))
+				break
+		}
+		if(textoDerecho) {
+			container.appendChild(crearElementoDeTexto({
+				x: xBalanza + anchoBalanza + 5,
+				y: estadoBalanza === 'Equilibrada' ? yBrazos : yBrazoDerecho,
+				fontSize: '20',
+				textAnchor: 'start',
+				fill: '#363026',
+				style: 'font-family:Quicksand;'
+			}, textoDerecho))
+		}
+		if(textoIzquierdo) {
+			container.appendChild(crearElementoDeTexto({
+				x: xBalanza - 5,
+				y: estadoBalanza === 'Equilibrada' ? yBrazos : yBrazoIzquierdo,
+				fontSize: '20',
+				textAnchor: 'end',
+				fill: '#363026',
+				style: 'font-family:Quicksand;'
+			}, textoIzquierdo))
+		}
+		if(textoSuperiorIzquierdo) {
+			container.appendChild(crearElementoDeTexto({
+				x: xCentroBrazoIzquierdo,
+				y: estadoBalanza === 'Equilibrada' ? yBrazos - altoMaximoBrazoIzquierdo - 5 : yBrazoIzquierdo - altoMaximoBrazoIzquierdo - 5,
+				fontSize: '20',
+				textAnchor: 'middle',
+				fill: '#363026',
+				style: 'font-family:Quicksand;'
+			}, textoSuperiorIzquierdo))
+		}
+		if(textoSuperiorDerecho) {
+			container.appendChild(crearElementoDeTexto({
+				x: xCentroBrazoDerecho,
+				y: estadoBalanza === 'Equilibrada' ? yBrazos - altoMaximoBrazoDerecho - 5 : yBrazoDerecho - altoMaximoBrazoDerecho - 5,
+				fontSize: '20',
+				textAnchor: 'middle',
+				fill: '#363026',
+				style: 'font-family:Quicksand;'
+			}, textoSuperiorDerecho))
+		}
+	} else {
+		let anchoTotalSinBalanza = anchoTotalBrazoDerecho + anchoTotalBrazoIzquierdo + 30 * (brazoDerecho.length + brazoIzquierdo.length - 1)
+		let xInicio = anchoSVG/2 - anchoTotalSinBalanza/2
+		let relaciones = [...brazoIzquierdo, { tipo: 'separador', anchoTotal: 0 } , ...brazoDerecho]
+		relaciones.forEach((opcion, indexOpcion) => {
+			switch(opcion.tipo) {
+				case 'bolsa repeticion':
+					container.appendChild(crearReferenciaAElemento(`${container.id}-bolsa`, {
+						x: xInicio,
+						y: altoSVG/2-altoBolsa/2
+					}))
+					repeticionIzqDer(container, opcion, xInicio+opcion.anchoTotal/2, altoSVG/2+opcion.altoTotal/2-opcion.separacionBrazo)
+					break
+				case 'bolsa texto':
+					container.appendChild(crearReferenciaAElemento(`${container.id}-bolsa`, {
+						x: xInicio,
+						y: altoSVG/2-altoBolsa/2
+					}))
+					container.appendChild(crearElementoDeTexto({
+						x: xInicio+opcion.anchoTotal/2,
+						y: altoSVG/2+opcion.altoTotal/2-opcion.separacionBrazo,
+						fontSize: opcion.alto,
+						textAnchor: 'middle',
+						fill: opcion.color,
+						style: 'font-family:Quicksand;'
+					}, opcion.texto))
+					break
+				case 'repeticion pictorico':
+					repeticionIzqDer(container, opcion, xInicio+opcion.anchoTotal/2, altoSVG/2+opcion.altoTotal/2)
+					break
+				case 'caja texto':
+					container.appendChild(crearElemento('rect', {
+						x: xInicio+1,
+						y: altoSVG/2 - altoCuadro/2,
+						width: anchoCuadro,
+						height: altoCuadro,
+						stroke: opcion.colorCaja,
+						strokeWidth: '2',
+						fill: 'none'
+					}))
+					container.appendChild(crearElementoDeTexto({
+						x: xInicio+opcion.anchoTotal/2-2,
+						y: altoSVG/2 + altoCuadro/2 - opcion.separacionBrazo ,
+						fontSize: opcion.alto,
+						textAnchor: 'middle',
+						fill: opcion.colorTexto,
+						style: 'font-family:Quicksand;'
+					}, opcion.texto))
+					break
+				default:
+					//no hace nada
+					break
+			}
+			if(opcion.tipo !== 'separador' && relaciones[indexOpcion+1]) {
+				if(relaciones[indexOpcion+1].tipo === 'separador') {
+					let simboloEquivalencia = estadoBalanza === 'Equilibrada' ? '=' : estadoBalanza === 'Pesada_Derecha' ? '<' : '>'
+					container.appendChild(crearElementoDeTexto({
+						x: xInicio + opcion.anchoTotal + 15,
+						y: altoSVG/2 + 10,
+						fontSize: '30',
+						textAnchor: 'middle',
+						fill: '#1F8EBE',
+						style: 'font-family:Quicksand;'
+					}, simboloEquivalencia))
+				} else {
+					container.appendChild(crearElementoDeTexto({
+						x: xInicio + opcion.anchoTotal + 15,
+						y: altoSVG/2 + 10,
+						fontSize: '30',
+						textAnchor: 'middle',
+						fill: '#1F8EBE',
+						style: 'font-family:Quicksand;'
+					}, '+'))
+				}
+				xInicio += opcion.anchoTotal + 30
+			}
+		})
+		if(textoSuperiorIzquierdo) {
+			container.appendChild(crearElementoDeTexto({
+				x: anchoSVG/2 - anchoTotalSinBalanza/2 + (anchoTotalBrazoIzquierdo + 30 * (brazoIzquierdo.length-1))/2,
+				y: altoSVG/2 - altoMaximoBrazoIzquierdo/2 - 5,
+				fontSize: '20',
+				textAnchor: 'middle',
+				fill: '#363026',
+				style: 'font-family:Quicksand;'
+			}, textoSuperiorIzquierdo))
+		}
+		if(textoSuperiorDerecho) {
+			container.appendChild(crearElementoDeTexto({
+				x: anchoSVG/2 - anchoTotalSinBalanza/2 + (anchoTotalBrazoIzquierdo + 30 * (brazoIzquierdo.length-1)) + (anchoTotalBrazoDerecho + 30 * (brazoDerecho.length-1))/2 + 30,
+				y: altoSVG/2 - altoMaximoBrazoIzquierdo/2 - 5,
+				fontSize: '20',
+				textAnchor: 'middle',
+				fill: '#363026',
+				style: 'font-family:Quicksand;'
+			}, textoSuperiorDerecho))
+		}
+	}
+
+	function creaSymbolDeBrazo(id, brazo, anchoBrazo, altoBrazo) {
+		let symbol = document.createElementNS('http://www.w3.org/2000/svg', 'symbol')
+		symbol.setAttributeNS(null,'id', id)
+		symbol.setAttributeNS(null,'width', anchoBrazo)
+		symbol.setAttributeNS(null,'height', altoBrazo)
+		symbol.setAttributeNS(null,'viewBox', `0 0 ${anchoBrazo} ${altoBrazo}`)
+		let xInicio = 0
+		brazo.forEach(opcion => {
+			switch(opcion.tipo) {
+				case 'bolsa repeticion':
+					symbol.appendChild(crearReferenciaAElemento(`${container.id}-bolsa`, {
+						x: xInicio,
+						y: altoBrazo - altoBolsa
+					}))
+					repeticionIzqDer(symbol, opcion, xInicio+opcion.anchoTotal/2, altoBrazo-opcion.separacionBrazo)
+					break
+				case 'bolsa texto':
+					symbol.appendChild(crearReferenciaAElemento(`${container.id}-bolsa`, {
+						x: xInicio,
+						y: altoBrazo - altoBolsa
+					}))
+					symbol.appendChild(crearElementoDeTexto({
+						x: xInicio+opcion.anchoTotal/2,
+						y: altoBrazo-opcion.separacionBrazo,
+						fontSize: opcion.alto,
+						textAnchor: 'middle',
+						fill: opcion.color,
+						style: 'font-family:Quicksand;'
+					}, opcion.texto))
+					break
+				case 'repeticion pictorico':
+					repeticionIzqDer(symbol, opcion, xInicio+opcion.anchoTotal/2, altoBrazo)
+					break
+				case 'caja texto':
+					symbol.appendChild(crearElemento('rect', {
+						x: xInicio+1,
+						y: altoBrazo - altoCuadro,
+						width: anchoCuadro,
+						height: altoCuadro,
+						stroke: opcion.colorCaja,
+						strokeWidth: '2',
+						fill: 'none'
+					}))
+					symbol.appendChild(crearElementoDeTexto({
+						x: xInicio+opcion.anchoTotal/2-2,
+						y: altoBrazo-opcion.separacionBrazo,
+						fontSize: opcion.alto,
+						textAnchor: 'middle',
+						fill: opcion.colorTexto,
+						style: 'font-family:Quicksand;'
+					}, opcion.texto))
+					break
+			}
+			xInicio += opcion.anchoTotal
+		})
+		defs.appendChild(symbol)
+	}
+
+	function repeticionIzqDer(grupo, repeticion, centroHorizontal, inicioRepeticionVertical) {
+		const { tipo, anchoTotal, anchoRepeticion, limiteHorizontal, imagen, cantidad, separacionX, separacionY } = repeticion
+		let anchoTotalRep = tipo === 'repeticion pictorico' ? anchoTotal : anchoRepeticion
+		for(let i = 0, acum = 0; i < cantidad; i++) {
+			let xRepeticion = centroHorizontal - anchoTotalRep/2 + (imagen.ancho+separacionX) * acum
+			let yRepeticion = inicioRepeticionVertical - imagen.alto - (imagen.alto+separacionY) * Math.floor(i/limiteHorizontal)
+			grupo.appendChild(crearReferenciaAElemento(imagen.id, {
+				x: xRepeticion,
+				y: yRepeticion
+			}))
+			if(acum === limiteHorizontal-1) {
+				acum = 0
+			} else {
+				acum++
+			}
+		}
+	}	
+	
+	function getOpcion(opcion) {
+		let cantidad,limiteHorizontal,imagen
+		switch(opcion.tipo) {
+			case 'bolsa repeticion':
+				cantidad = Number(regexFunctions(regex(opcion.cantidad, vars, vt)))
+				limiteHorizontal = Number(regexFunctions(regex(opcion.limiteHorizontal, vars, vt)))
+				imagen = opcion.imagen !== 'Seleccione' ? imagenes.find(x => x.id === `${container.id}-${opcion.imagen}`) : null
+				
+				return {
+					tipo: opcion.tipo,
+					imagen,
+					cantidad,
+					limiteHorizontal,
+					separacionX: Number(opcion.separacionX),
+					separacionY: Number(opcion.separacionY),
+					separacionBrazo: Number(opcion.separacionBrazo),
+					anchoRepeticion: cantidad < limiteHorizontal ?
+						(imagen.ancho + Number(opcion.separacionX)) * cantidad - Number(opcion.separacionX) : 
+						(imagen.ancho + Number(opcion.separacionX)) * limiteHorizontal - Number(opcion.separacionX),
+					anchoTotal: anchoBolsa,
+					altoTotal: altoBolsa
+				}
+			case 'bolsa texto':
+				return {
+					tipo: opcion.tipo,
+					texto: regexFunctions(regex(opcion.texto, vars, vt)),
+					alto: Number(opcion.alto),
+					color: '#363026',
+					separacionBrazo: Number(opcion.separacionBrazo),
+					anchoTotal: anchoBolsa,
+					altoTotal: altoBolsa
+				}
+			case 'repeticion pictorico':
+				cantidad = Number(regexFunctions(regex(opcion.cantidad, vars, vt)))
+				limiteHorizontal = Number(regexFunctions(regex(opcion.limiteHorizontal, vars, vt)))
+				imagen = opcion.imagen !== 'Seleccione' ? imagenes.find(x => x.id === `${container.id}-${opcion.imagen}`) : null
+				
+				return {
+					tipo: opcion.tipo,
+					imagen,
+					cantidad,
+					limiteHorizontal,
+					separacionX: Number(opcion.separacionX),
+					separacionY: Number(opcion.separacionY),
+					anchoTotal: cantidad < limiteHorizontal ?
+						(imagen.ancho + Number(opcion.separacionX)) * cantidad - Number(opcion.separacionX) : 
+						(imagen.ancho + Number(opcion.separacionX)) * limiteHorizontal - Number(opcion.separacionX),
+					altoTotal: (imagen.alto + Number(opcion.separacionY)) * Math.ceil(cantidad/limiteHorizontal) - Number(opcion.separacionY)
+				}
+			case 'caja texto':
+				return {
+					tipo: opcion.tipo,
+					texto: regexFunctions(regex(opcion.texto, vars, vt)),
+					alto: Number(opcion.alto),
+					colorTexto: '#363026',
+					separacionBrazo: Number(opcion.separacionBrazo),
+					colorCaja: '#1F8EBE',
+					anchoTotal: anchoCuadro+4,
+					altoTotal: altoCuadro
+				}
+		}
+	}
+	
+	async function getImagen(imagen) {
+		let src =  convertirARutaRelativa(regexFunctions(regex(imagen.src, vars, vt)))
+        let imagenCargada = await cargaImagen(src)
+        let alto = Number(imagen.alto)
+        let ancho = alto * imagenCargada.width / imagenCargada.height
+        let id = container.id + '-' + src.split('/').pop().replace('.svg','').replace(/%20/g,'-')
+		defs.appendChild(crearElementoDeImagen(src,{id,height:alto,width:ancho}))
+		return {
+			id, 
+            src, 
+            alto, 
+            ancho
+		}
+	}
+
+	function crearElementoDeImagen(src, atributos) {
+		let element = document.createElementNS('http://www.w3.org/2000/svg', 'image')
+		element.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', src)
+		for (let p in atributos) {
+			element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
+				return '-' + m.toLowerCase()
+			}), atributos[p])
+		}
+		return element
+	}
+
+	function crearReferenciaAElemento(id, atributos) {
+		let element = document.createElementNS('http://www.w3.org/2000/svg', 'use')
+		element.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `#${id}`)
+		for (let p in atributos) {
+			element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
+				return '-' + m.toLowerCase()
+			}), atributos[p])
+		}
+		return element
+	}
+
+	function crearElemento(nombre, atributos) {
+		let element = document.createElementNS('http://www.w3.org/2000/svg', nombre)
+		for (let p in atributos) {
+			element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
+				return '-' + m.toLowerCase()
+			}), atributos[p])
+		}
+		return element
+	}
 
 	function crearElementoDeTexto(atributos, texto) {
 		let element = document.createElementNS('http://www.w3.org/2000/svg', 'text')
