@@ -21,9 +21,10 @@ const FUNCIONES = [
 			{ id: 'Sucesiones', action: sucesiones },
 			{ id: 'Tabla Secuencia', action: tablaSecuencia },
 			{ id: 'Diagrama Barra', action: diagramaBarra },
-			{ id:'Patrones', action: patrones },
-			{ id:'Tarjeta', action: tarjeta },
-			{ id:'Balanza', action: balanza }
+			{ id: 'Patrones', action: patrones },
+			{ id: 'Tarjeta', action: tarjeta },
+			{ id: 'Balanza', action: balanza },
+			{ id: 'Patrón de Segmentos', action: patronSegmentos }
 		]
 	}, {
 		name: 'Numeración', tag: 'numeracion', fns: [
@@ -7763,6 +7764,225 @@ async function balanza(config) {
 		}
 		let textNode = document.createTextNode(texto)
 		element.appendChild(textNode)
+		return element
+	}
+}
+
+function patronSegmentos(config) {
+	const { container, params, variables, versions, vt } = config;
+	//container.innerHTML = ''
+	//container.style.border = '1px solid #000'
+	let {
+		altoSVG,
+		anchoSVG,
+		esFosforo,
+		largo,
+		color,
+		grosor,
+		dimensionCabeza,
+		tipoPatron,
+		patron,
+		palitos,
+		repeticiones,
+		separacionPalitos,
+		separacionFiguras,
+		anguloDiagonal
+	} = params
+	let vars = vt ? variables : versions
+	//defs para imagenes y fuentes
+	let defs = crearElemento('defs', {})
+	let styles = document.createElement('style')
+	styles.innerHTML = `@font-face{font-family:"Quicksand";src:url("../../../../fonts/Quicksand-Medium.ttf");}.fosforo{stroke:${color};stroke-width:${grosor};}`
+	defs.appendChild(styles)
+	container.appendChild(defs)
+	//trata de variables
+	altoSVG = Number(altoSVG)
+	anchoSVG = Number(anchoSVG)
+	patron = regexFunctions(regex(patron, vars, vt)).split(',')
+	largo = Number(largo)
+	palitos = Number(palitos)
+	repeticiones = Number(repeticiones)
+	anguloDiagonal = Number(anguloDiagonal)
+	separacionFiguras = Number(separacionFiguras)
+	esFosforo = esFosforo === 'si' ? true : false
+	let radioX = Number(dimensionCabeza.split(',')[0])
+	let radioY = Number(dimensionCabeza.split(',')[1])
+	let sep = Number(separacionPalitos)
+	let palitosArr = []
+	let g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+	//define tamaño del canvas
+	container.setAttribute('height', altoSVG)
+	container.setAttribute('width', anchoSVG)
+	container.setAttribute('viewBox', `0 0 ${anchoSVG} ${altoSVG}`)
+
+	if(palitos) {
+		dibujaPatronPersonalizado(palitos)
+	} else {
+		let cantPalitos = patron.length * repeticiones
+		dibujaPatronPersonalizado(cantPalitos)
+	}
+
+	function dibujaPatronPersonalizado(palitos) {
+		let lastX = 0, lastY = 0, sepX = 0, sepY = 0
+		for(let i=0,newX,newY; i < palitos; i++) {
+			let indicePatron = i % patron.length
+			switch(patron[indicePatron]) {
+				case 'R':
+					lastX += sep
+					newX = lastX + largo
+					newY = lastY
+					sepX = sep
+					sepY = 0
+					break
+				case 'L':
+					lastX -= sep
+					newX = lastX - largo
+					newY = lastY
+					sepX = -sep
+					sepY = 0
+					break
+				case 'U':
+					lastY -= sep 
+					newX = lastX
+					newY = lastY - largo
+					sepX = 0
+					sepY = -sep
+					break
+				case 'D':
+					lastY += sep
+					newX = lastX
+					newY = lastY + largo
+					sepX = 0
+					sepY = sep
+					break
+				case 'RU':
+					lastX += sep * Math.cos(anguloDiagonal * Math.PI / 180)
+					lastY -= sep * Math.sin(anguloDiagonal * Math.PI / 180)
+					newX = lastX + largo * Math.cos(anguloDiagonal * Math.PI / 180)
+					newY = lastY - largo * Math.sin(anguloDiagonal * Math.PI / 180)
+					sepX = sep * Math.cos(anguloDiagonal * Math.PI / 180)
+					sepY = -sep * Math.sin(anguloDiagonal * Math.PI / 180)
+					break
+				case 'RD':
+					lastX += sep * Math.cos(anguloDiagonal * Math.PI / 180)
+					lastY += sep * Math.sin(anguloDiagonal * Math.PI / 180)
+					newX = lastX + largo * Math.cos(anguloDiagonal * Math.PI / 180)
+					newY = lastY + largo * Math.sin(anguloDiagonal * Math.PI / 180)
+					sepX = sep * Math.cos(anguloDiagonal * Math.PI / 180)
+					sepY = sep * Math.sin(anguloDiagonal * Math.PI / 180)
+					break
+				case 'LU':
+					lastX -= sep * Math.cos(anguloDiagonal * Math.PI / 180)
+					lastY -= sep * Math.sin(anguloDiagonal * Math.PI / 180)
+					newX = lastX - largo * Math.cos(anguloDiagonal * Math.PI / 180)
+					newY = lastY - largo * Math.sin(anguloDiagonal * Math.PI / 180)
+					sepX = -sep * Math.cos(anguloDiagonal * Math.PI / 180)
+					sepY = -sep * Math.sin(anguloDiagonal * Math.PI / 180)
+					break
+				case 'LD':
+					lastX -= sep * Math.cos(anguloDiagonal * Math.PI / 180)
+					lastY += sep * Math.sin(anguloDiagonal * Math.PI / 180)
+					newX = lastX - largo * Math.cos(anguloDiagonal * Math.PI / 180)
+					newY = lastY + largo * Math.sin(anguloDiagonal * Math.PI / 180)
+					sepX = -sep * Math.cos(anguloDiagonal * Math.PI / 180)
+					sepY = sep * Math.sin(anguloDiagonal * Math.PI / 180)
+					break
+				case 'MR':
+					lastX += largo + sep*2
+					break
+				case 'ML':
+					lastX -= largo + sep*2
+					break
+				case 'MU':
+					lastY -= largo + sep*2
+					break
+				case 'MD':
+					lastY += largo + sep*2
+					break
+				case 'MRU':
+					lastX += (largo + sep*2) * Math.cos(anguloDiagonal * Math.PI / 180)
+					lastY -= (largo + sep*2) * Math.sin(anguloDiagonal * Math.PI / 180)
+					break
+				case 'MRD':
+					lastX += (largo + sep*2) * Math.cos(anguloDiagonal * Math.PI / 180)
+					lastY += (largo + sep*2) * Math.sin(anguloDiagonal * Math.PI / 180)
+					break
+				case 'MLU':
+					lastX -= (largo + sep*2) * Math.cos(anguloDiagonal * Math.PI / 180)
+					lastY -= (largo + sep*2) * Math.sin(anguloDiagonal * Math.PI / 180)
+					break
+				case 'MLD':
+					lastX -= (largo + sep*2) * Math.cos(anguloDiagonal * Math.PI / 180)
+					lastY += (largo + sep*2) * Math.sin(anguloDiagonal * Math.PI / 180)
+					break
+				default:
+					break
+			}
+			if(patron[indicePatron].startsWith('M')) {
+				palitos++
+				continue
+			}
+			dibujaPalito(`${container.id}-palito-${i+1}`,lastX,lastY,newX,newY)
+			esFosforo && dibujaCabezaFosforo(lastX,lastY,newX,newY)
+			palitosArr.push({
+				id: `${container.id}-palito-${i+1}`,
+				x1: lastX,
+				y1: lastY,
+				x2: newX,
+				y2: newY
+			})
+			if(tipoPatron === 'triangulo' && (indicePatron+1) === patron.length) {
+				lastX = newX + separacionFiguras + largo
+				lastY = lastY
+			} else if (tipoPatron === 'cuadrado separado' && (indicePatron+1) === patron.length) {
+				lastX = newX + separacionFiguras + largo
+				lastY = lastY
+			} else {
+				lastX = newX + sepX
+				lastY = newY + sepY
+			}
+		}
+		let maxX = Math.max(...palitosArr.map(a => a.x2))
+		let minX = Math.min(...palitosArr.map(a => a.x1))
+		let maxY = Math.max(...palitosArr.map(a => a.y2))
+		let minY = Math.min(...palitosArr.map(a => a.y1))
+		g.setAttributeNS(null, 'transform', `translate(${anchoSVG/2-(maxX-minX)/2+Math.abs(minX)},${altoSVG/2-(maxY-minY)/2+Math.abs(minY)})`)
+		container.appendChild(g)
+	}
+
+	function dibujaPalito(id, x1, y1, x2, y2) {
+		g.appendChild(crearElemento('line',{id,x1,y1,x2,y2,class:'fosforo'}))
+	}
+
+	function dibujaCabezaFosforo(x1, y1, x2, y2) {
+		let angulo
+		if(x1 !== x2 && y1 === y2) { // horizontalmente
+			angulo = 0
+		} else if(x1 === x2 && y1 !== y2) { // vertical
+			angulo = 90
+		} else if((x1 > x2 && y1 > y2) || (x1 < x2 && y1 < y2)) { // pendiente positiva
+			angulo = anguloDiagonal
+		} else if(x1 !== x2 && y1 !== y2) { // pendiente negativa
+			angulo = -anguloDiagonal
+		}
+		g.appendChild(crearElemento('ellipse', {
+			cx: x2,
+			cy: y2,
+			rx: radioX,
+			ry: radioY,
+			transform: `rotate(${angulo} ${x2} ${y2})`,
+			fill: 'red',
+			stroke: 'none'
+		}))
+	}
+
+	function crearElemento(nombre, atributos) {
+		let element = document.createElementNS('http://www.w3.org/2000/svg', nombre)
+		for (let p in atributos) {
+			element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
+				return '-' + m.toLowerCase()
+			}), atributos[p])
+		}
 		return element
 	}
 }
