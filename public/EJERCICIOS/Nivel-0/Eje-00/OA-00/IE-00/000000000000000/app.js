@@ -6803,7 +6803,7 @@ async function patrones(config) {
 				idImagen,
 				altoImagen: termino.imagen !== 'Seleccione' ? imagen.alto : 0,
 				anchoImagen: termino.imagen !== 'Seleccione' ? imagen.ancho : 0,
-				rotacion: termino.rotacion,
+				rotacion: regexFunctions(regex(termino.rotacion, vars, vt)),
 				texto: termino.texto ? regexFunctions(regex(termino.texto, vars, vt)) : null,
 				altoTexto: Number(termino.altoTexto),
 				yTexto: Number(termino.yTexto)
