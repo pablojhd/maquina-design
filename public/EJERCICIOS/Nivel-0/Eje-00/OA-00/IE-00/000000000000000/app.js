@@ -7808,7 +7808,7 @@ function patronSegmentos(config) {
 	//trata de variables
 	altoSVG = Number(altoSVG)
 	anchoSVG = Number(anchoSVG)
-	patron = regexFunctions(regex(patron, vars, vt)).split('\n')
+	patron = regexFunctions(regex(patron, vars, vt)).split(';')
 	largo = Number(largo)
 	palitos = Number(palitos)
 	repeticiones = Number(repeticiones)
