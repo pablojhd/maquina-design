@@ -7786,25 +7786,36 @@ function patronSegmentos(config) {
 		repeticiones,
 		separacionPalitos,
 		separacionFiguras,
-		anguloDiagonal
+		anguloDiagonal,
+		numerosPalitos
 	} = params
 	let vars = vt ? variables : versions
 	//defs para imagenes y fuentes
 	let defs = crearElemento('defs', {})
 	let styles = document.createElement('style')
-	styles.innerHTML = `@font-face{font-family:"Quicksand";src:url("../../../../fonts/Quicksand-Medium.ttf");}.fosforo{stroke:${color};stroke-width:${grosor};}`
+	styles.innerHTML = `
+		@font-face{
+			font-family:"Quicksand";
+			src:url("https://desarrolloadaptatin.blob.core.windows.net/sistemaejercicios/ejercicios/Nivel-3/fonts/Quicksand-Medium.ttf");
+		}
+		.fosforo {
+			stroke:${color};
+			stroke-width:${grosor};
+		}
+	`
 	defs.appendChild(styles)
 	container.appendChild(defs)
 	//trata de variables
 	altoSVG = Number(altoSVG)
 	anchoSVG = Number(anchoSVG)
-	patron = regexFunctions(regex(patron, vars, vt)).split(',')
+	patron = regexFunctions(regex(patron, vars, vt)).split('\n')
 	largo = Number(largo)
 	palitos = Number(palitos)
 	repeticiones = Number(repeticiones)
 	anguloDiagonal = Number(anguloDiagonal)
 	separacionFiguras = Number(separacionFiguras)
 	esFosforo = esFosforo === 'si' ? true : false
+	numerosPalitos = regexFunctions(regex(numerosPalitos, vars, vt))
 	let radioX = Number(dimensionCabeza.split(',')[0])
 	let radioY = Number(dimensionCabeza.split(',')[1])
 	let sep = Number(separacionPalitos)
@@ -7824,7 +7835,7 @@ function patronSegmentos(config) {
 
 	function dibujaPatronPersonalizado(palitos) {
 		let lastX = 0, lastY = 0, sepX = 0, sepY = 0
-		for(let i=0,newX,newY; i < palitos; i++) {
+		for(let i=0, newX, newY, centroX, centroY; i < palitos; i++) {
 			let indicePatron = i % patron.length
 			switch(patron[indicePatron]) {
 				case 'R':
@@ -7833,6 +7844,8 @@ function patronSegmentos(config) {
 					newY = lastY
 					sepX = sep
 					sepY = 0
+					centroX = lastX + largo/2
+					centroY = lastY
 					break
 				case 'L':
 					lastX -= sep
@@ -7840,6 +7853,8 @@ function patronSegmentos(config) {
 					newY = lastY
 					sepX = -sep
 					sepY = 0
+					centroX = lastX - largo/2
+					centroY = lastY
 					break
 				case 'U':
 					lastY -= sep 
@@ -7847,6 +7862,8 @@ function patronSegmentos(config) {
 					newY = lastY - largo
 					sepX = 0
 					sepY = -sep
+					centroX = lastX
+					centroY = lastY - largo/2
 					break
 				case 'D':
 					lastY += sep
@@ -7854,6 +7871,8 @@ function patronSegmentos(config) {
 					newY = lastY + largo
 					sepX = 0
 					sepY = sep
+					centroX = lastX
+					centroY = lastY + largo/2
 					break
 				case 'RU':
 					lastX += sep * Math.cos(anguloDiagonal * Math.PI / 180)
@@ -7862,6 +7881,8 @@ function patronSegmentos(config) {
 					newY = lastY - largo * Math.sin(anguloDiagonal * Math.PI / 180)
 					sepX = sep * Math.cos(anguloDiagonal * Math.PI / 180)
 					sepY = -sep * Math.sin(anguloDiagonal * Math.PI / 180)
+					centroX = lastX + largo/2 * Math.cos(anguloDiagonal * Math.PI / 180)
+					centroY = lastY - largo/2 * Math.sin(anguloDiagonal * Math.PI / 180)
 					break
 				case 'RD':
 					lastX += sep * Math.cos(anguloDiagonal * Math.PI / 180)
@@ -7870,6 +7891,8 @@ function patronSegmentos(config) {
 					newY = lastY + largo * Math.sin(anguloDiagonal * Math.PI / 180)
 					sepX = sep * Math.cos(anguloDiagonal * Math.PI / 180)
 					sepY = sep * Math.sin(anguloDiagonal * Math.PI / 180)
+					centroX = lastX + largo/2 * Math.cos(anguloDiagonal * Math.PI / 180)
+					centroY = lastY + largo/2 * Math.sin(anguloDiagonal * Math.PI / 180)
 					break
 				case 'LU':
 					lastX -= sep * Math.cos(anguloDiagonal * Math.PI / 180)
@@ -7878,6 +7901,8 @@ function patronSegmentos(config) {
 					newY = lastY - largo * Math.sin(anguloDiagonal * Math.PI / 180)
 					sepX = -sep * Math.cos(anguloDiagonal * Math.PI / 180)
 					sepY = -sep * Math.sin(anguloDiagonal * Math.PI / 180)
+					centroX = lastX - largo/2 * Math.cos(anguloDiagonal * Math.PI / 180)
+					centroY = lastY - largo/2 * Math.sin(anguloDiagonal * Math.PI / 180)
 					break
 				case 'LD':
 					lastX -= sep * Math.cos(anguloDiagonal * Math.PI / 180)
@@ -7886,6 +7911,8 @@ function patronSegmentos(config) {
 					newY = lastY + largo * Math.sin(anguloDiagonal * Math.PI / 180)
 					sepX = -sep * Math.cos(anguloDiagonal * Math.PI / 180)
 					sepY = sep * Math.sin(anguloDiagonal * Math.PI / 180)
+					centroX = lastX - largo/2 * Math.cos(anguloDiagonal * Math.PI / 180)
+					centroY = lastY + largo/2 * Math.sin(anguloDiagonal * Math.PI / 180)
 					break
 				case 'MR':
 					lastX += largo + sep*2
@@ -7916,6 +7943,19 @@ function patronSegmentos(config) {
 					lastY += (largo + sep*2) * Math.sin(anguloDiagonal * Math.PI / 180)
 					break
 				default:
+					if(patron[indicePatron].startsWith('T')) {
+						let parametros = patron[indicePatron].split(',')
+						let largoVector = parametros[1] ? Number(parametros[1]) : largo
+						let anguloVector = parametros[2] ? parametros[2] : anguloDiagonal
+						lastX += sep * Math.cos(anguloVector * Math.PI / 180)
+						lastY += sep * Math.sin(anguloVector * Math.PI / 180)
+						newX = lastX + largoVector * Math.cos(anguloVector * Math.PI / 180)
+						newY = lastY + largoVector * Math.sin(anguloVector * Math.PI / 180)
+						sepX = sep * Math.cos(anguloVector * Math.PI / 180)
+						sepY = sep * Math.sin(anguloVector * Math.PI / 180)
+						centroX = lastX + largoVector/2 * Math.cos(anguloVector * Math.PI / 180)
+						centroY = lastY + largoVector/2 * Math.sin(anguloVector * Math.PI / 180)
+					}
 					break
 			}
 			if(patron[indicePatron].startsWith('M')) {
@@ -7924,6 +7964,7 @@ function patronSegmentos(config) {
 			}
 			dibujaPalito(`${container.id}-palito-${i+1}`,lastX,lastY,newX,newY)
 			esFosforo && dibujaCabezaFosforo(lastX,lastY,newX,newY)
+			numerosPalitos === 'todos' && dibujaNumeroPalito(centroX, centroY, i+1)
 			palitosArr.push({
 				id: `${container.id}-palito-${i+1}`,
 				x1: lastX,
@@ -7946,7 +7987,7 @@ function patronSegmentos(config) {
 		let minX = Math.min(...palitosArr.map(a => a.x1))
 		let maxY = Math.max(...palitosArr.map(a => a.y2))
 		let minY = Math.min(...palitosArr.map(a => a.y1))
-		g.setAttributeNS(null, 'transform', `translate(${anchoSVG/2-(maxX-minX)/2+Math.abs(minX)},${altoSVG/2-(maxY-minY)/2+Math.abs(minY)})`)
+		g.setAttributeNS(null, 'transform', `translate(${anchoSVG/2-(maxX-minX)/2-minX},${altoSVG/2-(maxY-minY)/2-minY})`)
 		container.appendChild(g)
 	}
 
@@ -7971,9 +8012,50 @@ function patronSegmentos(config) {
 			rx: radioX,
 			ry: radioY,
 			transform: `rotate(${angulo} ${x2} ${y2})`,
-			fill: 'red',
+			fill: '#C51611',
 			stroke: 'none'
 		}))
+	}
+
+	function dibujaNumeroPalito(x, y, numero) {
+		/*g.appendChild(crearElemento('circle', {
+			cx: x,
+			cy: y,
+			r: 8,
+			stroke: 1,
+			fill: '#1F8EBE',
+			stroke: '#1F8EBE'
+		}))*/
+		g.appendChild(crearElementoDeTexto({
+			x: x,
+			y: y+8,
+			fontSize: '20',
+			textAnchor: 'middle',
+			fill: '#363026',
+			style: 'font-family:Quicksand;'
+		}, numero))
+	}
+
+	function crearElementoDeImagen(src, atributos) {
+		let element = document.createElementNS('http://www.w3.org/2000/svg', 'image')
+		element.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', src)
+		for (let p in atributos) {
+			element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
+				return '-' + m.toLowerCase()
+			}), atributos[p])
+		}
+		return element
+	}
+
+	function crearReferenciaAElemento(id, atributos) {
+		let element = document.createElementNS('http://www.w3.org/2000/svg', 'use')
+		element.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `#${id}`)
+		for (let p in atributos) {
+			element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
+				return '-' + m.toLowerCase()
+			}), atributos[p])
+		}
+		return element
 	}
 
 	function crearElemento(nombre, atributos) {
@@ -7983,6 +8065,18 @@ function patronSegmentos(config) {
 				return '-' + m.toLowerCase()
 			}), atributos[p])
 		}
+		return element
+	}
+
+	function crearElementoDeTexto(atributos, texto) {
+		let element = document.createElementNS('http://www.w3.org/2000/svg', 'text')
+		for (let p in atributos) {
+			element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
+				return '-' + m.toLowerCase()
+			}), atributos[p])
+		}
+		let textNode = document.createTextNode(texto)
+		element.appendChild(textNode)
 		return element
 	}
 }
