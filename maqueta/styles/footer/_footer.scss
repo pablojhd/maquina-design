@@ -41,16 +41,11 @@ footer {
     grid-gap: 8px 0px;
     position: static;
   }
-
-  //   footer div.row {
-  //     height: $height-footer;
-  //     min-height: $height-footer;
-  //   }
 }
 
-@include media-breakpoint-up(sm) {
-  //   footer div.row {
-  //     height: $height-footer-md-up;
-  //     min-height: $height-footer-md-up;
-  //   }
+@media (min-width: 576px){
+  footer {
+    padding-left: 12%;
+    padding-right: 12%;
+  }
 }
