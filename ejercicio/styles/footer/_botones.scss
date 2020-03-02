@@ -9,6 +9,7 @@
   border-left: 1px solid;
   border-bottom: 4px solid;
   border-radius: 16px;
+  outline: none;
 }
 
 .boton:not(:disabled) {
@@ -35,8 +36,7 @@
 }
 
 #btnConsulta:hover {
-  border-color: #129cd5;
-  background-color: #1ab5e9;
+  background-color: #36c1f0;
 }
 
 #btnConsulta:disabled {
@@ -54,7 +54,7 @@
 }
 
 #btnResponder:hover {
-  background-color: #1ab5e9;
+  background-color: #36c1f0;
 }
 
 #btnResponder:disabled {
@@ -107,7 +107,7 @@
   button:not(:disabled).boton-icon:before {
     position: absolute;
     height: 100%;
-    line-height: 3;
+    line-height: 2.5;
     font-size: 180%;
     -moz-transition: all 0.3s;
     transition: all 1s;
@@ -135,7 +135,7 @@
 
   button:not(:disabled).icon-consulta:before {
     content: url("../imagenes_front/botones_ejercicios/open-book.svg");
-    width: 42px;
+    width: 36px;
     margin-left: auto;
     margin-right: auto;
     left: 0;
