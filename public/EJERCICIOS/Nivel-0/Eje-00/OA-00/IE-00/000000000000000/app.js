@@ -7787,7 +7787,7 @@ function patronSegmentos(config) {
 		separacionPalitos,
 		separacionFiguras,
 		anguloDiagonal,
-		numerosPalitos
+		textos
 	} = params
 	let vars = vt ? variables : versions
 	//defs para imagenes y fuentes
@@ -7815,7 +7815,6 @@ function patronSegmentos(config) {
 	anguloDiagonal = Number(anguloDiagonal)
 	separacionFiguras = Number(separacionFiguras)
 	esFosforo = esFosforo === 'si' ? true : false
-	numerosPalitos = regexFunctions(regex(numerosPalitos, vars, vt))
 	let radioX = Number(dimensionCabeza.split(',')[0])
 	let radioY = Number(dimensionCabeza.split(',')[1])
 	let sep = Number(separacionPalitos)
@@ -7837,125 +7836,129 @@ function patronSegmentos(config) {
 		let lastX = 0, lastY = 0, sepX = 0, sepY = 0
 		for(let i=0, newX, newY, centroX, centroY; i < palitos; i++) {
 			let indicePatron = i % patron.length
-			switch(patron[indicePatron]) {
+			let [ movimiento, largoVector, anguloVector, textoVector, movTextoX, movTextoY, alineacionTexto ] = patron[indicePatron].split(',')
+			largoVector = largoVector ? Number(largoVector) : largo
+			anguloVector = anguloVector ? Number(anguloVector) : anguloDiagonal
+			movTextoX = movTextoX ? Number(movTextoX) : 0
+			movTextoY = movTextoY ? Number(movTextoY) : 0
+			alineacionTexto = alineacionTexto ? alineacionTexto : 'middle'
+			switch(movimiento) {
 				case 'R':
 					lastX += sep
-					newX = lastX + largo
+					newX = lastX + largoVector
 					newY = lastY
 					sepX = sep
 					sepY = 0
-					centroX = lastX + largo/2
-					centroY = lastY
+					centroX = lastX + largoVector/2
+					centroY = lastY + movTextoY
 					break
 				case 'L':
 					lastX -= sep
-					newX = lastX - largo
+					newX = lastX - largoVector
 					newY = lastY
 					sepX = -sep
 					sepY = 0
-					centroX = lastX - largo/2
-					centroY = lastY
+					centroX = lastX - largoVector/2
+					centroY = lastY + movTextoY
 					break
 				case 'U':
 					lastY -= sep 
 					newX = lastX
-					newY = lastY - largo
+					newY = lastY - largoVector
 					sepX = 0
 					sepY = -sep
-					centroX = lastX
-					centroY = lastY - largo/2
+					centroX = lastX + movTextoX
+					centroY = lastY - largoVector/2
 					break
 				case 'D':
 					lastY += sep
 					newX = lastX
-					newY = lastY + largo
+					newY = lastY + largoVector
 					sepX = 0
 					sepY = sep
-					centroX = lastX
-					centroY = lastY + largo/2
+					centroX = lastX + movTextoX
+					centroY = lastY + largoVector/2
 					break
 				case 'RU':
 					lastX += sep * Math.cos(anguloDiagonal * Math.PI / 180)
 					lastY -= sep * Math.sin(anguloDiagonal * Math.PI / 180)
-					newX = lastX + largo * Math.cos(anguloDiagonal * Math.PI / 180)
-					newY = lastY - largo * Math.sin(anguloDiagonal * Math.PI / 180)
+					newX = lastX + largoVector * Math.cos(anguloDiagonal * Math.PI / 180)
+					newY = lastY - largoVector * Math.sin(anguloDiagonal * Math.PI / 180)
 					sepX = sep * Math.cos(anguloDiagonal * Math.PI / 180)
 					sepY = -sep * Math.sin(anguloDiagonal * Math.PI / 180)
-					centroX = lastX + largo/2 * Math.cos(anguloDiagonal * Math.PI / 180)
-					centroY = lastY - largo/2 * Math.sin(anguloDiagonal * Math.PI / 180)
+					centroX = lastX + largoVector/2 * Math.cos(anguloDiagonal * Math.PI / 180) + movTextoX
+					centroY = lastY - largoVector/2 * Math.sin(anguloDiagonal * Math.PI / 180) + movTextoY
 					break
 				case 'RD':
 					lastX += sep * Math.cos(anguloDiagonal * Math.PI / 180)
 					lastY += sep * Math.sin(anguloDiagonal * Math.PI / 180)
-					newX = lastX + largo * Math.cos(anguloDiagonal * Math.PI / 180)
-					newY = lastY + largo * Math.sin(anguloDiagonal * Math.PI / 180)
+					newX = lastX + largoVector * Math.cos(anguloDiagonal * Math.PI / 180)
+					newY = lastY + largoVector * Math.sin(anguloDiagonal * Math.PI / 180)
 					sepX = sep * Math.cos(anguloDiagonal * Math.PI / 180)
 					sepY = sep * Math.sin(anguloDiagonal * Math.PI / 180)
-					centroX = lastX + largo/2 * Math.cos(anguloDiagonal * Math.PI / 180)
-					centroY = lastY + largo/2 * Math.sin(anguloDiagonal * Math.PI / 180)
+					centroX = lastX + largo/2 * Math.cos(anguloDiagonal * Math.PI / 180) + movTextoX
+					centroY = lastY + largo/2 * Math.sin(anguloDiagonal * Math.PI / 180) + movTextoY
 					break
 				case 'LU':
 					lastX -= sep * Math.cos(anguloDiagonal * Math.PI / 180)
 					lastY -= sep * Math.sin(anguloDiagonal * Math.PI / 180)
-					newX = lastX - largo * Math.cos(anguloDiagonal * Math.PI / 180)
-					newY = lastY - largo * Math.sin(anguloDiagonal * Math.PI / 180)
+					newX = lastX - largoVector * Math.cos(anguloDiagonal * Math.PI / 180)
+					newY = lastY - largoVector * Math.sin(anguloDiagonal * Math.PI / 180)
 					sepX = -sep * Math.cos(anguloDiagonal * Math.PI / 180)
 					sepY = -sep * Math.sin(anguloDiagonal * Math.PI / 180)
-					centroX = lastX - largo/2 * Math.cos(anguloDiagonal * Math.PI / 180)
-					centroY = lastY - largo/2 * Math.sin(anguloDiagonal * Math.PI / 180)
+					centroX = lastX - largoVector/2 * Math.cos(anguloDiagonal * Math.PI / 180) + movTextoX
+					centroY = lastY - largoVector/2 * Math.sin(anguloDiagonal * Math.PI / 180) + movTextoY
 					break
 				case 'LD':
 					lastX -= sep * Math.cos(anguloDiagonal * Math.PI / 180)
 					lastY += sep * Math.sin(anguloDiagonal * Math.PI / 180)
-					newX = lastX - largo * Math.cos(anguloDiagonal * Math.PI / 180)
-					newY = lastY + largo * Math.sin(anguloDiagonal * Math.PI / 180)
+					newX = lastX - largoVector * Math.cos(anguloDiagonal * Math.PI / 180)
+					newY = lastY + largoVector * Math.sin(anguloDiagonal * Math.PI / 180)
 					sepX = -sep * Math.cos(anguloDiagonal * Math.PI / 180)
 					sepY = sep * Math.sin(anguloDiagonal * Math.PI / 180)
-					centroX = lastX - largo/2 * Math.cos(anguloDiagonal * Math.PI / 180)
-					centroY = lastY + largo/2 * Math.sin(anguloDiagonal * Math.PI / 180)
+					centroX = lastX - largoVector/2 * Math.cos(anguloDiagonal * Math.PI / 180) + movTextoX
+					centroY = lastY + largoVector/2 * Math.sin(anguloDiagonal * Math.PI / 180) + movTextoY
 					break
 				case 'MR':
-					lastX += largo + sep*2
+					lastX += largoVector + sep*2
 					break
 				case 'ML':
-					lastX -= largo + sep*2
+					lastX -= largoVector + sep*2
 					break
 				case 'MU':
-					lastY -= largo + sep*2
+					lastY -= largoVector + sep*2
 					break
 				case 'MD':
-					lastY += largo + sep*2
+					lastY += largoVector + sep*2
 					break
 				case 'MRU':
-					lastX += (largo + sep*2) * Math.cos(anguloDiagonal * Math.PI / 180)
-					lastY -= (largo + sep*2) * Math.sin(anguloDiagonal * Math.PI / 180)
+					lastX += (largoVector + sep*2) * Math.cos(anguloVector * Math.PI / 180)
+					lastY -= (largoVector + sep*2) * Math.sin(anguloVector * Math.PI / 180)
 					break
 				case 'MRD':
-					lastX += (largo + sep*2) * Math.cos(anguloDiagonal * Math.PI / 180)
-					lastY += (largo + sep*2) * Math.sin(anguloDiagonal * Math.PI / 180)
+					lastX += (largoVector + sep*2) * Math.cos(anguloVector * Math.PI / 180)
+					lastY += (largoVector + sep*2) * Math.sin(anguloVector * Math.PI / 180)
 					break
 				case 'MLU':
-					lastX -= (largo + sep*2) * Math.cos(anguloDiagonal * Math.PI / 180)
-					lastY -= (largo + sep*2) * Math.sin(anguloDiagonal * Math.PI / 180)
+					lastX -= (largoVector + sep*2) * Math.cos(anguloVector * Math.PI / 180)
+					lastY -= (largoVector + sep*2) * Math.sin(anguloVector * Math.PI / 180)
 					break
 				case 'MLD':
-					lastX -= (largo + sep*2) * Math.cos(anguloDiagonal * Math.PI / 180)
-					lastY += (largo + sep*2) * Math.sin(anguloDiagonal * Math.PI / 180)
+					lastX -= (largoVector + sep*2) * Math.cos(anguloVector * Math.PI / 180)
+					lastY += (largoVector + sep*2) * Math.sin(anguloVector * Math.PI / 180)
+					break
+				case 'T':
+					lastX += sep * Math.cos(anguloVector * Math.PI / 180)
+					lastY += sep * Math.sin(anguloVector * Math.PI / 180)
+					newX = lastX + largoVector * Math.cos(anguloVector * Math.PI / 180)
+					newY = lastY + largoVector * Math.sin(anguloVector * Math.PI / 180)
+					sepX = sep * Math.cos(anguloVector * Math.PI / 180)
+					sepY = sep * Math.sin(anguloVector * Math.PI / 180)
+					centroX = lastX + largoVector/2 * Math.cos(anguloVector * Math.PI / 180) + movTextoX
+					centroY = lastY + largoVector/2 * Math.sin(anguloVector * Math.PI / 180) + movTextoY
 					break
 				default:
-					if(patron[indicePatron].startsWith('T')) {
-						let parametros = patron[indicePatron].split(',')
-						let largoVector = parametros[1] ? Number(parametros[1]) : largo
-						let anguloVector = parametros[2] ? parametros[2] : anguloDiagonal
-						lastX += sep * Math.cos(anguloVector * Math.PI / 180)
-						lastY += sep * Math.sin(anguloVector * Math.PI / 180)
-						newX = lastX + largoVector * Math.cos(anguloVector * Math.PI / 180)
-						newY = lastY + largoVector * Math.sin(anguloVector * Math.PI / 180)
-						sepX = sep * Math.cos(anguloVector * Math.PI / 180)
-						sepY = sep * Math.sin(anguloVector * Math.PI / 180)
-						centroX = lastX + largoVector/2 * Math.cos(anguloVector * Math.PI / 180)
-						centroY = lastY + largoVector/2 * Math.sin(anguloVector * Math.PI / 180)
-					}
+					console.log('la embarre :c')
 					break
 			}
 			if(patron[indicePatron].startsWith('M')) {
@@ -7964,7 +7967,17 @@ function patronSegmentos(config) {
 			}
 			dibujaPalito(`${container.id}-palito-${i+1}`,lastX,lastY,newX,newY)
 			esFosforo && dibujaCabezaFosforo(lastX,lastY,newX,newY)
-			numerosPalitos === 'todos' && dibujaNumeroPalito(centroX, centroY, i+1)
+			if(textoVector) {
+				textoVector = regexFunctions(regex(textoVector, vars, vt)).replace(/#/g, i+1)
+				g.appendChild(crearElementoDeTexto({
+					x: centroX,
+					y: centroY+8,
+					fontSize: '18',
+					textAnchor: alineacionTexto,
+					fill: '#363026',
+					style: 'font-family:Quicksand;'
+				}, textoVector))
+			}
 			palitosArr.push({
 				id: `${container.id}-palito-${i+1}`,
 				x1: lastX,
@@ -7991,6 +8004,20 @@ function patronSegmentos(config) {
 		container.appendChild(g)
 	}
 
+	(textos && textos.length > 0) && textos.forEach(texto => {
+		let txt = regexFunctions(regex(texto.texto, vars, vt))
+		let y = regexFunctions(regex(texto.y, vars, vt))
+		let x = regexFunctions(regex(texto.x, vars, vt))
+		container.appendChild(crearElementoDeTexto({
+			x,
+			y,
+			fontSize: texto.alto,
+			textAnchor: texto.alineacion,
+			fill: '#363026',
+			style: 'font-family:Quicksand;'
+		}, txt))
+	})
+
 	function dibujaPalito(id, x1, y1, x2, y2) {
 		g.appendChild(crearElemento('line',{id,x1,y1,x2,y2,class:'fosforo'}))
 	}
@@ -8015,47 +8042,6 @@ function patronSegmentos(config) {
 			fill: '#C51611',
 			stroke: 'none'
 		}))
-	}
-
-	function dibujaNumeroPalito(x, y, numero) {
-		/*g.appendChild(crearElemento('circle', {
-			cx: x,
-			cy: y,
-			r: 8,
-			stroke: 1,
-			fill: '#1F8EBE',
-			stroke: '#1F8EBE'
-		}))*/
-		g.appendChild(crearElementoDeTexto({
-			x: x,
-			y: y+8,
-			fontSize: '20',
-			textAnchor: 'middle',
-			fill: '#363026',
-			style: 'font-family:Quicksand;'
-		}, numero))
-	}
-
-	function crearElementoDeImagen(src, atributos) {
-		let element = document.createElementNS('http://www.w3.org/2000/svg', 'image')
-		element.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', src)
-		for (let p in atributos) {
-			element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
-				return '-' + m.toLowerCase()
-			}), atributos[p])
-		}
-		return element
-	}
-
-	function crearReferenciaAElemento(id, atributos) {
-		let element = document.createElementNS('http://www.w3.org/2000/svg', 'use')
-		element.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `#${id}`)
-		for (let p in atributos) {
-			element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
-				return '-' + m.toLowerCase()
-			}), atributos[p])
-		}
-		return element
 	}
 
 	function crearElemento(nombre, atributos) {
