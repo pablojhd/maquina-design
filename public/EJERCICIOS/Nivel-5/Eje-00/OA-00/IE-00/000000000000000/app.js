@@ -7777,7 +7777,6 @@ function patronSegmentos(config) {
 		anchoSVG,
 		esFosforo,
 		largo,
-		color,
 		grosor,
 		dimensionCabeza,
 		tipoPatron,
@@ -7799,7 +7798,7 @@ function patronSegmentos(config) {
 			src:url("https://desarrolloadaptatin.blob.core.windows.net/sistemaejercicios/ejercicios/Nivel-3/fonts/Quicksand-Medium.ttf");
 		}
 		.fosforo {
-			stroke:${color};
+			stroke:${esFosforo === 'si' ? '#EC9C79' : '#1F8EBE'};
 			stroke-width:${grosor};
 		}
 	`
@@ -7810,13 +7809,13 @@ function patronSegmentos(config) {
 	anchoSVG = Number(anchoSVG)
 	patron = patron ? regexFunctions(regex(patron, vars, vt)).split('&') : ''
 	largo = Number(largo)
-	palitos = Number(regexFunctions(regex(palitos, vars, vt)))
-	repeticiones = Number(regexFunctions(regex(repeticiones, vars, vt)))
+	palitos = palitos ? Number(regexFunctions(regex(palitos, vars, vt))) : 0
+	repeticiones = repeticiones ? Number(regexFunctions(regex(repeticiones, vars, vt))) : 0
 	anguloDiagonal = Number(anguloDiagonal)
 	separacionFiguras = Number(separacionFiguras)
 	esFosforo = esFosforo === 'si' ? true : false
-	let radioX = Number(dimensionCabeza.split(',')[0])
-	let radioY = Number(dimensionCabeza.split(',')[1])
+	let radioX = dimensionCabeza ? Number(dimensionCabeza.split(',')[0]) : 0
+	let radioY = dimensionCabeza ? Number(dimensionCabeza.split(',')[1]) : 0
 	let sep = Number(separacionPalitos)
 	let palitosArr = []
 	let g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
@@ -7831,7 +7830,6 @@ function patronSegmentos(config) {
 		let cantPalitos = patron.length * repeticiones
 		dibujaPatronPersonalizado(cantPalitos)
 	}
-	
 	function dibujaPatronPersonalizado(palitos) {
 		let lastX = 0, lastY = 0, sepX = 0, sepY = 0
 		for(let i=0, newX, newY, centroX, centroY; i < palitos; i++) {
@@ -7966,7 +7964,7 @@ function patronSegmentos(config) {
 				continue
 			}
 			dibujaPalito(`${container.id}-palito-${i+1}`,lastX,lastY,newX,newY)
-			esFosforo && dibujaCabezaFosforo(lastX,lastY,newX,newY,anguloVector)
+			esFosforo && dibujaCabezaFosforo(lastX,lastY,newX,newY)
 			if(textoVector) {
 				textoVector = regexFunctions(regex(textoVector, vars, vt)).replace(/#/g, i+1)
 				g.appendChild(crearElementoDeTexto({
@@ -8022,23 +8020,23 @@ function patronSegmentos(config) {
 		g.appendChild(crearElemento('line',{id,x1,y1,x2,y2,class:'fosforo'}))
 	}
 
-	function dibujaCabezaFosforo(x1, y1, x2, y2, angulo) {
-		let anguloDiagonal
+	function dibujaCabezaFosforo(x1, y1, x2, y2) {
+		let angulo
 		if(x1 !== x2 && y1 === y2) { // horizontalmente
-			anguloDiagonal = 0
+			angulo = 0
 		} else if(x1 === x2 && y1 !== y2) { // vertical
-			anguloDiagonal = 90
+			angulo = 90
 		} else if((x1 > x2 && y1 > y2) || (x1 < x2 && y1 < y2)) { // pendiente positiva
-			anguloDiagonal = angulo
+			angulo = anguloDiagonal
 		} else if(x1 !== x2 && y1 !== y2) { // pendiente negativa
-			anguloDiagonal = -angulo
+			angulo = -anguloDiagonal
 		}
 		g.appendChild(crearElemento('ellipse', {
 			cx: x2,
 			cy: y2,
 			rx: radioX,
 			ry: radioY,
-			transform: `rotate(${anguloDiagonal} ${x2} ${y2})`,
+			transform: `rotate(${angulo} ${x2} ${y2})`,
 			fill: '#C51611',
 			stroke: 'none'
 		}))
