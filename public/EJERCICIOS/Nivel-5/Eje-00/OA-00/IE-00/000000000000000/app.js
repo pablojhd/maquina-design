@@ -14,9 +14,12 @@ const FUNCIONES = [
 			{ id: 'Insertar Imagen', action: insertarImagen }
 		]
 	}, {
+		name: 'HTML', tag: 'html', fns:[
+			{ id:'Tabla Posicional V2', action: tabPos }
+		]
+	}, {
 		name: 'SVG', tag: 'svg', fns: [
 			{ id: 'Recta', action: recta },
-			{ id: 'Tabla Posicional V2', action: tabPos },
 			{ id: 'Formador Grupos', action: formadorGrupos },
 			{ id: 'Sucesiones', action: sucesiones },
 			{ id: 'Tabla Secuencia', action: tablaSecuencia },
@@ -431,7 +434,7 @@ function dibujaHtml() {
 	var contenidoHtml = '';
 	contenidoBody['e'].forEach((m, i) => {
 		contenidoHtml += `<div class="col-md-${m.width.md} col-sm-${m.width.sm} col-${m.width.xs}">`
-		if (m.tag != 'general') {
+		if (m.tag != 'general' && m.tag != 'html') {
 			if (m.tag == 'svg') {
 				contenidoHtml += `<svg id="container-e${i}" class="img-fluid mx-auto d-block"></svg>`
 			} else {
@@ -448,10 +451,10 @@ function dibujaHtml() {
 	var respuestaHtml = '';
 
 	var contenidoRespuestas = contenidoBody['r'].filter((item) => { //respuestas que deben estar en forma de imagen seleccionable
-		if (item.tag != 'general') {
+		if (item.tag != 'general' && item.tag != 'html') {
 			return true;
 		} else {
-			return item.name === 'Insertar Imagen' || item.name === 'Insertar Tabla';
+			return item.name === 'Insertar Imagen' || item.name === 'Insertar Tabla' || item.name === 'Tabla Posicional V2';
 		}
 	});
 	if (contenidoRespuestas.length > 0) {
@@ -465,7 +468,7 @@ function dibujaHtml() {
             <input type="radio" id="radio-${index}" name="answer" value="${valor}"/>
             <label for="radio-${index}">
               ${textoOpcion ? `<span>${textoOpcion}</span>` : ''}
-              ${item.tag != 'general' ?
+              ${item.tag != 'general' && item.tag != 'html' ?
 					item.tag == 'svg' ?
 						`<svg id="container-r${index}" class="img-fluid" ${textoOpcion ? '' : `style="padding:5px;"`}></svg>` :
 						`<canvas class="img-fluid" id="container-r${index}"></canvas>` :
@@ -3456,661 +3459,375 @@ function beforePan(oldPan, newPan) {
 	return customPan
 }
 
-async function tabPos(config) {
-	const { container, params, variables, versions, vt } = config
-	//container.innerHTML = ''
-	//container.style.border = '1px solid #000'
-	let vars = vt ? variables : versions
-	let {
-		altoTextoVP,
-		tipoTabla,
-		pisoTabla,
-		detallePisos,
-		conOperacion,
-		tipoOperacion,
-		canje,
-		detalleCanje,
-		imagenesParaPosiciones,
-		valoresPosicionales,
-		mostrarVF,
-		formaVF,
-		VF,
-		destacar
-	} = params
+function tabPos(config) {
+    const { container, params, variables, versions, vt } = config
+    container.innerHTML = ''
+    let vars = vt ? variables : versions
+    let {
+        tipoTabla,
+        pisoTabla,
+        detallePisos,
+        conOperacion,
+        tachar,
+        detalleCanje,
+        imagenesParaPosiciones,
+        valoresPosicionales,
+        mostrarVF,
+        formaVF,
+        VF,
+        destacar,
+        lineas
+    } = params
 
-	let tiposTabla = [{
-        id:'UMiCMDMUMCDU',
-        detalle: ['UMi','CM','DM','UM','C','D','U'],
-        url: `../../../../imagenes_front/tablas_posicionales/UMiCMDMUMCDU${pisoTabla}.svg`
-    },{
-        id:'CMDMUMCDU',
-        detalle: ['CM','DM','UM','C','D','U'],
-        url: `../../../../imagenes_front/tablas_posicionales/CMDMUMCDU${pisoTabla}.svg`
-    },{
-        id:'DMUMCDU',
-        detalle: ['DM','UM','C','D','U'],
-        url: `../../../../imagenes_front/tablas_posicionales/DMUMCDU${pisoTabla}.svg`
-    },{
-		id: 'UMCDU',
-		detalle: ['UM', 'C', 'D', 'U'],
-		url: `../../../../imagenes_front/tablas_posicionales/UMCDU${pisoTabla}.svg`
-	}, {
-		id: 'CDU',
-		detalle: ['C', 'D', 'U'],
-		url: `../../../../imagenes_front/tablas_posicionales/CDU${pisoTabla}.svg`
-	}, {
-		id: 'DU',
-		detalle: ['D', 'U'],
-		url: `../../../../imagenes_front/tablas_posicionales/DU${pisoTabla}.svg`
-	}, {
-		id: 'DU,dc',
-		detalle: ['D', 'U', 'd', 'c'],
-		url: `../../../../imagenes_front/tablas_posicionales/DU_dc${pisoTabla}.svg`
-	}, {
-		id: 'U,dc',
-		detalle: ['U', 'd', 'c'],
-		url: `../../../../imagenes_front/tablas_posicionales/U_dc${pisoTabla}.svg`
-	}, {
-		id: 'U,d',
-		detalle: ['U', 'd'],
-		url: `../../../../imagenes_front/tablas_posicionales/U_d${pisoTabla}.svg`
-	}]
-
-	let urlImagenesPosicionalesBloques = [{
-		posicion: 'U',
-		url: '../../../../imagenes_front/bloques_multibase/cubito#.svg'
-	}, {
-		posicion: 'D',
-		url: '../../../../imagenes_front/bloques_multibase/barra#.svg'
-	}, {
-		posicion: 'C',
-		url: '../../../../imagenes_front/bloques_multibase/placa#.svg'
-	}, {
-		posicion: 'UM',
-		url: '../../../../imagenes_front/bloques_multibase/cubo#.svg'
-	}, {
-		posicion: 'd',
-		url: '../../../../imagenes_front/bloques_multibase/cubo_decimo_#.svg'
-	}, {
-		posicion: 'c',
-		url: '../../../../imagenes_front/bloques_multibase/cubo_centesimo_#.svg'
-	}]
-
-	let urlImagenesPosicionalesMonedasYBilletes = [{
+    let urlImagenesPosicionalesBloques = [{
         posicion: 'U',
-        url: '../../../../imagenes_front/tablas_posicionales/1_#.svg'
+        url: 'https://desarrolloadaptatin.blob.core.windows.net/sistemaejercicios/ejercicios/Nivel-3/imagenes_front/bloques_multibase/cubito#.svg'
     },{
         posicion: 'D',
-        url: '../../../../imagenes_front/tablas_posicionales/10_#.svg'
+        url: 'https://desarrolloadaptatin.blob.core.windows.net/sistemaejercicios/ejercicios/Nivel-3/imagenes_front/bloques_multibase/barra#.svg'
     },{
         posicion: 'C',
-        url: '../../../../imagenes_front/tablas_posicionales/100_#.svg'
-    }, {
+        url: 'https://desarrolloadaptatin.blob.core.windows.net/sistemaejercicios/ejercicios/Nivel-3/imagenes_front/bloques_multibase/placa#.svg'
+    },{
         posicion: 'UM',
-        url: '../../../../imagenes_front/tablas_posicionales/1000_#.svg'
+        url: 'https://desarrolloadaptatin.blob.core.windows.net/sistemaejercicios/ejercicios/Nivel-3/imagenes_front/bloques_multibase/cubo#.svg'
+    },{
+        posicion: 'd',
+        url: 'https://desarrolloadaptatin.blob.core.windows.net/sistemaejercicios/ejercicios/Nivel-3/imagenes_front/bloques_multibase/cubo_decimo_#.svg'
+    },{
+        posicion: 'c',
+        url: 'https://desarrolloadaptatin.blob.core.windows.net/sistemaejercicios/ejercicios/Nivel-3/imagenes_front/bloques_multibase/cubo_centesimo_#.svg'
     }]
 
-    let urlImgsFichasLila = '../../../../imagenes_front/pelotas_repeticiones/lila#.svg'
+    let urlImagenesPosicionalesMonedasYBilletes = [{
+        posicion: 'U',
+        url: 'https://desarrolloadaptatin.blob.core.windows.net/sistemaejercicios/ejercicios/Nivel-3/imagenes_front/tablas_posicionales/1_#.svg'
+    },{
+        posicion: 'D',
+        url: 'https://desarrolloadaptatin.blob.core.windows.net/sistemaejercicios/ejercicios/Nivel-3/imagenes_front/tablas_posicionales/10_#.svg'
+    },{
+        posicion: 'C',
+        url: 'https://desarrolloadaptatin.blob.core.windows.net/sistemaejercicios/ejercicios/Nivel-3/imagenes_front/tablas_posicionales/100_#.svg'
+    }, {
+        posicion: 'UM',
+        url: 'https://desarrolloadaptatin.blob.core.windows.net/sistemaejercicios/ejercicios/Nivel-3/imagenes_front/tablas_posicionales/1000_#.svg'
+    }]
 
-	let urlImgsFichasCalipso = '../../../../imagenes_front/pelotas_repeticiones/calipso#.svg'
-	
-	let urlImgsFichasAzul = '../../../../imagenes_front/pelotas_repeticiones/azul#.svg'
+    let urlImgsFichasLila = 'https://desarrolloadaptatin.blob.core.windows.net/sistemaejercicios/ejercicios/Nivel-3/imagenes_front/pelotas_repeticiones/lila#.svg'
 
-	let urlImgFlecha = '../../../../imagenes_front/flechas/flecha_abajo.svg'
+    let urlImgsFichasCalipso = 'https://desarrolloadaptatin.blob.core.windows.net/sistemaejercicios/ejercicios/Nivel-3/imagenes_front/pelotas_repeticiones/calipso#.svg'
 
-	//variables para dibujar tabla
-	mostrarVF = mostrarVF === 'si' ? true : false
-	let { imagenes, imagenTabla, imagenFlecha } = await getImagenesPorCargar()
-	let { pisosAdicionales, valores } = obtenerValorPosicional()
-	//variables para medidas
-	conOperacion = conOperacion === 'si' ? true : false
-	pisoTabla = Number(pisoTabla)
-	altoTextoVP = Number(altoTextoVP)
+    let urlImgsFichasAzul = 'https://desarrolloadaptatin.blob.core.windows.net/sistemaejercicios/ejercicios/Nivel-3/imagenes_front/pelotas_repeticiones/azul#.svg'
+    
+    let urlImgFlecha = 'https://desarrolloadaptatin.blob.core.windows.net/sistemaejercicios/ejercicios/Nivel-3/imagenes_front/flechas/flecha_abajo.svg'
 
-	canje = regexFunctions(regex(canje, vars, vt)) === 'si' ? true : false
-	let anchoPosicion = 160
-	let anchoSvg = imagenTabla.detalle.length * anchoPosicion + (conOperacion ? anchoPosicion / 2 : 0)
-	let altoImagen = imagenTabla.detalle.length * anchoPosicion * imagenTabla.height / imagenTabla.width
-	let altoPosicion = (altoImagen / ((pisoTabla * 2) + 1)) * 2
-	let altoSvg = altoImagen + altoPosicion * pisosAdicionales
-	let altoPosicionConMargen = altoPosicion * 0.8
-	let anchoPosicionConMargen = anchoPosicion * 0.8
-	let fontSize = altoPosicion * 0.8
-	let altoImagenFlecha = altoPosicion * 0.8
-	let anchoImagenFlecha = imagenFlecha.width * altoImagenFlecha / imagenFlecha.height
-	let celdasDestacadas = destacar ? regexFunctions(regex(destacar, vars, vt)).split(';').map(x => x.split(',')).map(x => ({ col: x[0], filaI: Number(x[1]), filaF: Number(x[2]), color: x[3] })) : []
-	//agrega elementos a defs
-	let defs = crearElemento('defs', {})
-	let styles = document.createElement('style')
-	styles.innerHTML = '@font-face{font-family:"Quicksand-Medium";src:url("../../../../fonts/Quicksand-Medium.ttf");}'
-	defs.appendChild(styles)
-	imagenes.forEach(imagen => {
-		let g = crearElemento('g', {
-			id: imagen.id
-		})
-		if (imagen.id.startsWith('bloque')) {
-			let posicion = imagen.id.match(/-\w{1,}-/g)[0].replace(/-/g, '')
-			switch (posicion) {
-				case 'D':
-					if (tipoTabla.indexOf(',') > -1) {
-						g.appendChild(crearElementoDeImagen(imagen.url, {
-							height: altoPosicionConMargen,
-							width: altoPosicionConMargen * imagen.width / imagen.height
-						}))
-					} else {
-						g.appendChild(crearElementoDeImagen(imagen.url, {
-							height: anchoPosicionConMargen * imagen.height / imagen.width,
-							width: anchoPosicionConMargen
-						}))
-					}
-					break
-				case 'U':
-					if (tipoTabla.indexOf(',') > -1) {
-						g.appendChild(crearElementoDeImagen(imagen.url, {
-							height: altoPosicionConMargen,
-							width: altoPosicionConMargen * imagen.width / imagen.height
-						}))
-					} else {
-						g.appendChild(crearElementoDeImagen(imagen.url, {
-							height: altoPosicionConMargen * 0.5 * imagen.width / imagen.height,
-							width: altoPosicionConMargen * 0.5
-						}))
-					}
-					break
-				case 'd':
-					g.appendChild(crearElementoDeImagen(imagen.url, {
-						height: altoPosicionConMargen * 1.2,
-						width: altoPosicionConMargen * 1.2 * imagen.width / imagen.height
-					}))
-					break
-				case 'c':
-					g.appendChild(crearElementoDeImagen(imagen.url, {
-						height: altoPosicionConMargen * 1.2,
-						width: altoPosicionConMargen * 1.2 * imagen.width / imagen.height
-					}))
-					break
-				default:
-					g.appendChild(crearElementoDeImagen(imagen.url, {
-						height: altoPosicionConMargen,
-						width: altoPosicionConMargen * imagen.width / imagen.height
-					}))
-					break
-			}
-		} else {
-			g.appendChild(crearElementoDeImagen(imagen.url, {
-				height: altoPosicionConMargen,
-				width: altoPosicionConMargen * imagen.width / imagen.height
-			}))
-		}
-		defs.appendChild(g)
-	})
-	container.appendChild(defs)
+    let urlImgLlave = 'https://desarrolloadaptatin.blob.core.windows.net/sistemaejercicios/ejercicios/Nivel-5/imagenes_front/llaves/Llave_Horizontal.svg'
+    
+    let encabezados = ['CMi','DMi','UMi','UM','C','D','U','d','c','m']
 
-	//setea tamaños de la tabla
-	container.setAttributeNS(null, 'height', altoSvg)
-	container.setAttributeNS(null, 'width', anchoSvg)
-	container.setAttributeNS(null, 'viewBox', `0 0 ${anchoSvg} ${altoSvg}`)
-	//dibuja backgroud de destado en tablas
-    celdasDestacadas.forEach(destado => {
-        let { col, filaI, filaF, color } = destado
-        let numCol = tiposTabla.find(x => x.id === tipoTabla).detalle.indexOf(col)
-        container.appendChild(crearElemento('rect', {
-            x: numCol * anchoPosicion + (conOperacion ? anchoPosicion/2 : 0) + 2,
-            y: filaI * altoPosicion - (altoPosicion / 2),
-            height: (filaI * altoPosicion - altoPosicion / 2) + ((filaF - filaI) * altoPosicion + altoPosicion / 2) - 2,
-            width: anchoPosicion - 4,
-            fill: color,
-            rx: 10,
-            ry: 10
-        }))
-    })
-	//dibuja tabla principal
-	container.appendChild(crearElementoDeImagen(imagenTabla.url, {
-		x: conOperacion ? anchoPosicion / 2 : 0,
-		y: 0,
-		width: conOperacion ? anchoSvg - anchoPosicion / 2 : anchoSvg,
-		height: altoImagen
-	}))
-	//inicio de relleno de pisos
-	detallePisos = detallePisos.map(x => getDetallePiso(x)).forEach((detallePiso, piso) => {
-		let centroYPiso = (piso + 1) * altoPosicion
-		switch (detallePiso.tipo) {
-			case 'numero':
-				let yNumero = centroYPiso + fontSize / 3
-				let grupoT = crearElemento('g', {
-					id: `Piso${piso + 1}`,
-					textAnchor: 'middle',
-					fontSize: fontSize,
-					fill: '#363026'
-				})
-				imagenTabla.detalle.forEach((posicion, index) => {
-					let centroXPiso = conOperacion ? anchoPosicion + index * anchoPosicion : anchoPosicion / 2 + index * anchoPosicion
-					let numero = detallePiso.detalle[posicion]
-					let moverNumeroY = conOperacion && canje && piso === 0 && detalleCanje[posicion]
-					grupoT.appendChild(crearElementoDeTexto({
-						//si es con operacion, hay que mostrar canje, es la primera fila y hay un numero en el objeto de canje pàra la columna especifica
-						x: centroXPiso,
-						y: moverNumeroY ? yNumero + fontSize / 4 : yNumero,
-						style: 'font-family:Quicksand-Medium;'
-					}, numero))
-				})
-				container.appendChild(grupoT)
-				break
-			case 'fichas lila':
-				let grupoFA = crearElemento('g', {
-					id: `Piso${piso + 1}`
-				})
-				imagenTabla.detalle.forEach((posicion, index) => {
-					let centroXPiso = conOperacion ? anchoPosicion + index * anchoPosicion : anchoPosicion / 2 + index * anchoPosicion
-					grupoFA.appendChild(crearReferenciaAElemento(
-						detallePiso.tipo.replace(' ', '-') + '-' + detallePiso.detalle[posicion], {
-						x: centroXPiso - altoPosicionConMargen / 2,
-						y: centroYPiso - altoPosicionConMargen / 2
-					}))
-				})
-				container.appendChild(grupoFA)
-				break
-			case 'fichas calipso':
-				let grupoFR = crearElemento('g', {
-					id: `Piso${piso + 1}`
-				})
-				imagenTabla.detalle.forEach((posicion, index) => {
-					let centroXPiso = conOperacion ? anchoPosicion + index * anchoPosicion : anchoPosicion / 2 + index * anchoPosicion
-					grupoFR.appendChild(crearReferenciaAElemento(
-						detallePiso.tipo.replace(' ', '-') + '-' + detallePiso.detalle[posicion], {
-						x: centroXPiso - altoPosicionConMargen / 2,
-						y: centroYPiso - altoPosicionConMargen / 2
-					}))
-				})
-				container.appendChild(grupoFR)
-				break
-			case 'fichas azul':
-                let grupoFC = crearElemento('g',{
-                    id: `Piso${piso+1}`
-                })
-                imagenTabla.detalle.forEach((posicion,index)=>{
-                    let centroXPiso = conOperacion ? anchoPosicion + index*anchoPosicion : anchoPosicion/2 + index*anchoPosicion
-                    grupoFC.appendChild(crearReferenciaAElemento(
-                        detallePiso.tipo.replace(' ','-')+'-'+detallePiso.detalle[posicion], {
-                        x: centroXPiso-altoPosicionConMargen/2,
-                        y: centroYPiso-altoPosicionConMargen/2
-                    }))
-                })
-                container.appendChild(grupoFC)
-                break
-			case 'bloques':
-				let grupoB = crearElemento('g', {
-					id: `Piso${piso + 1}`
-				})
-				imagenTabla.detalle.forEach((posicion, index) => {
-					if (detallePiso.detalle[posicion] > 0) {
-						let imagen = document.getElementById(detallePiso.tipo + '-' + posicion + '-' + detallePiso.detalle[posicion]).children[0]
-						let centroXPiso = conOperacion ? anchoPosicion + index * anchoPosicion : anchoPosicion / 2 + index * anchoPosicion
-						grupoB.appendChild(crearReferenciaAElemento(
-							detallePiso.tipo + '-' + posicion + '-' + detallePiso.detalle[posicion], {
-							x: centroXPiso - Number(imagen.getAttribute('width')) / 2,
-							y: centroYPiso - Number(imagen.getAttribute('height')) / 2
-						}))
-					}
-				})
-				container.appendChild(grupoB)
-				break
-			case 'monedas y billetes':
-				let grupoMB = crearElemento('g',{
-					id: `Piso${piso+1}`
-				})
-				imagenTabla.detalle.forEach((posicion,index)=>{
-					if(detallePiso.detalle[posicion] > 0) {
-						let imagen = document.getElementById(detallePiso.tipo.replace(/\s/g,'-')+'-'+posicion+'-'+detallePiso.detalle[posicion]).children[0]
-						let centroXPiso = conOperacion ? anchoPosicion + index*anchoPosicion : anchoPosicion/2 + index*anchoPosicion
-						grupoMB.appendChild(crearReferenciaAElemento(
-							detallePiso.tipo.replace(/\s/g,'-')+'-'+posicion+'-'+detallePiso.detalle[posicion], {
-							x: centroXPiso-Number(imagen.getAttribute('width'))/2,
-							y: centroYPiso-Number(imagen.getAttribute('height'))/2
-						}))
-					}
-					
-				})
-				container.appendChild(grupoMB)
-				break
-			default:
-				//no soportado
-				break
-		}
-	})
-	//dibuja la operacion y los canjes
-	if (conOperacion) {
-		let simbolo = tipoOperacion === 'suma' ? '+' : '-'
-		let centroYUltimoPiso = (pisoTabla - 1) * altoPosicion
-		container.appendChild(crearElementoDeTexto({//dibuja simbolo
-			x: (anchoPosicion / 2) / 2,
-			y: centroYUltimoPiso + (fontSize * 1.2) / 3,
-			style: 'font-family:Quicksand-Medium;',
-			textAnchor: 'middle',
-			fontSize: fontSize * 1.2,
-			fill: '#2A8EBE'
-		}, simbolo))
+    let titulos = tipoTabla.split(/[\s,]/g)
+    let indiceDecimal = titulos.findIndex(x => x.match(/[d,c,m]/g))
+    conOperacion = conOperacion === 'si' ? true : false
+    pisoTabla = Number(pisoTabla)
+    detallePisos = detallePisos.map(x => getDetallePiso(x))
+    valoresPosicionales = valoresPosicionales ? valoresPosicionales.map(x => getDetalleValorPosicional(x)) : []
+    mostrarVF = mostrarVF === 'si' ? true : false
+    VF = regexFunctions(regex(VF))
+    let celdasDestacadas = destacar ? 
+        regexFunctions(regex(destacar, vars, vt)).split(';').map(x => x.split(',')).map(x => ({ 
+            col: x[0],
+            filaI: Number(x[1]),
+            filaF: Number(x[2]),
+            color: x[3]
+        })) : []
+    lineas = lineas ? lineas.split(';').map(x => ({ fila: x[0], inicio: x[2], fin: x[4] })) : []
 
-		let yLineaOperacion = (pisoTabla - 1) * altoPosicion + altoPosicion / 2
-		container.appendChild(crearElemento('rect', {//dibuja linea de operacion
-			x: 0,
-			y: yLineaOperacion - 2,
-			width: anchoSvg,
-			height: 4,
-			stroke: '#2A8EBE',
-			fill: '#2A8EBE'
-		}))
-		imagenTabla.detalle.forEach((posicion,columna)=>{
-            if(detalleCanje[posicion]) {
-                let numero = regexFunctions(regex(detalleCanje[posicion], vars, vt))
-                if(numero) {
-                    let centroXPiso = anchoPosicion + columna*anchoPosicion
-                    container.appendChild(crearElementoDeTexto({
-                        x: centroXPiso,
-                        y: altoPosicion/2+fontSize/2.3,
-                        style: 'font-family:Quicksand-Medium;',
-                        textAnchor: 'middle',
-                        fontSize: fontSize/2,
-                        fill: '#363026'
-                    }, numero))
-                    if(tipoOperacion === 'resta') {
-                        container.appendChild(crearElemento('line', {
-                            x1: centroXPiso+fontSize/4,
-                            y1: altoPosicion - fontSize/4.5,
-                            x2: centroXPiso - fontSize/4,
-                            y2: altoPosicion + altoPosicion /2,
-                            stroke: '#363026',
-                            strokeWidth: '3'
-                        }))
-                    }
+    container.classList.add('tabPos', 'img-fluid')
+    container.style.width = (titulos.length * 100) + 'px'
+    let filasTabla = pisoTabla + 1 + valoresPosicionales.length
+    let primerSignoMas
+
+    for(let indexFila = 0; indexFila < filasTabla; indexFila++) {
+        let fila = document.createElement('div')
+        primerSignoMas = true
+        fila.classList.add('tabPos-fila')
+        //casillas para titulo
+        titulos.forEach((titulo, indexColumna) => {
+            let celda = document.createElement('div')
+            celda.classList.add('tabPos-celda')
+            agregaElementoACelda(celda, indexFila, indexColumna, titulo)
+            marcarCasilla(celda, indexFila, titulo)
+            dibujarLinea(celda, indexFila, indexColumna)
+            dibujarImagen(celda, indexFila, titulo)
+            fila.appendChild(celda)
+        })
+        container.appendChild(fila)
+    }
+
+    if(mostrarVF) {
+        let vpDibujado = false
+        let fila = document.createElement('div')
+        fila.classList.add('tabPos-fila')
+        titulos.forEach(titulo => {
+            if(encabezados.indexOf(titulo) > -1 && !vpDibujado) {
+                let celda = document.createElement('div')
+                celda.classList.add('tabPos-celda')
+                if(formaVF === 'flecha') {
+                    let imgFlecha = document.createElement('img')
+                    imgFlecha.src = urlImgFlecha
+                    imgFlecha.classList.add('tabPos-imgFlecha')
+                    celda.appendChild(imgFlecha)
+                    celda.style.flexDirection = 'column'
+                    celda.style.flexGrow = titulos.filter(x => encabezados.includes(x)).length
                 }
+                if(formaVF === 'llave') {
+                    let imgLlave = document.createElement('img')
+                    imgLlave.src = urlImgLlave
+                    imgLlave.classList.add('tabPos-imgLLave')
+                    celda.appendChild(imgLlave)
+                    celda.style.flexDirection = 'column'
+                    celda.style.flexGrow = titulos.filter(x => encabezados.includes(x)).length
+                }
+                if(VF) {
+                    celda.classList.add('tabPos-celda_texto')
+                    let numero = document.createElement('p')
+                    numero.innerHTML = VF
+                    celda.appendChild(numero)
+                }
+                vpDibujado = true
+                fila.appendChild(celda)
+            } else if(encabezados.indexOf(titulo) === -1) {
+                let celda = document.createElement('div')
+                celda.classList.add('tabPos-celda')
+                fila.appendChild(celda)
             }
         })
-	}
+        container.appendChild(fila)
+    }
 
-	let pisoActual = pisoTabla
-	valores.forEach(vp => {
-		let centroY = altoPosicion * pisoActual + altoPosicion
-		if (vp.mostrarFlecha) {
-			Object.keys(vp.detalle).forEach((pos, col) => {
-				let centroX = conOperacion ? anchoPosicion * col + anchoPosicion : anchoPosicion * col + anchoPosicion / 2
-				container.appendChild(crearElementoDeImagen(urlImgFlecha, {
-					x: centroX - anchoImagenFlecha / 2,
-					y: centroY - altoImagenFlecha / 2,
-					height: altoImagenFlecha,
-					width: anchoImagenFlecha
-				}))
-			})
-			pisoActual++
-			centroY += altoPosicion
-		}
-		if (vp.mostrarSignoMas) {
-			Object.keys(vp.detalle).slice(1).forEach((x, col) => {
-				let centroX = conOperacion ? anchoPosicion * col + anchoPosicion * 1.5 : anchoPosicion * col + anchoPosicion
-				container.appendChild(crearElementoDeTexto({
-					x: centroX,
-					y: centroY + altoTextoVP / 3 - 3,
-					style: 'font-family:Quicksand-Medium;',
-					textAnchor: 'middle',
-					fontSize: altoTextoVP,
-					fill: '#2A8EBE'
-				}, '+'))
-			})
-		}
-		Object.keys(vp.detalle).forEach((posicion, columna) => {
-			let centroX = conOperacion ? anchoPosicion * columna + anchoPosicion : anchoPosicion * columna + anchoPosicion / 2
-			container.appendChild(crearElementoDeTexto({
-				x: centroX,
-				y: centroY + altoTextoVP / 3,
-				style: 'font-family:Quicksand-Medium;',
-				textAnchor: 'middle',
-				fontSize: altoTextoVP,
-				fill: '#363026'
-			}, vp.detalle[posicion]))
-		})
-		pisoActual++
-	})
-
-	if (mostrarVF) {
-		let centroY = altoPosicion * pisoActual + altoPosicion
-		let inicioX = conOperacion ? anchoPosicion / 2 : 0
-		let finX = anchoSvg
-		let centro = (finX - inicioX) / 2 + inicioX
-		switch (formaVF) {
-			case 'llave':
-				let radio = 20
-				let inicioY = centroY - altoPosicion / 2 - radio + 5
-				container.appendChild(crearElemento('path', {
-					d: `M ${inicioX} ${inicioY}
-                        A ${radio} ${radio} 0 0 0 ${inicioX + radio} ${inicioY + radio}
-                        H ${centro - radio}
-                        A ${radio} ${radio} 0 0 1 ${centro} ${inicioY + radio * 2}
-                        A ${radio} ${radio} 0 0 1 ${centro + radio} ${inicioY + radio}
-                        H ${finX - radio}
-                        A ${radio} ${radio} 0 0 0 ${finX} ${inicioY}`,
-					fill: 'none',
-					stroke: '#2A8EBE',
-					strokeWidth: 4
-				}))
-				break
-			case 'flecha':
-				container.appendChild(crearElementoDeImagen(urlImgFlecha, {
-					x: centro - anchoImagenFlecha / 2,
-					y: centroY - altoImagenFlecha / 2,
-					height: altoImagenFlecha,
-					width: anchoImagenFlecha
-				}))
-				pisoActual++
-				centroY += altoPosicion
-				break
-			default:
-				//console.log('no se')
-				break
-		}
-		container.appendChild(crearElementoDeTexto({
-			x: centro,
-			y: centroY + altoTextoVP / 3,
-			style: 'font-family:Quicksand-Medium;',
-			textAnchor: 'middle',
-			fontSize: altoTextoVP,
-			fill: '#363026'
-		}, regexFunctions(regex(VF, vars, vt))))
-
-	}
-
-	if (imagenesParaPosiciones && imagenesParaPosiciones.length > 0) {
-		let imagenesCargadas = await Promise.all(imagenesParaPosiciones.map(async function (x) {
-			let src = regexFunctions(regex(x.src, vars, vt)).replace(`https://desarrolloadaptatin.blob.core.windows.net/sistemaejercicios/ejercicios/Nivel-${nivelEjercicio}/`, '../../../../')
-			let imagen = await cargaImagen(src)
-			return {
-				nombre: src.split('/').pop().replace('.svg', ''),
-				piso: Number(regexFunctions(regex(x.piso, vars, vt))),
-                posicion: regexFunctions(regex(x.posicion, vars, vt)),
-				src: src,
-				alto: Number(x.alto),
-				ancho: Number(x.alto) * imagen.width / imagen.height
-			}
-		}))
-		imagenesCargadas.forEach(imagen => {
-			let indicePosicion = tiposTabla.find(x => x.id === tipoTabla).detalle.indexOf(imagen.posicion)
-			container.appendChild(crearElementoDeImagen(imagen.src, {
-				x: indicePosicion * anchoPosicion + anchoPosicion / 2 + (conOperacion ? anchoPosicion / 2 : 0) - imagen.ancho / 2,
-				y: imagen.piso * altoPosicion - imagen.alto / 2,
-				height: imagen.alto,
-				width: imagen.ancho
-			}))
-		})
-	}
-
-	//FUNCIONES -------------------
-	function getDetallePiso(x) {
-		let numeroCompleto = x.numeroCompleto === 'si' ? true : false
-		let detalle = {}
-		if (numeroCompleto) {
-			let numero = regexFunctions(regex(x.detalle, vars, vt)).toString().replace('.', '').split('')
-			tiposTabla.find(x => x.id === tipoTabla).detalle.forEach((posicion, index) => {
-				detalle[posicion] = numero[index]
-			})
-		} else {
-			Object.keys(x.detalle).forEach(posicion => {
-				detalle[posicion] = regexFunctions(regex(x.detalle[posicion], vars, vt))
-			})
-		}
-		return {
-			tipo: x.tipo,
-			detalle
-		}
-	}
-
-	async function getImagenesPorCargar() {
-        let imagenes = []
-        detallePisos.forEach(piso => {
-            switch(piso.tipo) {
-                case 'bloques':
-                    Object.keys(piso.detalle).forEach(posicion => {
-                        let valor = regexFunctions(regex(piso.detalle[posicion], vars, vt))
-                        valor > 0 && imagenes.push({
-                            id: piso.tipo+'-'+posicion+'-'+valor,
-                            url: urlImagenesPosicionalesBloques.find(x => x.posicion === posicion).url.replace('#',valor)
-                        })
-                    })
-                    break
-                case 'monedas y billetes':
-                    Object.keys(piso.detalle).forEach(posicion => {
-                        let valor = regexFunctions(regex(piso.detalle[posicion], vars, vt))
-                        valor > 0 && imagenes.push({
-                            id: piso.tipo.replace(/\s/g,'-')+'-'+posicion+'-'+valor,
-                            url: urlImagenesPosicionalesMonedasYBilletes.find(x => x.posicion === posicion).url.replace('#', valor)
-                        })
-                    })
-                    break
-                case 'fichas lila':
-                    Object.keys(piso.detalle).forEach(posicion => {
-                        let valor = regexFunctions(regex(piso.detalle[posicion], vars, vt))
-                        valor > 0 && imagenes.push({
-                            id: piso.tipo.replace(' ','-')+'-'+valor,
-                            url: urlImgsFichasLila.replace('#',valor)
-                        })
-                    })
-                    break
-                case 'fichas calipso':
-                    Object.keys(piso.detalle).forEach(posicion => {
-                        let valor = regexFunctions(regex(piso.detalle[posicion], vars, vt))
-                        valor > 0 && imagenes.push({
-                            id: piso.tipo.replace(' ','-')+'-'+valor,
-                            url: urlImgsFichasCalipso.replace('#',valor)
-                        })
-                    })
-					break
-				case 'fichas azul':
-					Object.keys(piso.detalle).forEach(posicion => {
-						let valor = regexFunctions(regex(piso.detalle[posicion], vars, vt))
-						valor > 0 && imagenes.push({
-							id: piso.tipo.replace(' ','-')+'-'+valor,
-							url: urlImgsFichasAzul.replace('#',valor)
-						})
-					})
-					break
-                default:
-                    //no debe ingresar texto
-                    break
-            }
-        })
-        imagenes = imagenes.reduce((acc, current) => {
-            const x = acc.find(item => item.id === current.id)
-            if (!x) {
-              return acc.concat([current])
-            } else {
-              return acc
-            }
-        }, [])
-        let imagenesCargadas = await Promise.all(imagenes.map(x => cargaImagen(x.url)))
-        imagenes = imagenes.map((x,i) => ({
-            id: x.id, 
-            url: x.url, 
-            height: imagenesCargadas[i].height,
-            width: imagenesCargadas[i].width
-        }))
-        let imagenTabla = tiposTabla.find(x => x.id === tipoTabla)
-        let imagenTablaCargada = await cargaImagen(imagenTabla.url)
-        imagenTabla = {
-            ...imagenTabla,
-            height: imagenTablaCargada.height,
-            width: imagenTablaCargada.width
+    function getDetallePiso(x) {
+        let numeroCompleto = x.numeroCompleto === 'si' ? true : false
+        let detalle = {}
+        if(numeroCompleto) {
+            let numero = regexFunctions(regex(x.detalle, vars, vt)).toString().replace('.','').split('')
+            titulos.forEach((posicion, index) => {
+                detalle[posicion] = numero[index]
+            })
+        } else {
+            Object.keys(x.detalle).forEach(posicion => {
+                detalle[posicion] = regexFunctions(regex(x.detalle[posicion], vars, vt))
+            })
         }
-        let imagenFlecha = await cargaImagen(urlImgFlecha)
-
         return {
-            imagenes,
-            imagenTabla,
-            imagenFlecha
+            tipo: x.tipo,
+            detalle
         }
     }
 
-	function obtenerValorPosicional() {
-		let pisosAdicionales = 0
-		let valores = valoresPosicionales ? valoresPosicionales.map((valorPosicional => {
-			pisosAdicionales += 1 + (valorPosicional.mostrarFlecha === 'si' ? 1 : 0)
-			let detalleObj = {}
-			Object.keys(valorPosicional.detalle).forEach(posicion => {
-				detalleObj[posicion] = regexFunctions(regex(valorPosicional.detalle[posicion], vars, vt))
-			})
-			return {
-				mostrarFlecha: valorPosicional.mostrarFlecha === 'si' ? true : false,
-				mostrarSignoMas: valorPosicional.mostrarSignoMas === 'si' ? true : false,
-				detalle: detalleObj
-			}
-		})) : []
-		if (mostrarVF) {
+    function agregaElementoACelda(celda, fila, indexColumna, nombreColumna) {
+        if(fila === 0) {
+            if(encabezados.indexOf(nombreColumna) > -1) {
+                let titulo = document.createElement('h6')
+                celda.classList.add('tabPos-celda_encabezado')
+                titulo.innerHTML = nombreColumna
+                celda.appendChild(titulo)
+                //testea si es la primera columna del encabezado de la tabla para corregir bordes
+                if(titulos[indexColumna-1]) {
+                    if(encabezados.indexOf(titulos[indexColumna-1]) === -1) {
+                        celda.classList.add('tabPos-celda_encabezadofirst')
+                    }
+                } else {
+                    celda.classList.add('tabPos-celda_encabezadofirst')
+                }
+                //testea si es la ultima columna del encabezado de la tabla para corregir bordes
+                if(titulos[indexColumna+1]) {
+                    if(encabezados.indexOf(titulos[indexColumna+1]) === -1) {
+                        celda.classList.add('tabPos-celda_encabezadolast')
+                    }
+                } else {
+                    celda.classList.add('tabPos-celda_encabezadolast')
+                }
+            } else if(!nombreColumna.match(/w\d{1,}/g)) {
+                let texto = document.createElement('p')
+                celda.classList.add('tabPos-celda_textoencabezado')
+                texto.innerHTML = nombreColumna
+                celda.appendChild(texto)
+            }
+            return
+        } else if(fila <= pisoTabla) {
+            let detallePiso = detallePisos[fila-1]
+            let detalleCelda = detallePiso.detalle[nombreColumna]
+            if(encabezados.indexOf(nombreColumna) > -1 && fila < pisoTabla) {
+                celda.classList.add('tabPos-celda_cuerpo')
+                //testea si es la primera columna del cuerpo de la tabla para corregir bordes
+                if(titulos[indexColumna-1]) {
+                    if(encabezados.indexOf(titulos[indexColumna-1]) === -1) {
+                        celda.classList.add('tabPos-celda_cuerpofirst')
+                    }
+                } else {
+                    celda.classList.add('tabPos-celda_cuerpofirst')
+                }
+                //testea si es la ultima columna del cuerpo de la tabla para corregir bordes
+                if(titulos[indexColumna+1]) {
+                    if(encabezados.indexOf(titulos[indexColumna+1]) === -1) {
+                        celda.classList.add('tabPos-celda_cuerpolast')
+                    }
+                } else {
+                    celda.classList.add('tabPos-celda_cuerpolast')
+                }
+            } else if (encabezados.indexOf(nombreColumna) > -1 && fila == pisoTabla) {
+                celda.classList.add('tabPos-celda_cuerpo')
+                //testea si es la primera columna del cuerpo de la tabla para corregir bordes
+                if(titulos[indexColumna-1]) {
+                    if(encabezados.indexOf(titulos[indexColumna-1]) === -1) {
+                        celda.classList.add('tabPos-celda_cuerpofirstcol')
+                    }
+                } else {
+                    celda.classList.add('tabPos-celda_cuerpofirstcol')
+                }
+                //testea si es la ultima columna del cuerpo de la tabla para corregir bordes
+                if(titulos[indexColumna+1]) {
+                    if(encabezados.indexOf(titulos[indexColumna+1]) === -1) {
+                        celda.classList.add('tabPos-celda_cuerpolastcol')
+                    }
+                } else {
+                    celda.classList.add('tabPos-celda_cuerpolastcol')
+                }
+            }
+            if(indexColumna === indiceDecimal) {
+                celda.classList.add('tabPos-celda_coma')
+            }
+            if(!detalleCelda) {
+                return
+            }
+            if(detalleCelda === '0' && detallePiso.tipo !== 'numero') {
+                return
+            }
+            
+            
+            switch(detallePiso.tipo) {
+                case 'numero':
+                    let reserva
+                    if(conOperacion && fila === 1) {
+                        celda.classList.add('tabPos-celda_operacion')
+                        reserva = detalleCanje[nombreColumna] ? regexFunctions(regex(detalleCanje[nombreColumna], vars, vt)) : ''
+                        if(reserva) {
+                            let numeroArriba = document.createElement('span')
+                            numeroArriba.innerHTML = reserva
+                            celda.appendChild(numeroArriba)
+                        }
+                    } else {
+                        celda.classList.add('tabPos-celda_texto')
+                    }
+                    let numero = document.createElement('p')
+                    numero.innerHTML = detalleCelda
+                    celda.appendChild(numero)
+                    if(tachar === 'si' && fila === 1 && encabezados.indexOf(nombreColumna) > -1 && reserva) {
+                        numero.classList.add('tabPos-celda_textotachado')
+                    }
+                    break
+                case 'bloques':
+                    let imgBloque = document.createElement('img')
+                    imgBloque.src = urlImagenesPosicionalesBloques.find(x => x.posicion === nombreColumna).url.replace('#', detalleCelda)
+                    imgBloque.classList.add(`tabPos-bloques_${nombreColumna}`, 'tabPos-img')
+                    celda.appendChild(imgBloque)
+                    break
+                case 'monedas y billetes':
+                    let imgMyB = document.createElement('img')
+                    imgMyB.src = urlImagenesPosicionalesMonedasYBilletes.find(x => x.posicion === nombreColumna).url.replace('#', detalleCelda)
+                    imgMyB.classList.add(`tabPos-monedabillete_${nombreColumna}`, 'tabPos-img')
+                    celda.appendChild(imgMyB)
+                    break
+                case 'fichas calipso':
+                    let imgFichaCalipso = document.createElement('img')
+                    imgFichaCalipso.src = urlImgsFichasCalipso.replace('#', detalleCelda)
+                    imgFichaCalipso.classList.add('tabPos-ficha', 'tabPos-img')
+                    celda.appendChild(imgFichaCalipso)
+                    break
+                case 'fichas lila':
+                    let imgFichaLila = document.createElement('img')
+                    imgFichaLila.src = urlImgsFichasLila.replace('#', detalleCelda)
+                    imgFichaLila.classList.add('tabPos-ficha', 'tabPos-img')
+                    celda.appendChild(imgFichaLila)
+                    break
+                case 'fichas azul':
+                    let imgFichaAzul = document.createElement('img')
+                    imgFichaAzul.src = urlImgsFichasAzul.replace('#', detalleCelda)
+                    imgFichaAzul.classList.add('tabPos-ficha', 'tabPos-img')
+                    celda.appendChild(imgFichaAzul)
+                    break
+                default:
+                    break
+            }
+        } else if((fila-pisoTabla-1) < valoresPosicionales.length) {
+            let vp = valoresPosicionales[fila-pisoTabla-1]
+            if(vp.mostrarFlecha && encabezados.indexOf(nombreColumna) > -1) {
+                let imgFlecha = document.createElement('img')
+                imgFlecha.src = urlImgFlecha
+                imgFlecha.classList.add('tabPos-imgFlecha')
+                celda.appendChild(imgFlecha)
+                celda.style.flexDirection = 'column'
+            }
+            if(vp.detalle[nombreColumna]) {
+                celda.classList.add('tabPos-celda_texto')
+                let numero = document.createElement('p')
+                numero.innerHTML = vp.detalle[nombreColumna]
+                celda.appendChild(numero)
+            }
+            if(vp.mostrarSignoMas && encabezados.indexOf(nombreColumna) > -1) {
+                if(!primerSignoMas) {
+                    celda.classList.add('tabPos-celda_signoMas')
+                } else {
+                    primerSignoMas = false
+                }
+                
+            }
+        }
+    }
 
-			pisosAdicionales += 1 + (formaVF === 'flecha' ? 1 : 0)
-		}
-		return { pisosAdicionales, valores }
-	}
+    function marcarCasilla(casilla, fila, columna) {
+        let celda = celdasDestacadas.find(x => x.col === columna)
+        if(celda) {
+            if(celda.filaI <= (fila+1) && celda.filaF >= (fila+1)) {
+                casilla.style.backgroundColor = celda.color
+            }
+        }
+    }
 
-	function crearElementoDeImagen(src, atributos) {
-		let element = document.createElementNS('http://www.w3.org/2000/svg', 'image')
-		element.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', src)
-		for (let p in atributos) {
-			element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
-				return '-' + m.toLowerCase()
-			}), atributos[p])
-		}
-		return element
-	}
+    function dibujarLinea(celda, fila, columna) {
+        let conBorde = lineas.find(x => x.fila == (fila+1))
+        if(conBorde) {
+            if(conBorde.inicio <= (columna+1) && conBorde.fin >= (columna+1)) {
+                celda.style.borderBottom = '3px solid #1F8EBE'
+            }
+        }
+    }
 
-	function crearReferenciaAElemento(id, atributos) {
-		let element = document.createElementNS('http://www.w3.org/2000/svg', 'use')
-		element.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `#${id}`)
-		for (let p in atributos) {
-			element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
-				return '-' + m.toLowerCase()
-			}), atributos[p])
-		}
-		return element
-	}
+    function dibujarImagen(celda, fila, titulo) {
+        let conImagen = imagenesParaPosiciones ? imagenesParaPosiciones.find(x => x.piso == (fila+1)) : []
+        if(conImagen) {
+            if(conImagen.posicion === titulo) {
+                let imagen = document.createElement('img')
+                imagen.src = conImagen.src
+                imagen.width = conImagen.ancho
+                imagen.classList.add('tabPos-img')
+                celda.appendChild(imagen)
+            }
+        }
+    }
 
-	function crearElemento(nombre, atributos) {
-		let element = document.createElementNS('http://www.w3.org/2000/svg', nombre)
-		for (let p in atributos) {
-			element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
-				return '-' + m.toLowerCase()
-			}), atributos[p])
-		}
-		return element
-	}
-
-	function crearElementoDeTexto(atributos, texto) {
-		let element = document.createElementNS('http://www.w3.org/2000/svg', 'text')
-		for (let p in atributos) {
-			element.setAttributeNS(null, p.replace(/[A-Z]/g, function (m, p, o, s) {
-				return '-' + m.toLowerCase()
-			}), atributos[p])
-		}
-		let textNode = document.createTextNode(texto)
-		element.appendChild(textNode)
-		return element
-	}
+    
+    function getDetalleValorPosicional(valorPosicional) {
+        let detalle = {}
+        Object.keys(valorPosicional.detalle).forEach(x => {
+            detalle[x] = regexFunctions(regex(valorPosicional.detalle[x], vars, vt))
+        })
+        return {
+            mostrarFlecha: valorPosicional.mostrarFlecha === 'si' ? true : false,
+            mostrarSignoMas: valorPosicional.mostrarSignoMas === 'si' ? true : false,
+            detalle
+        }
+    }
 }
 
 async function formadorGrupos(config) {
