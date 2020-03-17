@@ -3523,13 +3523,13 @@ function tabPos(config) {
 
     let urlImgLlave = 'https://desarrolloadaptatin.blob.core.windows.net/sistemaejercicios/ejercicios/Nivel-5/imagenes_front/llaves/Llave_Horizontal.svg'
     
-    let encabezados = ['CMi','DMi','UMi','UM','C','D','U','d','c','m']
+    let encabezados = ['CMi','DMi','UMi','CM','DM','UM','C','D','U','d','c','m']
 
     let titulos = tipoTabla.split(/[\s,]/g)
     let indiceDecimal = titulos.findIndex(x => x.match(/[d,c,m]/g))
     conOperacion = conOperacion === 'si' ? true : false
     pisoTabla = Number(pisoTabla)
-    detallePisos = detallePisos.map(x => getDetallePiso(x))
+    detallePisos = detallePisos ? detallePisos.map(x => getDetallePiso(x)) : []
     valoresPosicionales = valoresPosicionales ? valoresPosicionales.map(x => getDetalleValorPosicional(x)) : []
     mostrarVF = mostrarVF === 'si' ? true : false
     VF = regexFunctions(regex(VF))
