@@ -499,7 +499,7 @@ function dibujaHtml() {
 	var glosaHtml = '';
 	contenidoBody['g'].forEach((m, i) => {
 		glosaHtml += `<div class="col-md-${m.width.md} col-sm-${m.width.sm} col-${m.width.xs}">`
-		if (m.tag != 'general') {
+		if (m.tag != 'general' && m.tag != 'html') {
 			if (m.tag == 'svg') {
 				glosaHtml += `<svg id="container-g${i}" class="img-fluid mx-auto d-block"></svg>`
 			} else {
