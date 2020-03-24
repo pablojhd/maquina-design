@@ -12,6 +12,7 @@ import {
 } from "./Variables";
 import { validaRespuesta } from "./ValidaRespuesta";
 import { continuarEjercicio } from "./ContinuarEjercicio";
+import FormateaNumeros from "../utils/FormateaNumeros"
 
 export const handleRespuesta = () => {
   document.querySelector("footer").style.display = "none";
@@ -49,7 +50,7 @@ export const handleRespuesta = () => {
       feedbackElement.style.display = "block";
       feedbackElement.classList.add("feedback-incorrecto");
       feedbackStrong.innerHTML = feedRandomIndex(false);
-      feedbackText.innerHTML = feedback;
+      feedbackText.innerHTML = FormateaNumeros(feedback);
       document.getElementById("btnContinuar").addEventListener("click", continuarEjercicio);
       siguienteIntento();
       window.MathJax && MathJax.Hub.Queue(["Typeset", MathJax.Hub]) //muestra el mathjax en los feedbacks en caso de que existan
