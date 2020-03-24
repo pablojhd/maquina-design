@@ -50,7 +50,7 @@ export const handleRespuesta = () => {
       feedbackElement.style.display = "block";
       feedbackElement.classList.add("feedback-incorrecto");
       feedbackStrong.innerHTML = feedRandomIndex(false);
-      feedbackText.innerHTML = FormateaNumeros(feedback);
+      feedbackText.innerHTML = FormateaNumeros(feedback, '&nbsp;');
       document.getElementById("btnContinuar").addEventListener("click", continuarEjercicio);
       siguienteIntento();
       window.MathJax && MathJax.Hub.Queue(["Typeset", MathJax.Hub]) //muestra el mathjax en los feedbacks en caso de que existan
