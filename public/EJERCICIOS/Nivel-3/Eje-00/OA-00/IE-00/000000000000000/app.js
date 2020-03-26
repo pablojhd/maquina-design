@@ -292,8 +292,8 @@ function espacioMilesRegex(texto) {
 		if (entero.length >= 4) {
 			let enteroReverse = entero.split('').reverse()
 			let count = 1
-			enteroReverse.forEach(function (numero) {
-				if (count === 3) {
+			enteroReverse.forEach(function (numero, index) {
+				if (count === 3 && (index+1) < enteroReverse.length) {
 					enteroEspaciado = '&nbsp;' + numero + enteroEspaciado
 					count = 1
 				} else {

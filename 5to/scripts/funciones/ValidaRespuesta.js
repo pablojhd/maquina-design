@@ -13,7 +13,7 @@ export const validaRespuesta = (validaciones, tipo) => {
 			}
 		}
 		return { feedback, errorFrecuente }
-	} else {
+	} else if (tipo === 'respuesta breve') {
 		const { respuestas, errFrecDefecto, feedbackDefecto } = validaciones
 		for (let respuesta of respuestas) {
 			let coincidenTodas = true
@@ -82,7 +82,29 @@ export const validaRespuesta = (validaciones, tipo) => {
 			}
 		}
 		return { feedback, errorFrecuente }
-	}
+	} else {
+        const { respuestas, errFrecDefecto, feedbackDefecto } = validaciones
+        for(let resp of respuestas) {
+            let evaluacion = resp.opcion.replace(/input\d/g, coincidencia => document.getElementById(coincidencia).value.replace(',', '.').replace(/\s/, ''))
+            if(eval(evaluacion)) {
+                feedback = resp.feedback
+				errorFrecuente = resp.errorFrecuente
+				break
+            }
+        }
+        if(!feedback) {
+            feedback = FormateaNumeros(feedbackDefecto, '&nbsp;')
+            errorFrecuente = errFrecDefecto
+            document.querySelectorAll("input[name='answer']").forEach(input => {
+                input.classList.add('inputTexto-incorrecto')
+            })
+        } else {
+            document.querySelectorAll("input[name='answer']").forEach(input => {
+                input.classList.add('inputTexto-correcto')
+            })
+        }
+        return { feedback, errorFrecuente }
+    }
 }
 
 function coloreaInputTextoPorDefecto(inputElement) {
