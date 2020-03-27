@@ -22,15 +22,17 @@
 
 .tabPos-celda_encabezado {
     background-color: #1F8EBE;
-    border-left: 1.5px solid #DFD9D0;
-    border-right: 1.5px solid #DFD9D0;
+    border-left: 0.07em solid #DFD9D0;
+    border-right: 0.07em solid #DFD9D0;
 }
 
 .tabPos-celda_encabezado h6 {
     font-family: $quicksand-medium;
-    font-size: 30px;
+    font-size: 1em;
+    font-weight: 300;
     color: #F9F3E9;
-    margin: 0;
+    margin-top: 0.2em;
+    margin-bottom: 0.2em;
 }
 
 .tabPos-celda_textoencabezado p {
@@ -48,9 +50,9 @@
 }
 
 .tabPos-celda_cuerpo {
-    border-bottom: 3px solid #DFD9D0;
-    border-left: 1.5px solid #DFD9D0;
-    border-right: 1.5px solid #DFD9D0;
+    border-bottom: 0.14em solid #DFD9D0;
+    border-left: 0.07em solid #DFD9D0;
+    border-right: 0.07em solid #DFD9D0;
 }
 
 .tabPos-celda_coma {
@@ -138,30 +140,32 @@
 /* clases para dibujar los grosores y radios de los bordes de las tablas */
 .tabPos-celda_encabezadofirst {
     border-left: none;
-    border-top-left-radius: 20px;
+    border-top-left-radius: 10px;
+    padding-top: 0.3em;
+    padding-bottom: 0.3em;
 }
 
 .tabPos-celda_encabezadolast {
     border-right: none;
-    border-top-right-radius: 20px;
+    border-top-right-radius: 10px;
 }
 
 .tabPos-celda_cuerpofirst {
-    border-left: 3px solid #DFD9D0;
+    border-left: 0.14em solid #DFD9D0;
 }
 
 .tabPos-celda_cuerpolast {
-    border-right: 3px solid #DFD9D0;
+    border-right: 0.14em solid #DFD9D0;
 }
 
 .tabPos-celda_cuerpofirstcol {
-    border-left: 3px solid #DFD9D0;
-    border-bottom-left-radius: 20px;
+    border-left: 0.14em solid #DFD9D0;
+    border-bottom-left-radius: 10px;
 }
 
 .tabPos-celda_cuerpolastcol {
-    border-right: 3px solid #DFD9D0;
-    border-bottom-right-radius: 20px;
+    border-right: 0.14em solid #DFD9D0;
+    border-bottom-right-radius: 10px;
 }
 
 .tabPos-bloques_UM {
