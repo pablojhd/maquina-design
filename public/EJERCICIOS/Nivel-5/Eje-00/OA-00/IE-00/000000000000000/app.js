@@ -605,7 +605,7 @@ function insertarInput(config) {
 					lmnt.style.marginBottom = '5px'
 					lmnt.innerHTML = `
             <div class="opcionradio">
-              <input type="radio" id="radio-${i}" name="answer" value="${m.respuesta}">
+              <input type="radio" id="radio-${i}" name="answer" value="${m.respuesta.replace(/\s/g, ' ')}">
               <label for="radio-${i}">${espacioMilesRegex(m.respuesta)}</label>
             </div>`;
 					container.appendChild(lmnt);
