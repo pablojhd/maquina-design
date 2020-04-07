@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link rel="stylesheet" href="../../../../css/index.css">
+	
+	<title>00000_vt</title>
+	<!-- MATHJAX NO IMPORTADO -->
+	<script>document.domain = "adaptativamente.cl";</script>
+	<style>
+		.fraction {
+			display: inline-block;
+			vertical-align: middle; 
+			margin: 0 0.2em 0.4ex;
+			text-align: center;
+		}
+		.fraction > span {
+			display: block;
+			padding-top: 0.1em;
+			font-family: "quicksandmedium";
+		}
+		.fraction span.fdn {
+			border-top: thin solid black;
+		}
+		.fraction span.bar {
+			display: none;
+		}
+	</style>
+</head>
+
+<body 
+    data-id="050000000000000"
+    data-content="{'e':[{'id':'-M4GPh1EMkG4eqVfgSYs','date':'6/4/2020 18:11:35','name':'Insertar Texto','params':{'active':0,'color':'#ffffff','content':'<p>&nbsp;Este es un texto que debe ir en el enunciado del ejercicio /[frac(\'$a\', \'$b\')/] asdasd  asdkij lasjdlj alskdhj aksjdlkjaslkjha lkalksd lak lk jalskdk klj lkajdfl ldkfj lk lksjgk sldkgj lkl kslkg jsldk jsl lsk j lkjlñkjslkgdfhjñsl&nbsp;</p>\n<p>Lj ljkhadfljkg  kjdgajksdha haljksgk jhajkhf gadgjk dfjkhdlfkjahl kyhdfjhlkj klj lkj a{kj ga{dlfiuañfdjgh dñl fuhsakdlfjgñaldfigñafg</p>\n<p>asdasd asdf asdfasfdfga /[frac(\'$a + 3\', \'$b - 9\')/]  asflaoijf asoid jasoifaoshd ougdesakgjspdouiasfkgjo i8uasoldhiufdgiskfjoaif lgo jaliksj</p>\n','date':'6/4/2020 18:11:35','padding':'10px 10px 0px'},'position':0,'tag':'general','width':{'md':12,'sm':12,'xs':12}}],'r':[],'g':[]}"
+    data-version="{'id':'vt','vars':[{'var':'a','val':'5'},{'var':'b','val':'8'}]}"
+    data-habilidad="C2"
+	data-tipoejercicio="seleccion multiple"
+	data-x="W10="
+	
+>
+	<header class="container-fluid">
+		<div class="row justify-content-center no-gutters">
+			<div class="col-11 lineasbarra">
+				<img id="cerrar" src="../../../../imagenes_front/figuras/cruz.svg" alt="cerrar" />
+				<hr class="sidelinebar d-none d-sm-block" />
+				<svg xmlns="http://www.w3.org/2000/svg" id="progressbar" version="1.1"
+					class="mx-sm-auto d-sm-block"></svg>
+				<hr class="sidelinebar d-none d-sm-block" />
+			</div>
+		</div>
+	</header>
+	<section >
+		<div id="contenedor" class="container-fluid">
+			<div id="contenido" class="row justify-content-center"></div>
+			<div id="respuesta"></div>
+		</div>
+	</section>
+	<footer class="container-fluid">
+		<div id="consulta" class="col-sm">
+			<button type="button" id="btnConsulta" onclick="pressConsulta();" class="boton boton-icon boton-animation icon-consulta">
+				<span>CONSULTA</span>
+			</button>
+		</div>
+		<div id="siguiente" class="col-sm">
+			<button type="button" id="btnResponder" class="boton boton-icon boton-animation icon-responder" disabled>
+				<span>RESPONDER</span>
+			</button>
+		</div>
+	</footer>
+	<div class="feedback" id="container-feedback">
+		<div id="footer-feedback" class="animate-zoom">
+			<div id="grid-feedback">
+				<div id="sub-grid">
+					<div id="sub-container">
+							<img id="imagen-feedback">
+						<div id="text-container">
+							<div>
+								<span id="feedback-span"></span>
+								<p id="feedback-p"></p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div id="siguiente-feedback">
+					<button type="button" id="btnContinuar" class="boton boton-icon boton-animation icon-responder">
+						<span>CONTINUAR</span>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="glosa">
+		<div class="modal-content animate-zoom-glosa">
+			<div id="contenedor-glosa" class="container-fluid">
+				<div id="explicacion" class="row no-gutters">
+					<div class="col-12 offset-sm-2 col-sm-10">
+						<h2>Solución</h2>
+					</div>
+					<div class="d-none d-sm-block col-sm-2">
+						<img id="imagenGlosa" src="" class="img-fluid" />
+					</div>
+					<div class="col-12 col-sm-10">
+						<div class="row no-gutters justify-content-center" id="contenido-glosa">
+						
+						</div>
+					</div>
+				</div>
+				<div class="row no-gutters justify-content-end">
+					<div class="col-4 col-sm-3">
+						<button type="button" id="btnCerrarGlosa" onclick="cerrarFeedGlosa()"
+							class="boton boton-icon boton-animation icon-responder">
+							<span>CONTINUAR</span>
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<input id="hiddenIntento" type="hidden" onchange="cambio(this);" />
+	<script src="../../../../js/jquery-3.3.1.slim.min.js"></script>
+	<script src="index.js"></script>
+	<script src="app.js"></script>
+	<script src="../../../../js/jsEjercicios.js"></script>
+	<script src="../../../../js/svg-pan-zoom.min.js"></script>
+	<script src="../../../../js/hammer.min.js"></script>
+</body>
+
+</html>
