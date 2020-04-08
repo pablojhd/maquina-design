@@ -276,8 +276,8 @@ function regexFunctions(text) {
 		try {
 			return eval(funcion)
 		} catch (error) {
-			/*console.log(error);
-			console.log(funcion)*/
+			console.log(error);
+			console.log(funcion);
 			return coincidencia;
 		}
 	})
@@ -327,12 +327,15 @@ function espacioMilesRegexx(texto) {
 	})
 }
 
-function frac(numerador, denominador) {
-	return `<span class="fraction">
-		<span class="fup">&nbsp;${numerador}&nbsp;</span>
-		<span class="bar">/</span>
-		<span class="fdn">&nbsp;${denominador}&nbsp;</span>
-	</span>`
+function frac(entero, numerador, denominador) {
+    return `<span class="eq">
+		${entero ? `<span class="integer">${entero}</span>` : ''}
+        <span class="fraction">
+            <span class="fup">&nbsp;${numerador}&nbsp;</span>
+            <span class="bar">/</span>
+            <span class="fdn">&nbsp;${denominador}&nbsp;</span>
+        </span>
+    </span>`
 }
 
 function cargaImagen(src) {
