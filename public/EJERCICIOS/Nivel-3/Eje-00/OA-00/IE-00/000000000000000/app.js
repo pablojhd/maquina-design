@@ -3247,7 +3247,7 @@ async function recta(config, tipo) {
 			textAnchor: 'middle',
 			fill: colorFuente,
 			style: 'font-family:Open-Sans-Reg;'
-		}, numero.toString().replace('.', ',')))
+		}, espacioMilesRegexx(numero.toString())))
 	}
 
 	function frac({ tipo, entero, numerador, denominador, ubicacion }) {
