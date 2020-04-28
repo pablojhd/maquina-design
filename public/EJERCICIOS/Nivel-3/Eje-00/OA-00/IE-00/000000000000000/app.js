@@ -2343,7 +2343,7 @@ async function recta(config, tipo) {
 		} else if (index == divicionesRecta && (extremos == 'ambos' || extremos == 'final')) { //dibuja ultimo valor
 			dibujaValorDeMarca(numero, posicion, index)
 		}
-		if (index != 0 && index != divicionesRecta && valores === 'todos') { //dibuja todos los valores de recta
+		if(index != 0 && index != divicionesRecta && (valores === 'todos' || valores === 'intercalados')) { //dibuja todos los valores de recta
 			dibujaValorDeMarca(numero, posicion, index)
 		}
 	})
@@ -2526,103 +2526,25 @@ async function recta(config, tipo) {
 	}
 
 	arcos.forEach(arco => {
-		if (arco.saltos) {
+		if(arco.saltos) {
 			let puntosDeArcos = _posicionesEnRecta.filter(x => x.numero >= arco.inicio && x.numero <= arco.fin)
 			puntosDeArcos.forEach(({ posicion }, index) => {
-				if (index + 1 == puntosDeArcos.length) {
+				if(index+1 == puntosDeArcos.length) {
 					return
 				}
-				let x = posicion + _anchoSeparaciones / 2
-				let y = altoRecta / 2
-				let radio = _anchoSeparaciones / 2
-				container.appendChild(crearElemento('path', {
-					d: createArcWithAngles(x, y, radio, 45, 135),
-					fill: 'none',
-					stroke: arco.color,
-					strokeWidth: grosorMarcas
-				}))
-				if (arco.direccion == 'derecha') {
-					let puntaFlecha = polarToCartesian(x, y, radio, 135)
-					container.appendChild(crearElemento('path', {
-						d: `M ${puntaFlecha.x} ${puntaFlecha.y}
-							L ${puntaFlecha.x} ${puntaFlecha.y - 5}
-							L ${puntaFlecha.x - 5} ${puntaFlecha.y}
-							L ${puntaFlecha.x} ${puntaFlecha.y} Z`,
-						fill: arco.color,
-						stroke: arco.color
-					}))
-				} else {
-					let puntaFlecha = polarToCartesian(x, y, radio, 45)
-					container.appendChild(crearElemento('path', {
-						d: `M ${puntaFlecha.x} ${puntaFlecha.y}
-							L ${puntaFlecha.x} ${puntaFlecha.y - 5}
-							L ${puntaFlecha.x + 5} ${puntaFlecha.y}
-							L ${puntaFlecha.x} ${puntaFlecha.y} Z`,
-						fill: arco.color,
-						stroke: arco.color
-					}))
-				}
-				if (arco.mostrarValorTramo) {
-					container.appendChild(crearElementoDeTexto({
-						x: posicion + _anchoSeparaciones / 2,
-						y: altoRecta / 2 - _anchoSeparaciones / 2 - 5,
-						fontSize: fontSize,
-						textAnchor: 'middle',
-						fill: colorFuente,
-						style: 'font-family:Open-Sans-Reg;'
-					}, valorEscalaRecta))
-				}
+				let x1 = posicion + arco.separacionMarca
+				let x2 = puntosDeArcos[index+1].posicion - arco.separacionMarca
+				let y = altoRecta/2 - arco.separacionRecta
+				let texto = arco.texto.replace('#', arco.direccion === 'derecha' ? index+1 : puntosDeArcos.length-index-1)
+				let posicionTexto = altoRecta/2 - arco.separacionTexto
+				dibujaFlechaArqueada(x1, y, x2, y, arco.direccion, arco.altoArco, arco.color, texto, arco.colorTexto, posicionTexto)
 			})
 		} else {
-			let inicioArco = valorRectaACoordenadaX(arco.inicio)
-			let finArco = valorRectaACoordenadaX(arco.fin)
-			let mitad = (finArco - inicioArco) / 2 + inicioArco
-			let yArco = altoRecta / 2 - largoMarcas / 2 - 10
-			container.appendChild(crearElemento('path', {
-				d: `M ${inicioArco} ${yArco}
-					A 22 2 0 0 1 ${finArco} ${yArco}`,
-				fill: 'none',
-				stroke: arco.color,
-				strokeWidth: grosorMarcas
-			}))
-			if (arco.direccion == 'derecha') {
-				let puntaFlecha = {
-					x: finArco,
-					y: yArco
-				}
-				container.appendChild(crearElemento('path', {
-					d: `M ${puntaFlecha.x} ${puntaFlecha.y}
-						L ${puntaFlecha.x} ${puntaFlecha.y - 5}
-						L ${puntaFlecha.x - 5} ${puntaFlecha.y}
-						L ${puntaFlecha.x} ${puntaFlecha.y} Z`,
-					fill: arco.color,
-					stroke: arco.color
-				}))
-			} else {
-				let puntaFlecha = {
-					x: inicioArco,
-					y: yArco
-				}
-				container.appendChild(crearElemento('path', {
-					d: `M ${puntaFlecha.x} ${puntaFlecha.y}
-						L ${puntaFlecha.x} ${puntaFlecha.y - 5}
-						L ${puntaFlecha.x + 5} ${puntaFlecha.y}
-						L ${puntaFlecha.x} ${puntaFlecha.y} Z`,
-					fill: arco.color,
-					stroke: arco.color
-				}))
-			}
-			if (arco.mostrarValorTramo) {
-				let diferencia = arco.fin - arco.inicio
-				container.appendChild(crearElementoDeTexto({
-					x: mitad,
-					y: altoRecta / 2 - _anchoSeparaciones * 0.7,
-					fontSize: fontSize,
-					textAnchor: 'middle',
-					fill: colorFuente,
-					style: 'font-family:Open-Sans-Reg;'
-				}, diferencia.toString().replace('.', ',')))
-			}
+			let x1 = valorRectaACoordenadaX(arco.inicio) + arco.separacionMarca
+			let x2 = valorRectaACoordenadaX(arco.fin) - arco.separacionMarca
+			let y = altoRecta/2 - arco.separacionRecta
+			let posicionTexto = altoRecta/2 - arco.separacionTexto
+			dibujaFlechaArqueada(x1, y, x2, y, arco.direccion, arco.altoArco, arco.color, arco.texto, arco.colorTexto, posicionTexto)
 		}
 	})
 	//pone todos los textos de la recta
@@ -3118,6 +3040,70 @@ async function recta(config, tipo) {
 		})
 	}
 
+	
+	function dibujaFlechaArqueada(x1, y1, x2, y2, direccion, variacion, colorFlecha, texto, colorTexto, yTexto) {
+        let horizontal = y1 === y2 ? true : false
+        let puntoMedio = horizontal ? x1 + (x2 - x1) / 2 : y1 + (y2 - y1) / 2
+        let puntoExterno = horizontal ? y1 - variacion : x1 + (30 * variacion)
+		container.appendChild(crearElemento('path', {
+			d: `M ${x1} ${y1} C ${x1} ${y1}, ${horizontal ? puntoMedio : puntoExterno} ${horizontal ? puntoExterno : puntoMedio}, ${x2} ${y2}`,
+			stroke: colorFlecha,
+			strokeWidth: '2',
+			fill: 'transparent'
+		}))
+		if(direccion === 'abajo') {
+			let pendiente = Math.atan((y2 - puntoMedio) / (x2 - puntoExterno))*180/Math.PI
+			let punta1Flecha = polarToCartesian(x2, y2, 8, pendiente - (variacion > 0 ? 140 : 40))
+			let punta2Flecha = polarToCartesian(x2, y2, 8, pendiente + (variacion > 0 ? 140 : 40))
+			container.appendChild(crearElemento('path', {
+				d: `M ${punta1Flecha.x} ${punta1Flecha.y } L ${x2} ${y2} L ${punta2Flecha.x} ${punta2Flecha.y}`,
+				stroke: colorFlecha,
+				strokeWidth: '2',
+				fill: 'none'
+			}))
+		} else if (direccion === 'arriba') {
+            let pendiente = Math.atan((y1 - puntoMedio) / (x1 - puntoExterno))*180/Math.PI
+			let punta1Flecha = polarToCartesian(x2, y2, 8, -pendiente - (variacion > 0 ? 140 : 40))
+			let punta2Flecha = polarToCartesian(x2, y2, 8, -pendiente + (variacion > 0 ? 140 : 40))
+			container.appendChild(crearElemento('path', {
+				d: `M ${punta1Flecha.x} ${punta1Flecha.y } L ${x2} ${y2} L ${punta2Flecha.x} ${punta2Flecha.y}`,
+				stroke: colorFlecha,
+				strokeWidth: '2',
+				fill: 'none'
+			}))
+        } else if (direccion === 'derecha') {
+            let pendiente = Math.atan((y1 - puntoExterno) / (x1 - puntoMedio))*180/Math.PI
+            let punta1Flecha = polarToCartesian(x2, y2, 8, -pendiente - 40)
+			let punta2Flecha = polarToCartesian(x2, y2, 8, -pendiente + 40)
+			container.appendChild(crearElemento('path', {
+				d: `M ${punta1Flecha.x} ${punta1Flecha.y } L ${x2} ${y2} L ${punta2Flecha.x} ${punta2Flecha.y}`,
+				stroke: colorFlecha,
+				strokeWidth: '2',
+				fill: 'none'
+			}))
+        } else if (direccion === 'izquierda') { //izquierda
+            let pendiente = Math.atan((y2 - puntoExterno) / (x2 - puntoMedio))*180/Math.PI
+            let punta1Flecha = polarToCartesian(x1, y1, 8, -pendiente - 140)
+			let punta2Flecha = polarToCartesian(x1, y1, 8, -pendiente + 140)
+			container.appendChild(crearElemento('path', {
+				d: `M ${punta1Flecha.x} ${punta1Flecha.y } L ${x1} ${y1} L ${punta2Flecha.x} ${punta2Flecha.y}`,
+				stroke: colorFlecha,
+				strokeWidth: '2',
+				fill: 'none'
+			}))
+        }
+        if(texto) {
+            container.appendChild(crearElementoDeTexto({
+                x: horizontal ? puntoMedio : puntoExterno + (5 * variacion),
+                y: yTexto,
+                fontSize: 20,
+                textAnchor: 'middle',
+                fill: colorTexto,
+                style: 'font-family:Open-Sans-Reg;'
+            }, texto))
+        }
+    }
+
 	function polarToCartesian(centerX, centerY, radius, angleInDegrees) { // 0 grados = 9 hrs
 		let angleInRadians = (angleInDegrees - 180) * Math.PI / 180.0;
 
@@ -3188,9 +3174,14 @@ async function recta(config, tipo) {
 			inicio: Number(regexFunctions(regex(arco.inicio, vars, vt))),
 			fin: Number(regexFunctions(regex(arco.fin, vars, vt))),
 			direccion: arco.direccion,
+			separacionRecta: Number(arco.separacionRecta),
 			color: arco.color,
 			saltos: arco.saltos == 'si' ? true : false,
-			mostrarValorTramo: arco.mostrarValorTramo == 'si' ? true : false
+			separacionMarca: Number(arco.separacionMarca),
+			altoArco: Number(regexFunctions(regex(arco.altoArco, vars, vt))),
+			texto: espacioMiles(regexFunctions(regex(arco.texto, vars, vt))),
+			separacionTexto: Number(arco.separacionTexto),
+			colorTexto: arco.colorTexto
 		}
 	}
 
@@ -3224,17 +3215,17 @@ async function recta(config, tipo) {
 		}))
 	}
 
-	function dibujaValorDeMarca(numero, posicion, index) { //pone los numeros o fracciones debajo de la marca de la recta
-		if (Number.isInteger(numero)) {
-			dibujaNumeroEnPosicion(numero, posicion, 'abajo')
-		} else if (formato == 'numero') {
-			//va a pintar el valor como numero, ya sea decimal o no, con todos sus decimales
-			dibujaNumeroEnPosicion(numero, posicion, 'abajo')
-		} else if (((valorFinalRecta - valorInicialRecta) == 1) && formato == 'fraccion' && index >= 0) {
-			/*si la diferencia entre la primera y la segunda marca es 1 y 
-			el formato se debe pintar como fraccion y 
-			el valor esta dentro de los valores de la recta*/
-			dibujaFraccionEnPosicion(Math.floor(numero), index, divicionesRecta, posicion, 'abajo')
+	function dibujaValorDeMarca(numero, posicion, index){ //pone los numeros o fracciones debajo de la marca de la recta
+		if(Number.isInteger(numero)) {
+			dibujaNumeroEnPosicion(numero, posicion, valores === 'intercalados' ? (index%2 === 0 ? 'abajo' : 'arriba') : 'abajo')
+		} else if(formato == 'numero') {
+//va a pintar el valor como numero, ya sea decimal o no, con todos sus decimales
+			dibujaNumeroEnPosicion(numero, posicion, valores === 'intercalados' ? (index%2 === 0 ? 'abajo' : 'arriba') : 'abajo')
+		} else if(((valorFinalRecta-valorInicialRecta)==1) && formato == 'fraccion' && index >= 0) {
+/*si la diferencia entre la primera y la segunda marca es 1 y 
+el formato se debe pintar como fraccion y 
+el valor esta dentro de los valores de la recta*/
+			dibujaFraccionEnPosicion(Math.floor(numero), index, divicionesRecta, posicion, valores === 'intercalados' ? (index%2 === 0 ? 'abajo' : 'arriba') : 'abajo')
 		}
 	}
 
@@ -4603,7 +4594,7 @@ async function sucesiones(config) {
         }
         
     }
-    console.log(numerosSecuencia)
+    //console.log(numerosSecuencia)
     container.appendChild(numeros)
 
     flechasMagicas.forEach(flecha => {
