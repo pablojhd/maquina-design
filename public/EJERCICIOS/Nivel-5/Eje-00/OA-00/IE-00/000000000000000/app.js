@@ -2447,52 +2447,65 @@ async function recta(config, tipo) {
 			let inicioX = valorRectaACoordenadaX(tramo.inicio)
 			let finX = valorRectaACoordenadaX(tramo.final)
 			let centro = (finX - inicioX) / 2 + inicioX
-			let inicioY = altoRecta / 2 - largoMarcas / 2 - tramo.alto
+			let inicioY = altoRecta/2-tramo.alto
 			let radio = 10
-
-			switch (tramo.tipo) {
+			
+			switch(tramo.tipo) {
 				case 'llave':
-					container.appendChild(crearElemento('path', {
-						d: `M ${inicioX} ${inicioY}
-							A ${radio} ${radio} 0 0 1 ${inicioX + radio} ${inicioY - radio}
-							H ${centro - radio}
-							A ${radio} ${radio} 0 0 0 ${centro} ${inicioY - radio * 2}
-							A ${radio} ${radio} 0 0 0 ${centro + radio} ${inicioY - radio}
-							H ${finX - radio}
-							A ${radio} ${radio} 0 0 1 ${finX} ${inicioY}`,
-						fill: 'none',
-						stroke: tramo.color,
-						strokeWidth: grosorMarcas
-					}))
+					if(tramo.alto >= 0) {
+						container.appendChild(crearElemento('path',{
+							d: `M ${inicioX} ${inicioY}
+								A ${radio} ${radio} 0 0 1 ${inicioX+radio} ${inicioY-radio}
+								H ${centro-radio}
+								A ${radio} ${radio} 0 0 0 ${centro} ${inicioY-radio*2}
+								A ${radio} ${radio} 0 0 0 ${centro+radio} ${inicioY-radio}
+								H ${finX-radio}
+								A ${radio} ${radio} 0 0 1 ${finX} ${inicioY}`,
+							fill: 'none',
+							stroke: tramo.color,
+							strokeWidth: grosorMarcas
+						}))
+					} else {
+						container.appendChild(crearElemento('path',{
+							d: `M ${inicioX} ${inicioY}
+								A ${radio} ${radio} 0 0 0 ${inicioX+radio} ${inicioY+radio}
+								H ${centro-radio}
+								A ${radio} ${radio} 0 0 1 ${centro} ${inicioY+radio*2}
+								A ${radio} ${radio} 0 0 1 ${centro+radio} ${inicioY+radio}
+								H ${finX-radio}
+								A ${radio} ${radio} 0 0 0 ${finX} ${inicioY}`,
+							fill: 'none',
+							stroke: tramo.color,
+							strokeWidth: grosorMarcas
+						}))
+					}
 					break
 				case 'punto-punto':
 					container.appendChild(crearElemento('circle', {
 						cx: inicioX,
-						cy: altoRecta / 2,
-						r: grosorRecta + 2,
+						cy: altoRecta/2,
+						r: grosorRecta,
 						fill: tramo.color,
-						stroke: colorRecta,
-						strokeWidth: grosorRecta / 2
+						stroke: 'none'
 					}))
 					container.appendChild(crearElemento('circle', {
 						cx: finX,
-						cy: altoRecta / 2,
-						r: grosorRecta + 2,
+						cy: altoRecta/2,
+						r: grosorRecta,
 						fill: tramo.color,
-						stroke: colorRecta,
-						strokeWidth: grosorRecta / 2
+						stroke: 'none'
 					}))
 					container.appendChild(crearElemento('rect', {
 						x: inicioX,
-						y: altoRecta / 2 - grosorRecta / 2,
-						width: finX - inicioX,
+						y: altoRecta/2-grosorRecta/2,
+						width: finX-inicioX,
 						height: grosorRecta,
 						fill: tramo.color
 					}))
 					break
 				case 'tramo':
-					let inicioLineaExtremoY = tramo.alto + largoMarcas / 4
-					let finLineaExtremoY = tramo.alto - largoMarcas / 4
+					let inicioLineaExtremoY = tramo.alto+largoMarcas/4
+					let finLineaExtremoY = tramo.alto-largoMarcas/4
 					container.appendChild(crearElemento('line', {
 						x1: inicioX,
 						y1: inicioLineaExtremoY,
@@ -3186,7 +3199,7 @@ async function recta(config, tipo) {
 
 	function getTextoObj(texto) {
 		return {
-			texto: regexFunctions(regex(texto.texto, vars, vt)),
+			texto: espacioMilesRegexx(regexFunctions(regex(texto.texto, vars, vt))),
 			valorCentro: valorRectaACoordenadaX(Number(regexFunctions(regex(texto.valorCentro, vars, vt)))),
 			posicionY: texto.posicionY
 		}
