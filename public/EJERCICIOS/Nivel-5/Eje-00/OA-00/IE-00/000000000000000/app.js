@@ -4,6 +4,27 @@ var versionBody = JSON.parse(document.body.getAttribute('data-version').replace(
 var nivelEjercicio = document.body.dataset.id.charAt(1)
 var svgGlosa = []
 
+document.addEventListener('DOMContentLoaded', (event) => {
+	var observer = new MutationObserver(function(mutations) {
+		mutations.forEach(function(mutationRecord) {
+			if(mutationRecord.target.style.display === 'block') {
+				svgGlosa.forEach(elemento => {
+					svgPanZoom(elemento, {
+						zoomEnabled: true,
+						minZomm: 1,
+						maxZoom: 2,
+						customEventsHandler: eventsHandler,
+						beforePan: beforePan
+					})
+				})
+			}
+		});    
+	});
+	
+	var target = document.getElementById('glosa');
+	observer.observe(target, { attributes : true, attributeFilter : ['style'] });
+});
+
 const FUNCIONES = [
 	{
 		name: 'General', tag: 'general', fns: [
@@ -3388,7 +3409,7 @@ el valor esta dentro de los valores de la recta*/
 		return element
 	}
 
-	if (window.innerWidth <= 576) {
+	if (window.innerWidth <= 800) {
 		container.setAttributeNS(null, 'height', Number(altoRecta) + 50)
 		container.style.borderRadius = '5px'
 		container.style.background = '#CACCCA'
@@ -5968,7 +5989,7 @@ async function diagramaBarra (config){
 
     function getTexto(texto) {
         return {
-            texto: regexFunctions(regex(texto.texto, vars, vt)),
+            texto: espacioMilesRegexx(regexFunctions(regex(texto.texto, vars, vt))),
             alto: Number(texto.alto),
             ubicacion: texto.ubicacion,
             posicion: texto.posicion,
