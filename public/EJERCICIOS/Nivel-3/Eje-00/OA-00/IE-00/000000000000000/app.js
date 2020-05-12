@@ -48,7 +48,8 @@ const FUNCIONES = [
 			{ id: 'Patrones', action: patrones },
 			{ id: 'Tarjeta', action: tarjeta },
 			{ id: 'Balanza', action: balanza },
-			{ id: 'Patrón de Segmentos', action: patronSegmentos }
+			{ id: 'Patrón de Segmentos', action: patronSegmentos },
+			{ id: 'Plano Cartesiano', action: planoCartesiano }
 		]
 	}, {
 		name: 'Numeración', tag: 'numeracion', fns: [
@@ -431,7 +432,7 @@ function print() { //Dibujar ejercicios
 								params: m.params,
 								versions: versionBody.vars,
 								vt: false
-							}, m.tag == 'svg' ? n : undefined);
+							}, m.tag == 'svg' ? n : undefined, m.id);
 
 							break;
 						}
@@ -7838,4 +7839,10 @@ function patronSegmentos(config) {
 		element.appendChild(textNode)
 		return element
 	}
+}
+
+function planoCartesiano(config, parte, id) {
+	const { container } = config
+	let style = parte === 'r' ? 'style="padding: 5px;"' : ''
+	container.outerHTML = `<img class="img-fluid d-block mx-auto" src="${id}-${versionBody.id}.svg" alt="plano cartesiano" ${style} />`
 }
