@@ -8005,10 +8005,10 @@ async function graficoDatos(config)
             showAxisX: showAxisX === 'si' || showAxisX === '' || showAxisX === undefined ? true : false,
             showAxisY: showAxisY === 'si' || showAxisY === '' || showAxisY === undefined ? true : false,
             width: axisWidth,
-            color: '#1F8EBE',
+            color: '#DFD9D0',
             arrowX: withArrowsX == 'si' ? true: false,
             arrowY: withArrowsY == 'si' ? true: false,
-            arrowColor: '#1F8EBE'
+            arrowColor: '#DFD9D0'
         },
         position: { x0: 0, y0: 0, x1: 0, y1: 0 },
         image: {
@@ -8181,7 +8181,6 @@ async function graficoDatos(config)
         chart.config.hightLightBar != '' && resaltarBarras(state)
         insTitulos(state)
         insGrafico(state)
-        scale.width > 0 && insGuias(state)
         if (chart.values.length > 0) {
             if (type == 'pictorico') {
                 datosPictoricos(state)
@@ -8189,6 +8188,7 @@ async function graficoDatos(config)
                 datosSimbolicos(state)
             }
         }
+        scale.width > 0 && insGuias(state)
         config.lines.limitLines != '' && limitarColumnas(state)
         config.lines.projectionLines != '' && proyectarColumnas(state)
         show.tags && insEtiquetas(state)
