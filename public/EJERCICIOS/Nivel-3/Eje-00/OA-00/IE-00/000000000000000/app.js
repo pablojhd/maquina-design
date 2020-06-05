@@ -5461,7 +5461,7 @@ async function diagramaBarra (config){
 	container.setAttributeNS(null, 'width', anchoSVG)
     container.setAttributeNS(null, 'viewBox', `0 0 ${anchoSVG} ${altoSVG}`)
     
-    imagenes = imagenes ? await Promise.all(imagenes.map(x => getImagen(x))) : []
+    imagenes = imagenes ? await Promise.all(imagenes.map((x,i) => getImagen(x,i))) : []
     textos = textos ? textos.map(x => getTexto(x)) : []
     operaciones = operaciones ? operaciones.map(x => getOperacion(x)) : []
     marcas = marcas ? marcas.map(x => getMarca(x)) : []
@@ -5725,16 +5725,16 @@ async function diagramaBarra (config){
         }
     })
 
-    textos.forEach(texto => {
-        let { texto: txt,alto,ubicacion,posicion,separacion,barra,division,x,y } = texto
+	textos.forEach(texto => {
+        let { texto: txt,alto,color,ubicacion,posicion,separacion,barra,division,x,y } = texto
         if(ubicacion === 'exacta') {
             for(let i = 0; i < x.length; i++) {
                 container.appendChild(crearElementoDeTexto({
                     x: x,
-                    y: y-fontSize/2,
-                    fontSize,
+                    y: y-alto/2,
+                    fontSize: alto,
                     textAnchor: 'middle',
-                    fill: '#363026',
+                    fill: color,
                     style: 'font-family:Quicksand;'
                 }, txt))
             }
@@ -5754,14 +5754,15 @@ async function diagramaBarra (config){
                         } else if(posicion === 'abajo') {
                             yTexto = yBarra + altoBarra + separacion + alto
                         } else { //centro
-                            yTexto = yBarra + altoBarra/2 + alto/2
+                            console.log('pasa por aqui :3')
+                            yTexto = yBarra + altoBarra/2 + alto/4
                         }
                         container.appendChild(crearElementoDeTexto({
                             x: centro,
                             y: yTexto,
                             fontSize: alto,
                             textAnchor: 'middle',
-                            fill: '#363026',
+                            fill: color,
                             style: 'font-family:Quicksand;'
                         }, txt))
                     })
@@ -5775,14 +5776,14 @@ async function diagramaBarra (config){
                     } else if(posicion === 'abajo') {
                         yTexto = yBarra + altoBarra + separacion + alto
                     } else { //centro
-                        yTexto = yBarra + altoBarra/2 + alto/2
+                        yTexto = yBarra + altoBarra/2 + alto/4
                     }
                     container.appendChild(crearElementoDeTexto({
                         x: centro,
                         y: yTexto,
                         fontSize: alto,
                         textAnchor: 'middle',
-                        fill: '#363026',
+                        fill: color,
                         style: 'font-family:Quicksand;'
                     }, txt))
                 }
@@ -5958,12 +5959,12 @@ async function diagramaBarra (config){
         }
     }
 
-    async function getImagen(imagen) {
-        let src = regexFunctions(regex(imagen.src, vars, vt)).replace(`https://desarrolloadaptatin.blob.core.windows.net/sistemaejercicios/ejercicios/Nivel-${nivelEjercicio}/`, '../../../../')
+	async function getImagen(imagen, index) {
+        let src = regexFunctions(regex(imagen.src, vars, vt))
         let imagenCargada = await cargaImagen(src)
         let alto = Number(imagen.alto)
         let ancho = alto * imagenCargada.width / imagenCargada.height
-        let id = container.id + '-' + src.split('/').pop().replace('.svg','').replace(/%20/g,'-')
+        let id = container.id + '-' + src.split('/').pop().replace('.svg','').replace(/%20/g,'-') + '-' + index
         defs.appendChild(crearElementoDeImagen(src,{id,height:alto,width:ancho}))
         return { 
             id, 
@@ -5989,10 +5990,11 @@ async function diagramaBarra (config){
         }
     }
 
-    function getTexto(texto) {
+	function getTexto(texto) {
         return {
             texto: espacioMilesRegexx(regexFunctions(regex(texto.texto, vars, vt))),
             alto: Number(texto.alto),
+            color: texto.color,
             ubicacion: texto.ubicacion,
             posicion: texto.posicion,
             separacion: Number(texto.separacion),
