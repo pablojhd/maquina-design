@@ -605,6 +605,7 @@ function insertarInput(config) {
 			value1, value2, value3, value4, inputType, id, colmd, colsm, col } = params
 	var vars = vt ? variables : versions;
 	if (container) {
+		container.innerHTML = '';
 		switch (inputType) {
 			case 'input':
 				if (tipoInput === 'comparacion' && container.tagName === 'DIV') {
@@ -632,8 +633,7 @@ function insertarInput(config) {
 						respuesta: espacioMilesRegex(regexFunctions(regex(value4, vars, vt)))
 					}
 				}
-
-				container.innerHTML = '';
+				
 				container.className = 'row justify-content-center';
 				answers = shuffle(answers);
 				answers.forEach((m, i) => {
@@ -5944,7 +5944,7 @@ async function diagramaBarra (config){
                     }
                 }) : null,
 			color: marca.color,
-			valor: regexFunctions(regex(marca.valor, vars, vt)).split(',')
+			valor: espacioMilesRegexx(regexFunctions(regex(marca.valor, vars, vt))).split(',')
         }
     }
 
