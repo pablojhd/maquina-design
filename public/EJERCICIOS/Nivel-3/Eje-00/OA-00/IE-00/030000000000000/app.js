@@ -5906,7 +5906,7 @@ async function diagramaBarra (config){
     })
 
     fracciones.forEach((fraccion, indexFraccion) => {
-        const { barra, posicion, opcion, especificas, destacar, color, cero, uno } = fraccion
+        const { barra, posicion, opcion, especificas, destacar, color, cero, uno, incremental, ocultarNumerador } = fraccion
         let yCentro = yCentroBarras[barra-1]
         let posiciones = posicionDivisiones[barra-1]
         let tipoBarra = barras[barra-1].tipo
@@ -5961,8 +5961,12 @@ async function diagramaBarra (config){
                 ? fin
                 : inicio + (fin - inicio)/2
             
-            let numerador = {
-                contenido: '\u00A0' + Number(index+1) + '\u00A0',
+			let numero = incremental ? Number(index+1) : 1
+			if(ocultarNumerador.indexOf(Number(index+1)) > -1) {
+				numero = '\u00A0'
+			}
+			let numerador = {
+				contenido: '\u00A0' + numero + '\u00A0',
                 atributos: {
                     x: xTexto,
                     textDecoration: 'underline',
@@ -6352,7 +6356,10 @@ async function diagramaBarra (config){
             destacar: fracciones.destacar.split(';').map(x => ({
                 posicion: Number(x.split(',')[0]),
                 color: x.split(',')[1]
-            })),
+			})),
+			ocultarNumerador: fracciones.ocultarNumerador 
+                ? fracciones.ocultarNumerador.split(',').map(x => Number(x)) : [],
+            incremental: fracciones.incremental === 'si' ? true : false,
             color: fracciones.color,
             cero: fracciones.cero === 'si' ? true : false,
             uno: fracciones.uno === 'si' ? true : false
