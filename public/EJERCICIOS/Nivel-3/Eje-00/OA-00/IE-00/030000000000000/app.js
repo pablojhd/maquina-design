@@ -504,8 +504,8 @@ function dibujaHtml() {
           <div class="opcionradio opcionradio-imagen">
             <input type="radio" id="radio-${index}" name="answer" value="${valor}"/>
             <label for="radio-${index}">
-              ${textoOpcion ? `<span>${textoOpcion}</span>` : ''}
-              ${item.tag != 'general' && item.tag != 'html' ?
+              	${textoOpcion ? `<h3 style="margin:0 auto;">${textoOpcion}</h3>` : ''}
+              	${item.tag != 'general' && item.tag != 'html' ?
 					item.tag == 'svg' ?
 						`<svg id="container-r${index}" class="img-fluid" ${textoOpcion ? '' : `style="padding:5px;"`}></svg>` :
 						`<canvas class="img-fluid" id="container-r${index}"></canvas>` :
@@ -602,7 +602,7 @@ function insertarImagen(config) {
 function insertarInput(config) {
 	const { container, params, variables, versions, vt } = config,
 		{ tipoInput, maxLength, inputSize, placeholder, anchoInput, clasesInput,
-			value1, value2, value3, value4, inputType, id, colmd, colsm, col } = params
+			value1, value2, value3, value4, texto1, texto2, texto3, texto4, inputType, id, colmd, colsm, col } = params
 	var vars = vt ? variables : versions;
 	if (container) {
 		container.innerHTML = '';
@@ -616,24 +616,28 @@ function insertarInput(config) {
 				break;
 			case 'radio':
 				var answers = [{
-					respuesta: espacioMilesRegex(regexFunctions(regex(value1, vars, vt)))
+					valor: regexFunctions(regex(value1, vars, vt)),
+					respuesta: regexFunctions(regex(texto1, vars, vt))
 				}];
 				if (inputSize > 1) {
 					answers[1] = {
-						respuesta: espacioMilesRegex(regexFunctions(regex(value2, vars, vt)))
+						valor: regexFunctions(regex(value2, vars, vt)),
+						respuesta: regexFunctions(regex(texto2, vars, vt))
 					}
 				}
 				if (inputSize > 2) {
 					answers[2] = {
-						respuesta: espacioMilesRegex(regexFunctions(regex(value3, vars, vt)))
+						valor: regexFunctions(regex(value3, vars, vt)),
+						respuesta: regexFunctions(regex(texto3, vars, vt))
 					}
 				}
 				if (inputSize > 3) {
 					answers[3] = {
-						respuesta: espacioMilesRegex(regexFunctions(regex(value4, vars, vt)))
+						valor: regexFunctions(regex(value4, vars, vt)),
+						respuesta: regexFunctions(regex(texto4, vars, vt))
 					}
 				}
-				
+
 				container.className = 'row justify-content-center';
 				answers = shuffle(answers);
 				answers.forEach((m, i) => {
@@ -642,8 +646,8 @@ function insertarInput(config) {
 					lmnt.style.marginBottom = '5px'
 					lmnt.innerHTML = `
             <div class="opcionradio">
-              <input type="radio" id="radio-${i}" name="answer" value="${m.respuesta.replace(/\s/g, ' ')}">
-              <label for="radio-${i}">${m.respuesta}</label>
+              <input type="radio" id="radio-${i}" name="answer" value="${m.valor}">
+              <label for="radio-${i}">${espacioMilesRegex(m.respuesta)}</label>
             </div>`;
 					container.appendChild(lmnt);
 				});

@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link rel="stylesheet" href="../../../../css/index.css">
+	
+	<title>00001_vt</title>
+	<!-- MATHJAX NO IMPORTADO -->
+	<script>document.domain = "adaptativamente.cl";</script>
+</head>
+
+<body 
+    data-id="050000000000001"
+    data-content="{'e':[],'r':[{'id':'-MBBWoYXP3vAqrz-mTlO','date':'1/7/2020 18:37:41','name':'Diagrama Barra','params':{'active':'k++','alto':'60','altoBarras':'50','ancho':'500','anchoBarras':'0.95','barras':[{'detalle':{'color':'white','dividendo':'','divisiones':'10','divisionesPunteadas':''},'tipo':'barra equitativa','total':'100'}],'col':'12','colmd':'12','colorBordes':'#1F8EBE','colsm':'12','errFrec':'1','grosorBordes':'3','separacionEntreBarras':'0','textoOpcion':'Opcion 1'},'position':-1,'tag':'svg','width':{'md':12,'sm':12,'xs':12}},{'id':'-MBBWrMe8pXJ8EfU8qef','date':'1/7/2020 18:38:05','name':'Diagrama Barra','params':{'active':'k++','alto':'60','altoBarras':'50','ancho':'500','anchoBarras':'0.95','barras':[{'detalle':{'color':'white','dividendo':'','divisiones':'10','divisionesPunteadas':''},'tipo':'barra equitativa','total':'100'}],'col':'12','colmd':'12','colorBordes':'#1F8EBE','colsm':'12','errFrec':'2','grosorBordes':'3','separacionEntreBarras':'0','textoOpcion':'Opcion 2'},'position':0,'tag':'svg','width':{'md':12,'sm':12,'xs':12}},{'id':'-MBBWs-9zHOwIo-Fk9r2','date':'1/7/2020 18:38:13','name':'Diagrama Barra','params':{'active':'k++','alto':'60','altoBarras':'50','ancho':'500','anchoBarras':'0.95','barras':[{'detalle':{'color':'white','dividendo':'','divisiones':'10','divisionesPunteadas':''},'tipo':'barra equitativa','total':'100'}],'col':'12','colmd':'12','colorBordes':'#1F8EBE','colsm':'12','errFrec':'3','grosorBordes':'3','separacionEntreBarras':'0','textoOpcion':'Opcion 3'},'position':1,'tag':'svg','width':{'md':12,'sm':12,'xs':12}}],'g':[]}"
+    data-version="{'id':'vt','vars':[{'var':'a','val':'2'},{'var':'b','val':'3'},{'var':'c','val':'8'},{'var':'d','val':'6'},{'var':'e','val':'8'},{'var':'f','val':'7'}]}"
+    data-habilidad="C2"
+	data-tipoejercicio="seleccion multiple"
+	data-x="W3sKIm9wY2lvbiI6ICIxIiwKImZlZWRiYWNrIjogIk11eSBCaWVuIiwgIAoiZXJyb3JGcmVjdWVudGUiOiBudWxsICAKfSx7CiJvcGNpb24iOiAiMiIsCiJmZWVkYmFjayI6ICJpbnB1dDEgKyBpbnB1dDIgPT0gJGEiLAoiZXJyb3JGcmVjdWVudGUiOiAiMiIgIAp9LHsKIm9wY2lvbiI6ICIzIiwKImZlZWRiYWNrIjogImlucHV0MSAqIGlucHV0MiA9PSA2NCIsCiJlcnJvckZyZWN1ZW50ZSI6ICIxIgp9XQ=="
+	
+>
+	<header class="container-fluid">
+		<div class="row justify-content-center no-gutters">
+			<div class="col-11 lineasbarra">
+				<img id="cerrar" src="../../../../imagenes_front/figuras/cruz.svg" alt="cerrar" />
+				<hr class="sidelinebar d-none d-sm-block" />
+				<svg xmlns="http://www.w3.org/2000/svg" id="progressbar" version="1.1"
+					class="mx-sm-auto d-sm-block"></svg>
+				<hr class="sidelinebar d-none d-sm-block" />
+			</div>
+		</div>
+	</header>
+	<section >
+		<div id="contenedor" class="container-fluid">
+			<div id="contenido" class="row justify-content-center"></div>
+			<div id="respuesta"></div>
+		</div>
+	</section>
+	<footer class="container-fluid">
+		<div id="consulta" class="col-sm">
+			<button type="button" id="btnConsulta" onclick="pressConsulta();" class="boton boton-icon boton-animation icon-consulta">
+				<span>CONSULTA</span>
+			</button>
+		</div>
+		<div id="siguiente" class="col-sm">
+			<button type="button" id="btnResponder" class="boton boton-icon boton-animation icon-responder" disabled>
+				<span>RESPONDER</span>
+			</button>
+		</div>
+	</footer>
+	<div class="feedback" id="container-feedback">
+		<div id="footer-feedback" class="animate-zoom">
+			<div id="grid-feedback">
+				<div id="sub-grid">
+					<div id="sub-container">
+							<img id="imagen-feedback">
+						<div id="text-container">
+							<div>
+								<span id="feedback-span"></span>
+								<p id="feedback-p"></p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div id="siguiente-feedback">
+					<button type="button" id="btnContinuar" class="boton boton-icon boton-animation icon-responder">
+						<span>CONTINUAR</span>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="glosa">
+		<div class="modal-content animate-zoom-glosa">
+			<div id="contenedor-glosa" class="container-fluid">
+				<div id="explicacion" class="row no-gutters">
+					<div class="col-12 offset-sm-2 col-sm-10">
+						<h2>Solución</h2>
+					</div>
+					<div class="d-none d-sm-block col-sm-2">
+						<img id="imagenGlosa" src="" class="img-fluid" />
+					</div>
+					<div class="col-12 col-sm-10">
+						<div class="row no-gutters justify-content-center" id="contenido-glosa">
+						
+						</div>
+					</div>
+				</div>
+				<div class="row no-gutters justify-content-end">
+					<div class="col-4 col-sm-3">
+						<button type="button" id="btnCerrarGlosa" onclick="cerrarFeedGlosa()"
+							class="boton boton-icon boton-animation icon-responder">
+							<span>CONTINUAR</span>
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<input id="hiddenIntento" type="hidden" onchange="cambio(this);" />
+	<script src="../../../../js/jquery-3.3.1.slim.min.js"></script>
+	<script src="index.js"></script>
+	<script src="app.js"></script>
+	<script src="../../../../js/jsEjercicios.js"></script>
+	<script src="../../../../js/svg-pan-zoom.min.js"></script>
+	<script src="../../../../js/hammer.min.js"></script>
+</body>
+
+</html>

@@ -6,12 +6,12 @@ const devtool = mode === 'develompent' ? 'source-map' : 'inline-source-map'
 module.exports = {
     entry: './index.js',
     output: {
-        path: path.resolve(__dirname, '..', 'public', 'EJERCICIOS', 'Nivel-3', 'Eje-00', 'OA-00', 'IE-00', '000000000000000'),
+        path: path.resolve(__dirname, '..', 'public', 'EJERCICIOS', 'Nivel-3', 'Eje-00', 'OA-00', 'IE-00', '030000000000000'),
         filename: 'index.js'
     },
     plugins: [
         new MiniCSSExtractPlugin({
-            filename: path.join('..', '..', '..', '..', 'css', 'index.css')
+            filename: path.join('..', '..', '..', '..', 'css', 'index2.css')
         })
     ],
     module: {
