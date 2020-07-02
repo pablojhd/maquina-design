@@ -13,6 +13,10 @@ export default text => {
     return result;
 }
 
+function frac(entero, numerador, denominador) {
+    return `<span class=\\"eq\\">${entero ? `<span class=\\"integer\\">${entero}</span>` : ''}<span class=\\"fraction\\"><span class=\\"fup\\">&nbsp;${numerador}&nbsp;</span><span class=\\"bar\\">/</span><span class=\\"fdn\\">&nbsp;${denominador}&nbsp;</span></span></span>`
+}
+
 function capitalize(a) {
     return a.charAt(0).toUpperCase()+a.slice(1)
 }
