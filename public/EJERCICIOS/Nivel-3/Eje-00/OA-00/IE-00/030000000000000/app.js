@@ -4438,7 +4438,7 @@ async function sucesiones(config) {
     //conversion de variables
     let defs = crearElemento('defs', {})
 	let styles = document.createElement('style')
-	styles.innerHTML = '@font-face{font-family:"Quicksand-Medium";src:url("https://desarrolloadaptatin.blob.core.windows.net/sistemaejercicios/ejercicios/Nivel-3/fonts/Quicksand-Medium.ttf");}'
+	styles.innerHTML = '@font-face{font-family:"Quicksand-Medium";src:url("../../../../fonts/Quicksand-Medium.ttf");}'
     defs.appendChild(styles)
     imagenes = imagenes ? await Promise.all(imagenes.map(x => getImagen(x))) : []
     container.appendChild(defs)
@@ -7937,7 +7937,7 @@ function patronSegmentos(config) {
 	styles.innerHTML = `
 		@font-face{
 			font-family:"Quicksand";
-			src:url("https://desarrolloadaptatin.blob.core.windows.net/sistemaejercicios/ejercicios/Nivel-3/fonts/Quicksand-Medium.ttf");
+			src:url("../../../../fonts/Quicksand-Medium.ttf");
 		}
 		.fosforo {
 			stroke:${esFosforo === 'si' ? '#EC9C79' : '#1F8EBE'};
@@ -8240,7 +8240,7 @@ async function graficoDatos(config)
     let { container, params, variables, versions, vt } = config
     let vars = vt ? variables : versions
     params = JSON.parse(regexFunctions(regex(JSON.stringify(params), vars, vt)))
-    let { axisWidth, background, lineColor, lineWidth, chartBorder, chartPosition, chartColor, chartValues, chartTags, dataTag, 
+    let { height, width, axisWidth, background, lineColor, lineWidth, chartBorder, chartPosition, chartColor, chartValues, chartTags, dataTag, 
         titleValue, titleSize, axisTitleX, axisTitleY, fontSize, scaleMax, scaleMin, scaleInterval, scaleColor, scaleWidth, withArrowsX, 
         withArrowsY, limitVal, projectionVal, highlightBar, chartType, pictoImg, captText, rotateTags, rotateValues, barSeparation, showTags, 
         showValues, titleWeight, fontWeight, borderBars, canvasPadding, containerPadding, chartPadding, innerChartPadding, valuesSeparator, showOrigin, 
@@ -8248,9 +8248,7 @@ async function graficoDatos(config)
     } = params
 
     if (!container) return
-    await cargaFuente('Quicksand-Medium', 'https://desarrolloadaptatin.blob.core.windows.net/sistemaejercicios/ejercicios/Nivel-5/fonts/Quicksand-Medium.ttf');
-    let maxWidth = container.parentElement.offsetWidth, responsive = params.width < maxWidth,
-        width = responsive ? params.width : maxWidth - 15, height = responsive ? params.height : width
+    await cargaFuente('Quicksand-Medium', '../../../../fonts/Quicksand-Medium.ttf');
 
     container.height = height
     container.width = width
