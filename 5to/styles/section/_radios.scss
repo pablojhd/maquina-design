@@ -72,12 +72,15 @@
 
 /*
 consideraciones para opcion de imagenes ._.
-*/
+
+esta clase se comento, debido a que generaba problemas con las fracciones en las alternativas,
+el <span> de las alternativas con funcionalidad cuando titulo se reemplazo por un <h3> con style
 
 .opcionradio label span {
   display: block;
   font-size: 18px;
 }
+*/
 
 .opcionradio-imagen label {
   padding: 0px !important;
