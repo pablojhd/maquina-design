@@ -1,0 +1,23 @@
+@import "../node_modules/bootstrap/scss/bootstrap-grid";
+@import "./general/variables";
+@import "./general/fonts";
+@import "./general/general";
+@import "./general/tablas";
+@import "./general/tablaPosicional";
+@import "./general/fracciones";
+
+@import "./container_fluid/container_fluid";
+
+@import "./header/header";
+@import "./header/barraprogreso";
+
+@import "./section/section";
+@import "./section/radios";
+@import "./section/inputTexto";
+
+@import "./footer/footer";
+@import "./footer/botones";
+
+@import "./feedback/feedback";
+
+@import "./glosa/glosa";

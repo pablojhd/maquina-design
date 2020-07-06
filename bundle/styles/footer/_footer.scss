@@ -1,0 +1,51 @@
+footer {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 120px;
+  z-index: 1000;
+  border-top: 1px solid;
+  border-color: #bfbfbf;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  -webkit-box-align: center;
+  display: grid;
+  -ms-flex-align: center;
+  align-items: center;
+  grid-auto-rows: auto;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: 100%;
+  grid-gap: 8px 16px;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+}
+
+#siguiente {
+  grid-column: 5 / auto;
+  justify-self: end;
+  text-align: center;
+  padding: 0px;
+}
+
+#consulta {
+  text-align: center;
+  padding: 0px;
+}
+
+@include media-breakpoint-down(xs) {
+  footer {
+    grid-template-columns: none;
+    grid-template-rows: none;
+    grid-gap: 8px 0px;
+    position: static;
+  }
+}
+
+@media (min-width: 576px){
+  footer {
+    padding-left: 12%;
+    padding-right: 12%;
+  }
+}

@@ -1,15 +1,12 @@
-import FormateaNumeros from '../utils/FormateaNumeros'
-import ValidaNumeroEscrito from '../utils/ValidaNumeroEscrito'
-import { version } from './Variables'
-import ReemplazaVariables from '../utils/ReemplazaVariables'
+import formateaNumeros from '../utils/FormateaNumeros'
 
-export const validaRespuesta = (validaciones, tipo) => {
+export default (validaciones, tipo) => {
 	let feedback, errorFrecuente
 	if(tipo === 'seleccion multiple') {
         let respuesta = document.querySelector('input[type=radio]:checked').value
 		for(let validacion of validaciones) {
 			if(respuesta == validacion.opcion) {
-				feedback = validacion.feedback
+				feedback = formateaNumeros(validacion.feedback, '&nbsp;')
 				errorFrecuente = validacion.errorFrecuente
 				break
 			}
@@ -63,7 +60,7 @@ export const validaRespuesta = (validaciones, tipo) => {
 				}
             })
 			if (coincidenTodas) {
-				feedback = FormateaNumeros(respuesta.feedback, '&nbsp;')
+				feedback = formateaNumeros(respuesta.feedback, '&nbsp;')
 				errorFrecuente = respuesta.errFrec
 				if (errorFrecuente !== null) {
 					coloreaInputsTextoPorCoincidencia(respuesta) //colorear input
@@ -76,7 +73,7 @@ export const validaRespuesta = (validaciones, tipo) => {
 			}
 		}
 		if (!feedback) {
-			feedback = FormateaNumeros(feedbackDefecto, '&nbsp;')
+			feedback = formateaNumeros(feedbackDefecto, '&nbsp;')
 			errorFrecuente = errFrecDefecto
 			var inputs = document.querySelectorAll("input[name='answer']");
 			for (var input of inputs) {
@@ -95,7 +92,7 @@ export const validaRespuesta = (validaciones, tipo) => {
             }
         }
         if(!feedback) {
-            feedback = FormateaNumeros(feedbackDefecto, '&nbsp;')
+            feedback = formateaNumeros(feedbackDefecto, '&nbsp;')
             errorFrecuente = errFrecDefecto
             document.querySelectorAll("input[name='answer']").forEach(input => {
                 input.classList.add('inputTexto-incorrecto')

@@ -1,0 +1,43 @@
+.inputTexto {
+  min-width: 40px;
+  max-height: 50px;
+  border: 2px solid #cfcfcf;
+  border-radius: 8px;
+  padding: 5px;
+  background: white;
+  font-family: 'quicksandmedium';
+  font-size: $font-size;
+  color: #000000;
+}
+
+.inputTexto:focus {
+  border-color: #1cb0f6;
+}
+
+.inputTexto-correcto {
+  border: 2px solid #bff199 !important;
+  color: #bff199 !important;
+}
+
+.inputTexto-incorrecto {
+  border: 2px solid #f6b3b1 !important;
+  color: #f6b3b1 !important;
+}
+/*clases para input de compraracion de tablas posicionales*/
+.comparacion {
+  text-align: center;
+  font-size: 30px !important;
+  height: 50px !important;
+}
+
+@include media-breakpoint-down(xs) {
+  .comparacion {
+    margin: 15px auto;
+  }
+}
+
+@include media-breakpoint-up(sm) {
+  .comparacion {
+    margin: auto;
+  }
+}

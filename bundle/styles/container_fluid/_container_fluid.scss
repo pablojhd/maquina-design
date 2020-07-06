@@ -1,0 +1,17 @@
+.container-fluid {
+  width: 100%;
+}
+
+@include media-breakpoint-down(xs) {
+  .container-fluid {
+    padding-left: 7%;
+    padding-right: 7%;
+  }
+}
+
+@include media-breakpoint-up(sm) {
+  .container-fluid {
+    padding-left: 12%;
+    padding-right: 12%;
+  }
+}

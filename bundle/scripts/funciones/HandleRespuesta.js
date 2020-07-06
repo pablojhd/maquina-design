@@ -1,88 +1,78 @@
-import { validaRespuesta } from "./ValidaRespuesta";
-import { continuarEjercicio } from "./ContinuarEjercicio";
-import FormateaNumeros from "../utils/FormateaNumeros"
+import validaRespuesta from './ValidaRespuesta'
+import continuarEjercicio from './ContinuarEjercicio'
 
-export const handleRespuesta = (event, datos) => {
-  event.target.disabled = true
-  let { idEjercicio, numeroIntento, validaciones, tipoEjercicio, tmpProgreso } = datos
+export default (event, datos) => {
+	event.target.disabled = true
+	let { validaciones, tipoEjercicio, tmpProgreso } = datos
 
-  document.querySelector('footer').style.display = 'none'
+	document.querySelector('footer').style.display = 'none'
 
-  document.getElementsByName('answer').forEach(input => {
-    input.disabled = true
-  })
+	document.getElementsByName('answer').forEach(input => {
+		input.disabled = true
+	})
 
-  let { feedback, errorFrecuente } = validaRespuesta(validaciones, tipoEjercicio);
-  let feedbackElement = document.querySelector(".feedback");
-  let feedbackStrong = document.querySelector(".feedback span");
-  let feedbackText = document.querySelector(".feedback p");
-  let imgFeedback = document.querySelector(".feedback img");
-  if (!errorFrecuente) {
-    //respuesta correcta
-    feedbackElement.style.display = "block";
-    feedbackElement.classList.add("feedback-correcto");
-    feedbackStrong.innerHTML = feedRandomIndex(true);
-    let racha = rachaCorrectas();
-    if (racha) {
-      feedbackText.innerHTML = `Tienes una racha de <b>${rachaCorrectas()}</b> respuestas correctas.`;
-    }
-    imgFeedback.setAttribute(
-      "src",
-      srcImgRespuestaCorrecta[imgRandomIndex(true)]
-    );
-    numeroIntento === 2 && document.getElementById("btnContinuar").removeEventListener ("click", continuarEjercicio);//si es que es el segundo intento
-    document.getElementById("btnContinuar").setAttribute("onClick", "cerrarFeed();");
-  } else {
-    //respuesta incorrecta
-    if (numeroIntento === 1) {
-      imgFeedback.setAttribute(
-        "src",
-        srcImgRespuestaIncorrecta[imgRandomIndex(false)]
-      );
-      feedbackElement.style.display = "block";
-      feedbackElement.classList.add("feedback-incorrecto");
-      feedbackStrong.innerHTML = feedRandomIndex(false);
-      feedbackText.innerHTML = FormateaNumeros(feedback, '&nbsp;');
-      document.getElementById("btnContinuar").addEventListener("click", continuarEjercicio);
-      siguienteIntento();
-      window.MathJax && MathJax.Hub.Queue(["Typeset", MathJax.Hub]) //muestra el mathjax en los feedbacks en caso de que existan
-    } else {
-      document
-        .getElementById("imagenGlosa")
-        .setAttribute(
-          "src",
-          srcImgGlosa[Math.floor(Math.random() * srcImgGlosa.length)]
-        );
-      document.getElementById("glosa").style.display = "block";
-    }
-  }
-  eval(`enviar(${errorFrecuente == null}, ${errorFrecuente == null ? errorFrecuente : '"'+errorFrecuente+ '"'})`)
-};
+	let { feedback, errorFrecuente } = validaRespuesta(validaciones, tipoEjercicio)
+	
+	let feedbackElement, feedbackSpan, feedbackText
+	if(errorFrecuente) {
+		feedbackElement = document.querySelector('.feedback-incorrecto')
+		feedbackSpan = document.querySelector('.feedback-incorrecto span.feedback-span')
+		feedbackText = document.querySelector('.feedback-incorrecto p.feedback-p') 
+	} else {
+		feedbackElement = document.querySelector('.feedback-correcto')
+		feedbackSpan = document.querySelector('.feedback-correcto span.feedback-span')
+		feedbackText = document.querySelector('.feedback-correcto p.feedback-p') 
+	}
 
-const imgRandomIndex = esCorrecta => {
-  if (esCorrecta) {
-    return Math.floor(Math.random() * srcImgRespuestaCorrecta.length);
-  } else {
-    return Math.floor(Math.random() * srcImgRespuestaIncorrecta.length);
-  }
-};
+	if (!errorFrecuente) {
+		//respuesta correcta
+		feedbackElement.style.display = 'block'
 
-const feedRandomIndex = esCorrecta => {
-  if(esCorrecta) {
-    return feedPositivos[Math.floor(Math.random() * feedPositivos.length)]
-  } else {
-    return feedNegativos[Math.floor(Math.random() * feedNegativos.length)]
-  }
+		feedbackSpan.innerHTML = feedPositivos[Math.floor(Math.random()*4)]
+		let racha = rachaCorrectas(tmpProgreso)
+		if (racha) {
+			feedbackText.innerHTML = `Tienes una racha de <b>${racha}</b> respuestas correctas.`
+		}
+		window.numeroIntento === 2 && document.getElementById('btnContinuar').removeEventListener('click', () => continuarEjercicio(tipoEjercicio, feedbackElement))//si es que es el segundo intento
+	} else {
+		//respuesta incorrecta
+		if (window.numeroIntento === 1) {
+			feedbackSpan.innerHTML = feedNegativos[Math.floor(Math.random()*4)]
+			feedbackText.innerHTML = feedback
+			feedbackElement.querySelector('button').addEventListener('click', () => continuarEjercicio(tipoEjercicio, feedbackElement))
+			
+			feedbackElement.style.display = 'block'
+			
+			window.numeroIntento++
+		} else {
+			document.getElementById('glosa').style.display = 'block'
+		}
+	}
+	//eval(`enviar(${errorFrecuente == null}, ${errorFrecuente == null ? errorFrecuente : '''+errorFrecuente+ '''})`)
 }
 
-const rachaCorrectas = () => {
-  var correctos = 0;
-  for (var i = tmpProgreso.length - 1; i > -1; i--) {
-    if (tmpProgreso[i].correcto) {
-      correctos++;
-    } else {
-      break;
-    }
-  }
-  return correctos + 1 > 1 ? correctos + 1 : null;
-};
+const rachaCorrectas = tmpProgreso => {
+	var correctos = 0
+	for (var i = tmpProgreso.length - 1; i > -1; i--) {
+		if (tmpProgreso[i].correcto) {
+			correctos++
+		} else {
+			break
+		}
+	}
+	return correctos + 1 > 1 ? correctos + 1 : null
+}
+
+const feedPositivos = [
+	'¡Muy bien!',
+	'¡Lo has logrado!',
+	'¡Genial!',
+	'¡Así se hace!'
+]
+
+const feedNegativos = [
+	'¡Atención!',
+	'¡Algo anda mal!',
+	'¡Vuelve a intentarlo!',
+	'¡Ten cuidado!'
+]
