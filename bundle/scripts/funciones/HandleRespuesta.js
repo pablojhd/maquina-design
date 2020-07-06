@@ -1,9 +1,10 @@
 import validaRespuesta from './ValidaRespuesta'
 import continuarEjercicio from './ContinuarEjercicio'
+import { enviar, cerrarFeedGlosa, cerrarFeed } from './ConexionPlataforma'
 
 export default (event, datos) => {
 	event.target.disabled = true
-	let { validaciones, tipoEjercicio, tmpProgreso } = datos
+	let { idEjercicio, validaciones, tipoEjercicio, tmpProgreso } = datos
 
 	document.querySelector('footer').style.display = 'none'
 
@@ -33,22 +34,24 @@ export default (event, datos) => {
 		if (racha) {
 			feedbackText.innerHTML = `Tienes una racha de <b>${racha}</b> respuestas correctas.`
 		}
-		window.numeroIntento === 2 && document.getElementById('btnContinuar').removeEventListener('click', () => continuarEjercicio(tipoEjercicio, feedbackElement))//si es que es el segundo intento
+		if(window.numeroIntento === 2) {
+			feedbackElement.querySelector('button').removeEventListener('click', () => continuarEjercicio(tipoEjercicio, feedbackElement))//si es que es el segundo intento
+		}
+		feedbackElement.querySelector('button').addEventListener('click', cerrarFeed)
 	} else {
 		//respuesta incorrecta
 		if (window.numeroIntento === 1) {
 			feedbackSpan.innerHTML = feedNegativos[Math.floor(Math.random()*4)]
 			feedbackText.innerHTML = feedback
 			feedbackElement.querySelector('button').addEventListener('click', () => continuarEjercicio(tipoEjercicio, feedbackElement))
-			
 			feedbackElement.style.display = 'block'
-			
-			window.numeroIntento++
 		} else {
+			document.querySelector('#btnCerrarGlosa').addEventListener('click', cerrarFeedGlosa)
 			document.getElementById('glosa').style.display = 'block'
+
 		}
 	}
-	//eval(`enviar(${errorFrecuente == null}, ${errorFrecuente == null ? errorFrecuente : '''+errorFrecuente+ '''})`)
+	enviar({ idEjercicio, tipoEjercicio, errorFrecuente })
 }
 
 const rachaCorrectas = tmpProgreso => {
