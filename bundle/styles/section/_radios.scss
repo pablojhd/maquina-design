@@ -23,8 +23,7 @@
 
 .opcionradio label {
   display: inline-block;
-  // align-items: center;
-  // justify-content: center;
+  cursor: pointer;
   border-top: 1px solid;
   border-right: 1px solid;
   border-left: 1px solid;
@@ -64,10 +63,6 @@
   color: #1caff6;
   padding: 8px 20px;
   border-color: rgba(23, 164, 224, 1);
-}
-
-.opcionradio label {
-  cursor: pointer;
 }
 
 /*
