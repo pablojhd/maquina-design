@@ -8905,9 +8905,9 @@ async function graficoDatos(config)
                         ctx.textAlign = 'center'
                         ctx.textBaseline = 'bottom'
                         if (chart.config.dataTags[i] === '0') {
-                            ctx.fillText(values[i], x0 + delta/2 +  delta*i, y1 - (data.innerChart.height/data.chartDivisions)*(((values[i]) - scale.min)/scale.value))
+                            ctx.fillText(espacioMilesRegexx(values[i]), x0 + delta/2 +  delta*i, y1 - (data.innerChart.height/data.chartDivisions)*(((values[i]) - scale.min)/scale.value))
                         } else {
-                            ctx.fillText(chart.config.dataTags[i], x0 + delta/2 +  delta*i, y1 - (data.innerChart.height/data.chartDivisions)*(((values[i]) - scale.min)/scale.value))
+                            ctx.fillText(espacioMilesRegexx(chart.config.dataTags[i]), x0 + delta/2 +  delta*i, y1 - (data.innerChart.height/data.chartDivisions)*(((values[i]) - scale.min)/scale.value))
                         }
                     } else {
                         barMargin = (data.innerChart.height/data.lenTag)*chart.bars.separation
@@ -8916,9 +8916,9 @@ async function graficoDatos(config)
                         ctx.textAlign = 'left'
                         ctx.textBaseline = 'middle'
                         if (chart.config.dataTags[i] === '0') {
-                            ctx.fillText(values[i], x0 + 5 + (data.innerChart.width/data.chartDivisions)*(((values[i]) - scale.min)/scale.value), y1 - delta/2 - delta*i)
+                            ctx.fillText(espacioMilesRegexx(values[i]), x0 + 5 + (data.innerChart.width/data.chartDivisions)*(((values[i]) - scale.min)/scale.value), y1 - delta/2 - delta*i)
                         } else {
-                            ctx.fillText(chart.config.dataTags[i], x0 + 5 + (data.innerChart.width/data.chartDivisions)*(((values[i]) - scale.min)/scale.value), y1 - delta/2 - delta*i)
+                            ctx.fillText(espacioMilesRegexx(chart.config.dataTags[i]), x0 + 5 + (data.innerChart.width/data.chartDivisions)*(((values[i]) - scale.min)/scale.value), y1 - delta/2 - delta*i)
                         }
                     }
                 }
@@ -9011,7 +9011,7 @@ async function graficoDatos(config)
                     chart.show.origen && ctx.fillText(0,chart.position.x0 - 5, y1)
                 } else {
                     ctx.beginPath()
-                    ctx.fillText(valorImprimir,chart.position.x0 - 5, y1 - (data.innerChart.height/(data.chartDivisions))*(i))
+                    ctx.fillText(espacioMilesRegexx(valorImprimir),chart.position.x0 - 5, y1 - (data.innerChart.height/(data.chartDivisions))*(i))
                     ctx.closePath()
                 }
             }
@@ -9047,7 +9047,7 @@ async function graficoDatos(config)
                     chart.show.origen && ctx.fillText(0,x0, chart.position.y1 + 5)
                 } else {
                     ctx.beginPath()
-                    ctx.fillText(valorImprimir,x0 + (data.innerChart.width/(data.chartDivisions))*(i), chart.position.y1 + 5)
+                    ctx.fillText(espacioMilesRegexx(valorImprimir),x0 + (data.innerChart.width/(data.chartDivisions))*(i), chart.position.y1 + 5)
                     ctx.closePath()
                 }
             }

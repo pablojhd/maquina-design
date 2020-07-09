@@ -9,7 +9,7 @@ module.exports = env => {
         devtool: env.NODE_ENV === 'develompent' ? 'source-map' : 'inline-source-map',
         entry: './index.js',
         output: {
-            path: path.resolve(__dirname, '..', 'public', 'EJERCICIOS', 'Nivel-5', 'Eje-00', 'OA-00', 'IE-00', '050000000000000'),
+            path: path.resolve(__dirname, '..', 'public', 'EJERCICIOS', 'Nivel-11', 'Eje-00', 'OA-00', 'IE-00', '110000000000000'),
             filename: 'bundle.js'
         },
         module: {

@@ -4,15 +4,19 @@ body {
   background-color: #f9f3e9;
 }
 
-p {
+:not(.katex) > p {
   font-family: $quicksand-medium;
   font-size: $font-size;
   color: $font-color;
 }
 
-span {
+:not(.katex) > span {
   font-family: $quicksand-medium;
   font-size: $font-size;
+}
+
+.katex {
+  font-size: 1.3em;
 }
 
 p img {
