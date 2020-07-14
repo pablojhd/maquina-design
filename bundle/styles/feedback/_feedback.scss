@@ -113,11 +113,6 @@ right: 0;
   border-color: #f92219;
 }
 
-.imagen-feedback {
-  padding-right: 16px;
-  height: 120px;
-}
-
 .siguiente-feedback {
   grid-column: 5 / auto;
   justify-self: center;
@@ -144,22 +139,16 @@ right: 0;
 
   .footer-feedback {
     margin: auto;
-    top: 50%;
-    -ms-transform: translateY(-50%);
-    transform: translateY(-50%);
+    top: 30%;
     display: flex;
     flex-direction: column;
     position: relative;
-    border-radius: 20px;
+    border-radius: 12px;
     justify-content: space-around;
     min-height: 180px;
     padding: 7%;
     height: auto;
     width: 80%;
-  }
-
-  .imagen-feedback {
-    display: none;
   }
 
   .feedback-p {

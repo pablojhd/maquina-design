@@ -1,19 +1,5 @@
-/*.opciones {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  margin-top: 20px;
-  margin-bottom: 20px;
-}
-
-@include media-breakpoint-up(sm) {
-  .opciones {
-    justify-content: space-evenly;
-  }
-}*/
 .opcionradio {
   height: 100%;
-  background-color: #f9f3e9;
   color: #3c3c3c;
 }
 
@@ -28,7 +14,7 @@
   border-right: 1px solid;
   border-left: 1px solid;
   border-bottom: 4px solid;
-  border-color: rgba(223, 217, 208, 1);
+  border-color: #999;
   padding: 8px 20px;
   border-radius: 16px;
   text-align: center;
@@ -37,45 +23,12 @@
   height: 100%;
   width: 100%;
 }
-/*
-.opcionradio input[type=radio] + label:before {
-    height: 20px;
-    width: 20px;
-    border: 2px solid #bfbfbf;
-    border-radius: 50%;
-    margin-right: 4px;
-    margin-top: 3px;
-    margin-bottom: -4px;
-    content: " ";
-    display: inline-block;
-    background-color: #fff;
-    transition: 0.3s;
-    cursor: pointer;
-}
 
-.opcionradio input[type=radio]:checked + label:before {
-    border: 2px solid #1caff6;
-    background: #1caff6;
-}
-*/
 .opcionradio input[type='radio']:checked + label {
-  background: #b9e8ff;
-  color: #1caff6;
+  background: #fce5d4;
   padding: 8px 20px;
-  border-color: rgba(23, 164, 224, 1);
+  border-color: #fd9243;
 }
-
-/*
-consideraciones para opcion de imagenes ._.
-
-esta clase se comento, debido a que generaba problemas con las fracciones en las alternativas,
-el <span> de las alternativas con funcionalidad cuando titulo se reemplazo por un <h3> con style
-
-.opcionradio label span {
-  display: block;
-  font-size: 18px;
-}
-*/
 
 .opcionradio-imagen label {
   padding: 0px !important;
@@ -84,7 +37,3 @@ el <span> de las alternativas con funcionalidad cuando titulo se reemplazo por u
 .opcionradio-imagen label[type='radio']:checked + label {
   padding: 0px !important;
 }
-
-// .opcionradio input[type='radio']:checked + label {
-//   padding: 0px !important;
-// }

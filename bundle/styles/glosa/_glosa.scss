@@ -41,21 +41,31 @@
 }
 
 #glosa .modal-content {
+  display: block;
+  margin: 0 auto;
   background-color: #fff;
   border-radius: 26px;
   padding: 15px 0;
-  height: 100%;
-  width: 100%;
+  width: 90%;
+  max-width: 1200px;
 }
 
 #btnCerrarGlosa {
   background: #1a8dc6;
   color: #fff;
   border: none;
+  float: right;
 }
 
 .animate-zoom-glosa {
   animation: animatezoom 0.6s;
+}
+
+@include media-breakpoint-down(sm) {
+  #glosa .modal-content {
+    width: 100%;
+    height: fit-content !important;
+  }
 }
 
 @keyframes animatezoom {

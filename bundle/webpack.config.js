@@ -6,7 +6,7 @@ module.exports = env => {
     console.log('NODE_ENV: ', env.NODE_ENV)
     return {
         mode: env.NODE_ENV,
-        devtool: env.NODE_ENV === 'develompent' ? 'none' : 'source-map',
+        devtool: env.NODE_ENV === 'develompent' ? 'source-ma' : 'inline-source-map',
         entry: './index.js',
         output: {
             path: path.resolve(__dirname, '..', 'public', 'EJERCICIOS', 'Nivel-11', 'Eje-00', 'OA-00', 'IE-00', '110000000000000'),

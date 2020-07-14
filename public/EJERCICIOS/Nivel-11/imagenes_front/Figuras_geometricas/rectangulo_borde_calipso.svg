@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="162.38"
+   height="80.379997"
+   viewBox="0 0 162.38 80.379995"
+   version="1.1"
+   id="svg10"
+   sodipodi:docname="rectangulo_borde_calipso.svg"
+   inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)">
+  <metadata
+     id="metadata14">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>cuadrado_borde_calipso</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="2220"
+     inkscape:window-height="1171"
+     id="namedview12"
+     showgrid="false"
+     inkscape:zoom="5.8135237"
+     inkscape:cx="81.190002"
+     inkscape:cy="81.190002"
+     inkscape:window-x="2391"
+     inkscape:window-y="97"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg10" />
+  <defs
+     id="defs4">
+    <style
+       id="style2">.a{fill:#40d6cb;}</style>
+  </defs>
+  <title
+     id="title6">cuadrado_borde_calipso</title>
+  <path
+     class="a"
+     d="M 151.05,80.379995 H 11.32 C 5.0688046,80.368972 0.00550281,75.301198 0,69.049995 v -55.73 C 0.01100848,7.0726972 5.0727022,2.0110035 11.32,1.999995 h 139.73 c 6.2512,0.0055 11.31898,5.0688046 11.33,11.32 v 55.73 c -0.006,6.255101 -5.0749,11.324486 -11.33,11.33 z m -139.73,-72.38 c -2.9358724,0.0055 -5.3144969,2.384128 -5.32,5.32 v 55.73 c -5.2e-6,2.939777 2.3802283,5.324484 5.32,5.33 h 139.73 c 2.94368,0 5.33,-2.386322 5.33,-5.33 v 0 -55.73 c -0.006,-2.939772 -2.39022,-5.3200052 -5.33,-5.32 z"
+     id="path8"
+     inkscape:connector-curvature="0"
+     style="fill:#40d6cb"
+     sodipodi:nodetypes="cccccccccccccsccccc" />
+</svg>

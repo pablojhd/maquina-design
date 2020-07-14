@@ -1,3 +1,7 @@
+/*
+	función no utilizada, los ejercicios de media no llevan imágenes
+*/
+
 const imagenesPorEje = {
 	'01': {
 		correcta: [
