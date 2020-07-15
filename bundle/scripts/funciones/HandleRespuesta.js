@@ -44,6 +44,14 @@ export default (event, datos) => {
 			feedbackSpan.innerHTML = feedNegativos[Math.floor(Math.random()*4)]
 			feedbackText.innerHTML = feedback
 			feedbackElement.querySelector('button').addEventListener('click', () => continuarEjercicio(tipoEjercicio, feedbackElement))
+			if(window.renderMathInElement) { //la funcion forma parte de la libreria katex para dibujar ecuaciones 
+				window.renderMathInElement(feedbackElement, {
+					delimiters: [ 
+						{ left: '((', right: '))', display: false },
+						{ left: '[[', right: ']]', display: true }
+					] 
+				})
+			}
 			feedbackElement.style.display = 'block'
 		} else {
 			document.querySelector('#btnCerrarGlosa').addEventListener('click', cerrarFeedGlosa)
