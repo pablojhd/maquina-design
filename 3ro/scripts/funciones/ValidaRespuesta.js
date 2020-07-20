@@ -87,7 +87,7 @@ export const validaRespuesta = (validaciones, tipo) => {
 	} else {
         const { respuestas, errFrecDefecto, feedbackDefecto } = validaciones
         for(let resp of respuestas) {
-            let evaluacion = resp.opcion.replace(/input\d/g, coincidencia => document.getElementById(coincidencia).value.replace(',', '.').replace(/\s/, ''))
+            let evaluacion = resp.opcion.replace(/input\d/g, coincidencia => Number(document.getElementById(coincidencia).value.replace(',', '.').replace(/\s/, '')))
             if(eval(evaluacion)) {
                 feedback = resp.feedback
 				errorFrecuente = resp.errorFrecuente
