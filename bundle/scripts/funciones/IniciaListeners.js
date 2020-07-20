@@ -4,8 +4,8 @@ export default tipoEjercicio => {
 		return false
     }
 
-	document.body.addEventListener('drop', preventAction)
-    document.body.addEventListener('contextmenu', preventAction)
+    document.getElementById('body').addEventListener('drop', preventAction)
+    document.getElementById('body').addEventListener('contextmenu', preventAction)
     
     if(tipoEjercicio === 'seleccion multiple') {
         //inputs de tipo radio
