@@ -5,6 +5,7 @@ import iniciaListeners from './funciones/IniciaListeners'
 import handleRespuesta from './funciones/HandleRespuesta'
 import barraProgreso from './funciones/BarraProgreso'
 import { pressConsulta } from './funciones/ConexionPlataforma'
+import zoom from './funciones/Zoom'
 
 const init = () => {
 	let body = document.getElementById('body')
@@ -18,6 +19,8 @@ const init = () => {
 	//dibuja la barra de porgreso del ejercicio
 	const { tmpProgreso, tmpTotal } = datosProgreso()
 	barraProgreso(tmpProgreso, tmpTotal)
+	//dibuja zoom en svgs
+	zoom('section')
 	//lee variables dataset del body
 	const idEjercicio = body.dataset.id
 	const version = JSON.parse(Buffer(body.dataset.version, 'base64').toString('utf8'))
@@ -32,6 +35,7 @@ const init = () => {
 		tipoEjercicio,
 		tmpProgreso
 	}))
+	
 }
 
 

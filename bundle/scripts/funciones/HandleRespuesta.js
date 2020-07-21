@@ -1,6 +1,7 @@
 import validaRespuesta from './ValidaRespuesta'
 import continuarEjercicio from './ContinuarEjercicio'
 import { enviar, cerrarFeedGlosa, cerrarFeed } from './ConexionPlataforma'
+import zoom from './Zoom'
 
 export default (event, datos) => {
 	event.target.disabled = true
@@ -56,7 +57,7 @@ export default (event, datos) => {
 		} else {
 			document.querySelector('#btnCerrarGlosa').addEventListener('click', cerrarFeedGlosa)
 			document.getElementById('glosa').style.display = 'block'
-
+			zoom('#glosa')
 		}
 	}
 	enviar({ idEjercicio, tipoEjercicio, errorFrecuente })
