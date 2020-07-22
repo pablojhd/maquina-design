@@ -8,7 +8,7 @@ export default (selector) => { //selector: section | #glosa
     let svgs = document.querySelectorAll(`${selector} svg`)
     svgs.forEach(elemento => {
         elemento.style.borderRadius = '16px'
-        elemento.style.background = '#CACCCA'
+        elemento.style.background = '#F2F4F7'
         svgPanZoom(elemento, {
             zoomEnabled: true,
             minZomm: 1,

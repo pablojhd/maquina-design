@@ -36,16 +36,16 @@
 }
 
 .tabla-bordes td {
-  border-right: 2px solid #107dac;
-  border-bottom: 2px solid #107dac;
+  border-right: 2px solid #C7B1B5;
+  border-bottom: 2px solid #C7B1B5;
 }
 
 .tabla-bordes tr td:first-child {
-  border-left: 2px solid #107dac;
+  border-left: 2px solid #C7B1B5;
 }
 
 .tabla-bordes tr:first-child td {
-  border-top: 2px solid #107dac;
+  border-top: 2px solid #C7B1B5;
 }
 
 /* top-left border-radius */
@@ -74,7 +74,7 @@
 
 @include media-breakpoint-down(xs) {
   .display-border td {
-    border: 1px #107dac solid;
+    border: 1px #C7B1B5 solid;
     border-radius: 10px;
   }
 }
