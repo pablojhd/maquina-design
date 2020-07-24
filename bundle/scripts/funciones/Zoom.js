@@ -5,7 +5,7 @@ export default (selector) => { //selector: section | #glosa
 	if(window.innerWidth > 800) {
 		return
 	}
-    let svgs = document.querySelectorAll(`${selector} svg`)
+    let svgs = document.querySelectorAll(`${selector} svg[name=funcionalidad]`)
     svgs.forEach(elemento => {
         elemento.style.borderRadius = '16px'
         elemento.style.background = '#F2F4F7'

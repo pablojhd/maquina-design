@@ -76,6 +76,12 @@ right: 0;
   margin: 0px;
 }
 
+p.feedback-p img {
+  display: inline-block;
+  vertical-align: middle;
+  padding-bottom: 5px;
+}
+
 /* FEEDBACK PARA RESPUESTA CORRECTA */
 .feedback-correcto {
   background-color: #b2e675;

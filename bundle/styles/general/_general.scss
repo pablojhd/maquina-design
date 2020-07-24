@@ -6,19 +6,20 @@
   -ms-overflow-style: scrollbar;
 }
 
-:not(.katex) > p {
+p {
   font-family: $quicksand-medium;
   font-size: $font-size;
   color: $font-color;
 }
 
-:not(.katex) > span {
+span {
   font-family: $quicksand-medium;
   font-size: $font-size;
 }
 
+
 .katex {
-  font-size: 1.3em;
+  font-size: 1em;
 }
 
 p img {
