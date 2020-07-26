@@ -109,7 +109,6 @@ export default (validaciones, tipo) => {
 function coloreaInputTextoPorDefecto(inputElement) {
     let tipoInput = inputElement.getAttribute('data-tipoinput')
     let correctas = Buffer.from(inputElement.getAttribute('data-content'), 'base64').toString('utf-8')
-    correctas = ReemplazaVariables(correctas, version.vars, false)
     let match = false, resp;
     switch (tipoInput) {
         case 'numero':

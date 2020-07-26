@@ -1,4 +1,3 @@
-import reemplazaVariables from './utils/ReemplazaVariables'
 import reemplazaFunciones from './utils/ReemplazaFunciones'
 import datosProgreso from './utils/DatosProgreso'
 import iniciaListeners from './funciones/IniciaListeners'
@@ -24,9 +23,7 @@ const init = () => {
 	zoom('section')
 	//lee variables dataset del body
 	const idEjercicio = body.dataset.id
-	const version = JSON.parse(Buffer(body.dataset.version, 'base64').toString('utf8'))
-	
-	const validaciones = JSON.parse(reemplazaFunciones(reemplazaVariables(Buffer(body.dataset.x, 'base64').toString('utf8'), version.vars, false)))
+	const validaciones = JSON.parse(reemplazaFunciones(Buffer(body.dataset.x, 'base64').toString('utf8')))
 	const tipoEjercicio = body.dataset.tipoejercicio
 	//crea los eventos para habilitar el boton de respuesta y controlar algunas interacciones no debidas
 	iniciaListeners(tipoEjercicio)
