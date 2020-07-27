@@ -8,7 +8,6 @@ import zoom from './funciones/Zoom'
 
 const init = () => {
 	let body = document.getElementById('body')
-	console.log(Buffer(body.dataset.x, 'base64').toString('utf8'))
 	//se encarga del numero de intento, escuchando al hidden que puede ser cambiado por la plataforma
 	window.numeroIntento = parseInt(document.getElementById('hiddenIntento').value) || 1
 	document.querySelector('#hiddenIntento').addEventListener('change', event => {
