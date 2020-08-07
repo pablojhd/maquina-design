@@ -8,17 +8,16 @@ $font-size: 16px;
 $font-size-big: 20px;
 $font-color: #363026;
 
-/*
-HEADER 
-SI CAMBIA ESTAS VARIABLAS DEBE MODIFICAR MANUALMENTE LAS RESTAS EN /SECTION/_SECTION.SCSS 
-*/
+/* HEADER */
 $height-header: 50px;
 $margin-bottom-header: 10px;
-$margin-bottom-header-md-up: 20px;
 
-/*
-FOOTER
-SI CAMBIA ESTAS VARIABLAS DEBE MODIFICAR MANUALMENTE LAS RESTAS EN /SECTION/_SECTION.SCSS 
-*/
-$height-footer: 60px;
-$height-footer-md-up: 100px;
+/* FOOTER */
+$height-footer-mobile: 60px;
+$height-footer-desktop: 120px;
+
+/* BOTONES RESPONDER Y CONTINUAR */
+$background-color-button: #1ab5e9;
+$color-button: #f9f3e9;
+$border-color-button: #129cd5;
+$background-color-button-hover: #36c1f0;

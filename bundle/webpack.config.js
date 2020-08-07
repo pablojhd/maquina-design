@@ -5,7 +5,7 @@ const TerserPlugin = require('terser-webpack-plugin')
 module.exports = env => {
     console.log('NODE_ENV: ', env.NODE_ENV)
     let output = {
-        path: path.resolve(__dirname, '..', 'public', 'EJERCICIOS', 'Nivel-11', 'Eje-00', 'OA-00', 'IE-00', '110000000000000'),
+        path: path.resolve(__dirname, '..', 'public', 'EJERCICIOS', 'Nivel-12', 'Eje-00', 'OA-00', 'IE-00', '120000000000000'),
         filename: 'bundle.js'
     }
     if(env.NODE_ENV === 'production') {

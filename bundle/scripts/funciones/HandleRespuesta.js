@@ -42,7 +42,7 @@ export default (event, datos) => {
 	} else {
 		//respuesta incorrecta
 		if (window.numeroIntento === 1) {
-			feedbackSpan.innerHTML = feedNegativos[Math.floor(Math.random()*4)]
+			feedbackSpan.innerHTML = feedNegativos[Math.floor(Math.random()*10)]
 			feedbackText.innerHTML = feedback
 			feedbackElement.querySelector('button').addEventListener('click', () => continuarEjercicio(tipoEjercicio, feedbackElement))
 			if(window.renderMathInElement) { //la funcion forma parte de la libreria katex para dibujar ecuaciones 
@@ -76,15 +76,21 @@ const rachaCorrectas = tmpProgreso => {
 }
 
 const feedPositivos = [
-	'¡Muy bien!',
-	'¡Lo has logrado!',
-	'¡Genial!',
-	'¡Así se hace!'
+	'¡Bien hecho! Ahora nuevos desafíos.',
+	'¡Me sorprende tu estrategia!',
+	'Tu estrategia está dando frutos.',
+	'Tu esfuerzo no ha sido en vano.'
 ]
 
 const feedNegativos = [
-	'¡Atención!',
-	'¡Algo anda mal!',
-	'¡Vuelve a intentarlo!',
-	'¡Ten cuidado!'
+	'De los errores se aprende para alcanzar maestría.',
+	'Momento de revisar tu estrategia.',
+	'El error es parte de la práctica.',
+	'Aquí una pista.',
+	'Inténtalo una vez más.',
+	'Vuelve a intentarlo.',
+	'Perseverar es perfeccionar.',
+	'Necesitas idear otra estrategia.',
+	'Te enseñamos una nueva estrategia',
+	'Hoy aprenderás algo nuevo.'
 ]

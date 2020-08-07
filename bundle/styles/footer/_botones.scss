@@ -48,13 +48,13 @@
 
 /*--- CLASES BOTON RESPONDER ---*/
 #btnResponder {
-  background-color: #1ab5e9;
-  color: #f9f3e9;
-  border-color: #129cd5;
+  background-color: $background-color-button;
+  color: $color-button;
+  border-color: $border-color-button;
 }
 
 #btnResponder:hover {
-  background-color: #36c1f0;
+  background-color: $background-color-button-hover;
 }
 
 #btnResponder:disabled {
