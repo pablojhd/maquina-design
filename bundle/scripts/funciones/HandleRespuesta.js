@@ -91,6 +91,6 @@ const feedNegativos = [
 	'Vuelve a intentarlo.',
 	'Perseverar es perfeccionar.',
 	'Necesitas idear otra estrategia.',
-	'Te enseñamos una nueva estrategia',
+	'Te enseñamos una nueva estrategia.',
 	'Hoy aprenderás algo nuevo.'
 ]
