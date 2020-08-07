@@ -1,66 +1,28 @@
 section {
-  box-sizing: inherit;
-  align-items: stretch;
-  position: relative;
-  width: 100%;
-  height: calc(100% - #{$height-header} - #{$margin-bottom-header} - #{$height-footer-desktop});
-  height: -moz-calc(100% - #{$height-header} - #{$margin-bottom-header} - #{$height-footer-desktop});
-  height: -webkit-calc(100% - #{$height-header} - #{$margin-bottom-header} - #{$height-footer-desktop});
   display: flex;
+  align-items: center;
+  position: fixed;
+  top: calc(#{$height-header} + #{$margin-bottom-header});
+  top: -moz-calc(#{$height-header} + #{$margin-bottom-header});
+  top: -webkit-calc(#{$height-header} + #{$margin-bottom-header});
+  bottom: $height-footer-desktop;
+  width: 100%;
+  /*height: calc(100vh - #{$height-header} - #{$margin-bottom-header} - #{$height-footer-desktop});
+  height: -moz-calc(100vh - #{$height-header} - #{$margin-bottom-header} - #{$height-footer-desktop});
+  height: -webkit-calc(100vh - #{$height-header} - #{$margin-bottom-header} - #{$height-footer-desktop});*/
   overflow-y: auto;
 }
 
 #contenedor {
-  margin: auto;
-}
-
-ul {
-  list-style-type: none;
-  display: flex;
-  flex-direction: row;
-  padding: 12px;
-  margin: 0px;
-}
-
-#tabla {
-  margin: 5px;
-}
-
-.texto {
-  margin: 5px;
-}
-
-.texto p {
-  margin: 0px;
-}
-
-.tarjetas {
-  height: 100%;
-  border: 1px solid;
-  border-radius: 5px;
+  height: fit-content;
 }
 
 @include media-breakpoint-down(xs) {
   section {
-    height: calc(100% - #{$height-header} - #{$margin-bottom-header} - #{$height-footer-mobile});
-    height: -moz-calc(100% - #{$height-header} - #{$margin-bottom-header} - #{$height-footer-mobile});
-    height: -webkit-calc(100% - #{$height-header} - #{$margin-bottom-header} - #{$height-footer-mobile});
-  }
-
-  ul {
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .tarjetas {
-    margin: 10px;
-  }
-}
-
-@include media-breakpoint-up(sm) {
-  ul {
-    justify-content: space-around;
+    /*height: calc(100vh - #{$height-header} - #{$margin-bottom-header} - #{$height-footer-mobile});
+    height: -moz-calc(100vh - #{$height-header} - #{$margin-bottom-header} - #{$height-footer-mobile});
+    height: -webkit-calc(100vh - #{$height-header} - #{$margin-bottom-header} - #{$height-footer-mobile});*/
+    bottom: $height-footer-mobile;
   }
 }
 
