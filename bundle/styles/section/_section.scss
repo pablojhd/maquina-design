@@ -1,6 +1,6 @@
 section {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   position: fixed;
   top: calc(#{$height-header} + #{$margin-bottom-header});
   top: -moz-calc(#{$height-header} + #{$margin-bottom-header});
@@ -15,6 +15,7 @@ section {
 
 #contenedor {
   height: fit-content;
+  margin: auto;
 }
 
 @include media-breakpoint-down(xs) {
