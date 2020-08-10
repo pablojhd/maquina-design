@@ -83,7 +83,6 @@ const feedPositivos = [
 ]
 
 const feedNegativos = [
-	'De los errores se aprende para alcanzar maestría.',
 	'Momento de revisar tu estrategia.',
 	'El error es parte de la práctica.',
 	'Aquí una pista.',
