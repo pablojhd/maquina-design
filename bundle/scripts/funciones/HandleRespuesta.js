@@ -29,8 +29,7 @@ export default (event, datos) => {
 	if (!errorFrecuente) {
 		//respuesta correcta
 		feedbackElement.style.display = 'block'
-
-		feedbackSpan.innerHTML = feedPositivos[Math.floor(Math.random()*4)]
+		feedbackSpan.innerHTML = feedPositivos[Math.floor(Math.random()*feedPositivos.length)]
 		let racha = rachaCorrectas(tmpProgreso)
 		if (racha) {
 			feedbackText.innerHTML = `Tienes una racha de <b>${racha}</b> respuestas correctas.`
@@ -42,7 +41,7 @@ export default (event, datos) => {
 	} else {
 		//respuesta incorrecta
 		if (window.numeroIntento === 1) {
-			feedbackSpan.innerHTML = feedNegativos[Math.floor(Math.random()*10)]
+			feedbackSpan.innerHTML = feedNegativos[Math.floor(Math.random()*feedNegativos.length)]
 			feedbackText.innerHTML = feedback
 			feedbackElement.querySelector('button').addEventListener('click', () => continuarEjercicio(tipoEjercicio, feedbackElement))
 			if(window.renderMathInElement) { //la funcion forma parte de la libreria katex para dibujar ecuaciones 

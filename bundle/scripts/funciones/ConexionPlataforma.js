@@ -32,6 +32,7 @@ export const enviar = datos => {
             values += input.id + ' = '+ input.value + ' ';
         }
     }
+    console.log({ errorFrecuente })
     /*---------------------------------------*/
     let envioIntento = JSON.stringify({
         'idejercicioversion': versionEjercicio,
