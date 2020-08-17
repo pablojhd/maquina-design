@@ -12,13 +12,13 @@
   background-color: #ffffff;
 }
 
-.container-feedback button[name="btnContinuar"]  {
+.container-feedback button[name=btnContinuar] {
   background-color: $background-color-button;
   color: $color-button;
   border-color: $border-color-button;
 }
 
-.container-feedback button[name="btnContinuar"] {
+.container-feedback button[name=btnContinuar]:hover {
   background-color: $background-color-button-hover;
 }
 

@@ -67,6 +67,12 @@
   font-weight: 500;
 }
 
+@media (max-width: 1000px) {
+  #btnResponder {
+    float: right;
+  }
+}
+
 /*--- CLASES PARA BOTONES EN MOBILE---*/
 @include media-breakpoint-down(xs) {
   .icon-consulta span {

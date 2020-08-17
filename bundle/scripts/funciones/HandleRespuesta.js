@@ -4,7 +4,7 @@ import { enviar, cerrarFeedGlosa, cerrarFeed } from './ConexionPlataforma'
 import zoom from './Zoom'
 
 export default (event, datos) => {
-	event.target.disabled = true
+	document.querySelector('#btnResponder').disabled = true
 	let { idEjercicio, validaciones, tipoEjercicio, tmpProgreso } = datos
 
 	document.querySelector('footer').style.display = 'none'

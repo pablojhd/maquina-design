@@ -1,5 +1,4 @@
 export default (tipoEjercicio, feedbackElement) => {
-	feedbackElement.querySelector('button').disabled = true
 	feedbackElement.style.display = 'none'
 	document.querySelector('footer').style.display = 'grid'
 
