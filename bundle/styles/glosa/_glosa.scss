@@ -1,36 +1,11 @@
-#contenedor-glosa {
-  height: inherit;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  overflow-y: scroll;
-}
-
-#contenedor-glosa::-webkit-scrollbar {
-  width: 8px;
-}
-/* Track */
-#contenedor-glosa::-webkit-scrollbar-track {
-  color: transparent;
-}
-/* Handle */
-#contenedor-glosa::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.4);
-  border-radius: 10px;
-}
-/* Handle on hover */
-#contenedor-glosa::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.6);
-}
-
 #glosa {
   display: none;
   position: fixed;
   z-index: 1030;
   left: 0;
   top: 0;
-  width: 100vw;
-  height: 100vh;
+  bottom: 0;
+  right: 0;
   background-color: rgba(0, 0, 0, 0.4);
   padding: 15px;
 }
@@ -49,6 +24,28 @@
   width: 90%;
   max-width: 1200px;
   height: 100%;
+}
+
+#contenedor-glosa {
+  max-height: 100%;
+  overflow-y: auto;
+}
+
+#contenedor-glosa::-webkit-scrollbar {
+  width: 8px;
+}
+/* Track */
+#contenedor-glosa::-webkit-scrollbar-track {
+  color: transparent;
+}
+/* Handle */
+#contenedor-glosa::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 10px;
+}
+/* Handle on hover */
+#contenedor-glosa::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.6);
 }
 
 #btnCerrarGlosa {

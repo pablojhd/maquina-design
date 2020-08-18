@@ -4,23 +4,16 @@ const TerserPlugin = require('terser-webpack-plugin')
 
 module.exports = env => {
     console.log('NODE_ENV: ', env.NODE_ENV)
-    let output = {
-        path: path.resolve(__dirname, '..', 'public', 'EJERCICIOS', 'Nivel-12', 'Eje-00', 'OA-00', 'IE-00', '120000000000000'),
-        filename: 'bundle.js'
-    }
-    if(env.NODE_ENV === 'production') {
-        console.log('nivelFolder: ', env.nivelFolder)
-        console.log('ejercicioFolder: ', env.ejercicioFolder.toString())
-        output = {
-            path: path.resolve(__dirname, '..', 'public', 'EJERCICIOS', env.nivelFolder, 'Eje-00', 'OA-00', 'IE-00', env.ejercicioFolder.toString()),
-            filename: 'bundle.js'
-        }
-    }
+    console.log('nivelFolder: ', env.nivelFolder)
+    console.log('ejercicioFolder: ', env.ejercicioFolder.toString())
     return {
         mode: env.NODE_ENV,
         devtool: env.NODE_ENV === 'develompent' ? 'source-map' : 'inline-source-map',
         entry: './index.js',
-        output,
+        output: {
+            path: path.resolve(__dirname, '..', 'public', 'EJERCICIOS', env.nivelFolder, 'Eje-00', 'OA-00', 'IE-00', env.ejercicioFolder.toString()),
+            filename: 'bundle.js'
+        },
         module: {
             rules: [{
                 loader: 'babel-loader',
