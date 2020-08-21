@@ -3,7 +3,7 @@ import datosProgreso from './utils/DatosProgreso'
 import iniciaListeners from './funciones/IniciaListeners'
 import handleRespuesta from './funciones/HandleRespuesta'
 import barraProgreso from './funciones/BarraProgreso'
-import { pressConsulta } from './funciones/ConexionPlataforma'
+import { pressConsulta, pressCerrar } from './funciones/ConexionPlataforma'
 import zoom from './funciones/Zoom'
 
 const init = () => {
@@ -15,6 +15,10 @@ const init = () => {
 	})
 	//se encarga de mostrar las fichas cuando se presiona el boton de consulta
 	document.querySelector('#btnConsulta').addEventListener('click', pressConsulta)
+	//se encarga de cerrar el ejercicio cuando se presiona la x
+	let cruzCerrar = document.getElementById('cerrar')
+	cruzCerrar.style.cursor = 'pointer'
+	cruzCerrar.addEventListener('click', pressCerrar)
 	//dibuja la barra de porgreso del ejercicio
 	const { tmpProgreso, tmpTotal } = datosProgreso()
 	barraProgreso(tmpProgreso, tmpTotal)

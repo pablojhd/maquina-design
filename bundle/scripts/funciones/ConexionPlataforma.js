@@ -4,6 +4,7 @@ var hiddenTutorial = window.parent.parent.varTutorial //Comunicacón con frame p
 var hiddenSegundoError = window.parent.parent.varSegundoError //Comunicacón con frame Segundo error
 var hiddenCierraFeed = window.parent.parent.cerrarFeedbackHijo //Comunicacón con frame Segundo error
 var hiddenPressConsulta = window.parent.parent.pressConsulta //Comunicacón con frame Segundo error
+var hiddenPressCerrar = window.parent.parent.pressCerrar
 
 Date.prototype.yyyymmdd = function () {
     let mm = this.getMonth() + 1 // getMonth() is zero-based
@@ -62,6 +63,10 @@ export const pressConsulta = () => {
     dispatchEvent(hiddenPressConsulta, '1')
     //$(hiddenPressConsulta).val('1').trigger('change');
     //$(hiddenPressConsulta).val('1').trigger('click');
+}
+
+export const pressCerrar = () => {
+    dispatchEvent(hiddenPressCerrar, '1')
 }
 
 export const cerrarFeedGlosa = () => {//siguiente ejercicio respuesta incorrecta por segunda vez
