@@ -91,6 +91,29 @@ export default tipoEjercicio => {
                 e.target.value = valor;
             })
         })
+        document.querySelectorAll('[data-tipoinput="numero-negativo"]').forEach(input => {
+            input.addEventListener('keypress', (e) => {
+                var validacion = e.keyCode >= 48 && e.keyCode <= 57 || //solo numero
+                                    e.keyCode == 45 //menos -       
+                if (!validacion) {
+                    e.preventDefault();
+                    return false;
+                }
+            })
+            input.addEventListener('keyup', (e) => {
+                var arrayReverse = String(e.target.value).replace(/\s/g, '').split("").reverse(); //espacio cada 3 numeros
+                for (var i = 0, count = 0, valor = ''; i < arrayReverse.length; i++) {
+                    count++;
+                    if (count === 3 && arrayReverse[i + 1] && arrayReverse[i + 1] != '-') {
+                        valor = ' ' + arrayReverse[i] + valor;
+                        count = 0;
+                    } else {
+                        valor = arrayReverse[i] + valor;
+                    }
+                }
+                e.target.value = valor;
+            })
+        })
         document.querySelectorAll('[data-tipoinput="decimal"]').forEach(input => {
             input.addEventListener('keypress', (e) => {
                 var validacion = e.keyCode >= 48 && e.keyCode <= 57 || //solo numero
@@ -108,8 +131,39 @@ export default tipoEjercicio => {
                 if (entero.length >= 4) {
                     let enteroReverse = entero.split('').reverse()
                     let count = 1
-                    enteroReverse.forEach(function (numero) {
-                        if (count === 3) {
+                    enteroReverse.forEach(function (numero, i) {
+                        if (count === 3 && enteroReverse[i + 1]) {
+                            enteroEspaciado = ' ' + numero + enteroEspaciado
+                            count = 1
+                        } else {
+                            enteroEspaciado = numero + enteroEspaciado
+                            count++;
+                        }
+                    })
+                }
+                e.target.value = `${enteroEspaciado}${typeof decimal === 'undefined' ? '' : ','}${typeof decimal === 'undefined' ? '' : decimal}`
+            })
+        })
+        document.querySelectorAll('[data-tipoinput="decimal-negativo"]').forEach(input => {
+            input.addEventListener('keypress', (e) => {
+                var validacion = e.keyCode >= 48 && e.keyCode <= 57 || //solo numero
+                    e.keyCode === 44 || //coma
+                    e.keyCode == 45 //menos -
+                if (!validacion) {
+                    e.preventDefault();
+                    return false;
+                }
+            })
+            input.addEventListener('keyup', (e) => {
+                let valorReal = String(e.target.value).replace(' ', '')
+                let entero = String(valorReal).split(',')[0]
+                let decimal = String(valorReal).split(',')[1]
+                let enteroEspaciado = entero.length >= 4 ? '' : entero
+                if (entero.length >= 4) {
+                    let enteroReverse = entero.split('').reverse()
+                    let count = 1
+                    enteroReverse.forEach(function (numero, i) {
+                        if (count === 3 && enteroReverse[i + 1] && enteroReverse[i + 1] != '-') {
                             enteroEspaciado = ' ' + numero + enteroEspaciado
                             count = 1
                         } else {
