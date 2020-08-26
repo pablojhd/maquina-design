@@ -25,7 +25,17 @@ export default (validaciones, tipo) => {
 							coincidenTodas = false
                         }
                         break
+                    case 'numero-negativo':
+                        if (input.value.replace(/\s/g, '') !== val.valor && val.valor !== '-any-') {
+                            coincidenTodas = false
+                        }
+                        break
                     case 'decimal':
+                        if (input.value.replace(/\s/g, '').replace(',','.') !== val.valor && val.valor !== '-any-') {
+                            coincidenTodas = false
+                        }
+                        break
+                    case 'decimal-negativo':
                         if (input.value.replace(/\s/g, '').replace(',','.') !== val.valor && val.valor !== '-any-') {
                             coincidenTodas = false
                         }
