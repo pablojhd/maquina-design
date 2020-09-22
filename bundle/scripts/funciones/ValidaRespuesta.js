@@ -108,9 +108,15 @@ export default (validaciones, tipo) => {
                 input.classList.add('inputTexto-incorrecto')
             })
         } else {
-            document.querySelectorAll("input[name='answer']").forEach(input => {
-                input.classList.add('inputTexto-correcto')
-            })
+            if(errorFrecuente) {
+                document.querySelectorAll("input[name='answer']").forEach(input => {
+                    input.classList.add('inputTexto-incorrecto')
+                })
+            } else {
+                document.querySelectorAll("input[name='answer']").forEach(input => {
+                    input.classList.add('inputTexto-correcto')
+                })
+            }
         }
         return { feedback, errorFrecuente }
     }
