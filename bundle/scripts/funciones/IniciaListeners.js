@@ -77,6 +77,11 @@ export default tipoEjercicio => {
                     return false;
                 }
             })
+            input.addEventListener('change', event => {
+				if(!Number(event.target.value.replace(',','.').replace(/\s/g, ''))) {
+					event.target.value = ''
+				}
+			})
             input.addEventListener('keyup', (e) => {
                 var arrayReverse = String(e.target.value).replace(/\s/g, '').split("").reverse(); //espacio cada 3 numeros
                 for (var i = 0, count = 0, valor = ''; i < arrayReverse.length; i++) {
@@ -100,6 +105,11 @@ export default tipoEjercicio => {
                     return false;
                 }
             })
+            input.addEventListener('change', event => {
+				if(!Number(event.target.value.replace(',','.').replace(/\s/g, ''))) {
+					event.target.value = ''
+				}
+			})
             input.addEventListener('keyup', (e) => {
                 var arrayReverse = String(e.target.value).replace(/\s/g, '').split("").reverse(); //espacio cada 3 numeros
                 for (var i = 0, count = 0, valor = ''; i < arrayReverse.length; i++) {
@@ -123,6 +133,11 @@ export default tipoEjercicio => {
                     return false;
                 }
             })
+            input.addEventListener('change', event => {
+				if(!Number(event.target.value.replace(',','.').replace(/\s/g, ''))) {
+					event.target.value = ''
+				}
+			})
             input.addEventListener('keyup', (e) => {
                 let valorReal = String(e.target.value).replace(' ', '')
                 let entero = String(valorReal).split(',')[0]
@@ -154,6 +169,11 @@ export default tipoEjercicio => {
                     return false;
                 }
             })
+            input.addEventListener('change', event => {
+				if(!Number(event.target.value.replace(',','.').replace(/\s/g, ''))) {
+					event.target.value = ''
+				}
+			})
             input.addEventListener('keyup', (e) => {
                 let valorReal = String(e.target.value).replace(' ', '')
                 let entero = String(valorReal).split(',')[0]
