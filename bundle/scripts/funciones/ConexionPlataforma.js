@@ -43,7 +43,7 @@ export const enviar = datos => {
         'tiempoInicio': '' + date.yyyymmdd() + ' ' + fechaEntrada + '',
         'tiempoRespuesta': '' + date.yyyymmdd() + ' ' + fechaTerminoIntento.toLocaleTimeString() + '',
         'feedback': errorFrecuente ? '' : 'Respuesta Correcta',
-        'codigoErrorComun': errorFrecuente ? 0 : errorFrecuente,
+        'codigoErrorComun': errorFrecuente ? errorFrecuente : 0,
         'respuesta': values,
         'glosa': numeroIntento == 2 ? true : false
     })
