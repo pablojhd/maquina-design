@@ -78,7 +78,7 @@ export default tipoEjercicio => {
                 }
             })
             input.addEventListener('change', event => {
-				if(!Number(event.target.value.replace(',','.').replace(/\s/g, ''))) {
+				if(isNaN(event.target.value.replace(',','.').replace(/\s/g, ''))) {
 					event.target.value = ''
 				}
 			})
@@ -106,7 +106,7 @@ export default tipoEjercicio => {
                 }
             })
             input.addEventListener('change', event => {
-				if(!Number(event.target.value.replace(',','.').replace(/\s/g, ''))) {
+				if(isNaN(event.target.value.replace(',','.').replace(/\s/g, ''))) {
 					event.target.value = ''
 				}
 			})
@@ -134,7 +134,7 @@ export default tipoEjercicio => {
                 }
             })
             input.addEventListener('change', event => {
-				if(!Number(event.target.value.replace(',','.').replace(/\s/g, ''))) {
+				if(isNaN(event.target.value.replace(',','.').replace(/\s/g, ''))) {
 					event.target.value = ''
 				}
 			})
@@ -170,7 +170,7 @@ export default tipoEjercicio => {
                 }
             })
             input.addEventListener('change', event => {
-				if(!Number(event.target.value.replace(',','.').replace(/\s/g, ''))) {
+				if(isNaN(event.target.value.replace(',','.').replace(/\s/g, ''))) {
 					event.target.value = ''
 				}
 			})
