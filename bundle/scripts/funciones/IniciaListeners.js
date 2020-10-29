@@ -195,5 +195,16 @@ export default tipoEjercicio => {
                 e.target.value = `${enteroEspaciado}${typeof decimal === 'undefined' ? '' : ','}${typeof decimal === 'undefined' ? '' : decimal}`
             })
         })
+        document.querySelectorAll('[data-tipoinput="mas-menos"]').forEach(input => {
+            input.addEventListener('input', (e) => {
+                try {
+                    if(e.data.match(/\+|-/) === null) {
+                        e.target.value = ''
+                    }
+                }catch(e) {
+                    return false
+                }
+            })
+        })
     }
 }

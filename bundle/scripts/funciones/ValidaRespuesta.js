@@ -67,6 +67,11 @@ export default (validaciones, tipo) => {
                             coincidenTodas = false
                         }
                         break
+                    case 'mas-menos':
+                            if(input.value !== val.valor && val.valor !== '-any-') {
+                                coincidenTodas = false
+                            }
+                        break
 				}
             })
 			if (coincidenTodas) {
@@ -171,6 +176,28 @@ function coloreaInputTextoPorDefecto(inputElement) {
             correctas.split(',').forEach(function(correcta) {
                 if(String(resp).trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "") 
                     === String(correcta).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "")) 
+                {
+                    inputElement.classList.add('inputTexto-correcto')
+                    match = true
+                }
+            })
+            break
+        case 'comparacion':
+            resp = inputElement.value
+            correctas.split(',').forEach(function(correcta) {
+                console.log(correcta)
+                if(String(resp).trim() === String(correcta).trim()) 
+                {
+                    inputElement.classList.add('inputTexto-correcto')
+                    match = true
+                }
+            })
+            break
+        case 'mas-menos':
+            resp = inputElement.value
+            correctas.split(',').forEach(function(correcta) {
+                console.log(correcta)
+                if(String(resp).trim() === String(correcta).trim()) 
                 {
                     inputElement.classList.add('inputTexto-correcto')
                     match = true
