@@ -6,9 +6,13 @@
   "scripts": {
     "build:dev-1ro": "webpack --env.NODE_ENV=development --env.nivelFolder=Nivel-11 --env.ejercicioFolder=110000000000000 --watch",
     "build:dev-2do": "webpack --env.NODE_ENV=development --env.nivelFolder=Nivel-12 --env.ejercicioFolder=120000000000000 --watch",
-    "build:prod": "npm run build:prod-1ro && npm run build:prod-2do",
+    "build:dev-7mo": "webpack --env.NODE_ENV=development --env.nivelFolder=Nivel-7 --env.ejercicioFolder=0700000000000 --watch",
+    "build:dev-8vo": "webpack --env.NODE_ENV=development --env.nivelFolder=Nivel-8 --env.ejercicioFolder=080000000000000 --watch",
+    "build:prod": "npm run build:prod-1ro && npm run build:prod-2do && npm run build:prod-7mo && npm run build:prod-8vo",
     "build:prod-1ro": "webpack --env.NODE_ENV=production --env.nivelFolder=Nivel-11 --env.ejercicioFolder=110000000000000",
-    "build:prod-2do": "webpack --env.NODE_ENV=production --env.nivelFolder=Nivel-12 --env.ejercicioFolder=120000000000000"
+    "build:prod-2do": "webpack --env.NODE_ENV=production --env.nivelFolder=Nivel-12 --env.ejercicioFolder=120000000000000",
+    "build:prod-7mo": "webpack --env.NODE_ENV=production --env.nivelFolder=Nivel-7 --env.ejercicioFolder=070000000000000",
+    "build:prod-8vo": "webpack --env.NODE_ENV=production --env.nivelFolder=Nivel-8 --env.ejercicioFolder=080000000000000"
   },
   "author": "",
   "license": "ISC",
