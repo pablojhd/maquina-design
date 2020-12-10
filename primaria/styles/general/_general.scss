@@ -1,0 +1,36 @@
+#body {
+  margin: 0;
+  height: 100vh;
+  background-color: $background-color-body;
+  box-sizing: border-box;
+  -ms-overflow-style: scrollbar;
+}
+
+p {
+  font-family: $quicksand-medium;
+  font-size: $font-size;
+  color: $font-color;
+}
+
+span {
+  font-family: $quicksand-medium;
+  font-size: $font-size;
+}
+
+
+.katex {
+  font-size: 1em;
+}
+
+p img {
+  padding: 0;
+}
+
+table img {
+  padding: 0;
+}
+
+.img-fluid {
+  max-width: 100%;
+  height: auto;
+}

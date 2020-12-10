@@ -1,0 +1,35 @@
+section {
+  display: flex;
+  align-items: stretch;
+  position: fixed;
+  top: calc(#{$height-header} + #{$margin-bottom-header});
+  top: -moz-calc(#{$height-header} + #{$margin-bottom-header});
+  top: -webkit-calc(#{$height-header} + #{$margin-bottom-header});
+  bottom: $height-footer-desktop;
+  width: 100%;
+  /*height: calc(100vh - #{$height-header} - #{$margin-bottom-header} - #{$height-footer-desktop});
+  height: -moz-calc(100vh - #{$height-header} - #{$margin-bottom-header} - #{$height-footer-desktop});
+  height: -webkit-calc(100vh - #{$height-header} - #{$margin-bottom-header} - #{$height-footer-desktop});*/
+  overflow-y: auto;
+}
+
+#contenedor {
+  height: fit-content;
+  margin: auto;
+}
+
+@include media-breakpoint-down(xs) {
+  section {
+    /*height: calc(100vh - #{$height-header} - #{$margin-bottom-header} - #{$height-footer-mobile});
+    height: -moz-calc(100vh - #{$height-header} - #{$margin-bottom-header} - #{$height-footer-mobile});
+    height: -webkit-calc(100vh - #{$height-header} - #{$margin-bottom-header} - #{$height-footer-mobile});*/
+    bottom: $height-footer-mobile;
+  }
+}
+
+@include media-breakpoint-up(xl) {
+  #contenedor {
+    width: 900px;
+    padding: 0px;
+  }
+}

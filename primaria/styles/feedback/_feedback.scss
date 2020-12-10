@@ -1,0 +1,213 @@
+.feedback {
+  display: none;
+}
+
+.container-feedback {
+  position: fixed;
+  margin: 0px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+  background-color: #ffffff;
+}
+
+.container-feedback button[name=btnContinuar] {
+  background-color: $background-color-button;
+  color: $color-button;
+  border-color: $border-color-button;
+}
+
+.container-feedback button[name=btnContinuar]:hover {
+  background-color: $background-color-button-hover;
+}
+
+.footer-feedback {
+  bottom: 0;
+  position: absolute;
+  height: $height-footer-desktop;
+  overflow: hidden;
+  width: 100%;
+}
+
+.grid-feedback {
+  align-items: center;
+  grid-auto-rows: auto;
+  grid-template-columns: repeat(5,1fr);
+  grid-template-rows: 100%;
+  grid-gap: 8px 16px;
+  justify-content: space-between;
+  display: grid;
+  justify-items: stretch;
+  grid-auto-rows: 1fr;
+  grid-gap: 8px 16px;
+  justify-items: stretch;
+  position: relative;
+  min-height: 120px;
+  padding: 0 12%;
+  width: 100%;
+}
+
+.sub-grid {
+  display: flex;
+  flex-direction: column;
+  grid-column: 1/5;
+  margin: 0;
+  min-height: 120px;
+  position: relative;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.sub-container {
+  display: flex;
+  flex: 1 1 auto;
+}
+
+.imagen-feedback {
+  padding-right: 16px;
+  height: 120px;
+}
+
+.text-container {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  width: 100%;
+  padding: 0px;
+}
+
+.feedback-span {
+  font-family: $quicksand-medium;
+  font-size: $font-size;
+  font-weight: bold;
+}
+
+.feedback-p {
+  color: inherit !important;
+  text-align: left;
+  margin: 0px;
+}
+
+p.feedback-p img {
+  display: inline-block;
+  vertical-align: middle;
+  padding-bottom: 5px;
+}
+
+/* FEEDBACK PARA RESPUESTA CORRECTA */
+.feedback-correcto {
+  background-color: #b2e675;
+  color: #529b00;
+  height: 120px;
+}
+
+.feedback-correcto button[name="btnContinuar"] {
+  background: #72bc00;
+  color: #f9f3e9;
+  border-color: #5bac00;
+}
+
+.feedback-correcto button[name="btnContinuar"]:hover {
+  background: #7ed000;
+  color: #f9f3e9;
+  border-color: #5bac00;
+}
+
+/* FEEDBACK RESPUESTA INCORRECTA */
+.feedback-incorrecto {
+  background-color: #f9b4ab;
+  color: #e41e15;
+  height: 120px;
+}
+
+.feedback-incorrecto button[name="btnContinuar"] {
+  background: #f44316;
+  color: #f9f3e9;
+  border-color: #f92219;
+}
+
+.feedback-incorrecto button[name="btnContinuar"]:hover {
+  background: #f9463c;
+  color: #f9f3e9;
+  border-color: #f92219;
+}
+
+.siguiente-feedback {
+  grid-column: 5 / auto;
+  justify-self: center;
+  text-align: center;
+  padding: 0px;
+}
+
+@include media-breakpoint-down(sm) {
+  /*ESTAS CLASES MUESTRAN EL FEEDBACK COMO MODAL*/
+  
+  .feedback {
+    position: fixed;
+    z-index: 1030;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.6); /* Black w/ opacity */
+    padding: 25px;
+  }
+
+  .grid-feedback {
+    display: contents;
+  }
+
+  .footer-feedback {
+    margin: auto;
+    top: 30%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    justify-content: space-around;
+    min-height: 180px;
+    padding: 15px;
+    height: auto;
+    border-radius: 12px;
+  }
+
+  /* FEEDBACK PARA RESPUESTA CORRECTA */
+  .feedback-correcto .footer-feedback {
+    background-color: #b2e675;
+    color: #529b00;
+  }
+
+  /* FEEDBACK RESPUESTA INCORRECTA */
+  .feedback-incorrecto .footer-feedback {
+    background-color: #f9b4ab;
+    color: #e41e15;
+  }
+
+  .imagen-feedback {
+    display: none;
+  }
+
+  .feedback-p {
+    margin-top: 6px;
+  }
+
+  .siguiente-feedback {
+    padding: 0px;
+    text-align: right;
+  }
+
+  .animate-zoom {
+    animation: animatezoom 0.6s;
+  }
+
+  @keyframes animatezoom {
+    from {
+      transform: scale(0);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+}

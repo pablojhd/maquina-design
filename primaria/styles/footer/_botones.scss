@@ -1,0 +1,159 @@
+/*---- CLASES GENERALES ----*/
+.boton {
+  position: relative;
+  width: 140px;
+  font-family: $quicksand-medium;
+  font-size: 16px;
+  border-top: 1px solid;
+  border-right: 1px solid;
+  border-left: 1px solid;
+  border-bottom: 4px solid;
+  border-radius: 16px;
+  outline: none;
+}
+
+.boton:not(:disabled) {
+  cursor: pointer;
+}
+
+@include media-breakpoint-down(xs) {
+  .boton {
+    height: 40px;
+    width: 104px;
+  }
+}
+
+@include media-breakpoint-up(sm) {
+  .boton {
+    height: 53px;
+  }
+}
+/*--- CLASES BOTON CONSULTA ---*/
+#btnConsulta {
+  background-color: #1ab5e9;
+  color: #f9f3e9;
+  border-color: #129cd5;
+}
+
+#btnConsulta:hover {
+  background-color: #36c1f0;
+}
+
+#btnConsulta:disabled {
+  background: #e6e6e6;
+  color: #f9f3e9;
+  cursor: default;
+  border: none;
+}
+
+/*--- CLASES BOTON RESPONDER ---*/
+#btnResponder {
+  background-color: $background-color-button;
+  color: $color-button;
+  border-color: $border-color-button;
+}
+
+#btnResponder:hover {
+  background-color: $background-color-button-hover;
+}
+
+#btnResponder:disabled {
+  background-color: #e5e5e5;
+  color: #3C3C3C;
+  border: none;
+}
+
+#btnResponder span {
+  font-weight: 500;
+}
+
+@media (max-width: 1000px) {
+  #btnResponder {
+    float: right;
+  }
+}
+
+/*--- CLASES PARA BOTONES EN MOBILE---*/
+@include media-breakpoint-down(xs) {
+  .icon-consulta span {
+    display: block;
+    content: url("../imagenes_front/botones_ejercicios/open-book.svg");
+    margin: 0 auto;
+    height: 100%;
+    width: auto;
+    color: #f9f3e9;
+  }
+
+  .icon-responder span {
+    display: block;
+    content: url("../imagenes_front/botones_ejercicios/flecha-der.svg");
+    margin: 0 auto;
+    height: 85%;
+    width: auto;
+    color: #f9f3e9;
+  }
+}
+/*--- CLASES PARA BOTONES MAS GRANDE QUE MOBILE---*/
+@include media-breakpoint-up(sm) {
+  .boton-icon {
+    overflow: hidden;
+    backface-visibility: hidden;
+  }
+
+  button:not(:disabled).boton-icon span {
+    display: inline-block;
+    -webkit-transition: all 0.8s;
+    -webkit-backface-visibility: hidden;
+    -moz-transition: all 0.8s;
+    -moz-backface-visibility: hidden;
+    transition: all 1s;
+    backface-visibility: hidden;
+  }
+
+  button:not(:disabled).boton-icon:before {
+    position: absolute;
+    height: 100%;
+    line-height: 2.5;
+    font-size: 180%;
+    -moz-transition: all 0.3s;
+    transition: all 1s;
+  }
+
+  button:not(:disabled).boton-icon:active:before {
+    color: #703b87;
+  }
+
+  /* Button 5a */
+  button:not(:disabled).boton-animation:hover span {
+    -webkit-transform: translateY(300%);
+    -moz-transform: translateY(300%);
+    -ms-transform: translateY(300%);
+    transform: translateY(200%);
+  }
+
+  button:not(:disabled).boton-animation:before {
+    top: -115%;
+  }
+
+  button:not(:disabled).boton-animation:hover:before {
+    top: -4px;
+  }
+
+  button:not(:disabled).icon-consulta:before {
+    content: url("../imagenes_front/botones_ejercicios/open-book.svg");
+    width: 36px;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+  }
+
+  button:not(:disabled).icon-responder:before {
+    content: url("../imagenes_front/botones_ejercicios/flecha-der.svg");
+    width: 36px;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+  }
+}

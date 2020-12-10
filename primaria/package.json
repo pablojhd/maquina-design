@@ -1,0 +1,33 @@
+{
+  "name": "primaria",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build:dev-3ro": "webpack --env.NODE_ENV=development --env.nivelFolder=Nivel-3 --env.ejercicioFolder=030000000000000 --watch",
+    "build:dev-5to": "webpack --env.NODE_ENV=development --env.nivelFolder=Nivel-5 --env.ejercicioFolder=050000000000000 --watch",
+    "build:dev-6to": "webpack --env.NODE_ENV=development --env.nivelFolder=Nivel-6 --env.ejercicioFolder=060000000000000 --watch",
+    "build:prod": "npm run build:prod-3ro && npm run build:prod-5to && npm run build:prod-6to",
+    "build:prod-3ro": "webpack --env.NODE_ENV=production --env.nivelFolder=Nivel-3 --env.ejercicioFolder=030000000000000",
+    "build:prod-5to": "webpack --env.NODE_ENV=production --env.nivelFolder=Nivel-5 --env.ejercicioFolder=050000000000000",
+    "build:prod-6to": "webpack --env.NODE_ENV=production --env.nivelFolder=Nivel-6 --env.ejercicioFolder=060000000000000"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.10.3",
+    "@babel/preset-env": "^7.10.3",
+    "babel-loader": "^8.1.0",
+    "css-loader": "^3.6.0",
+    "mini-css-extract-plugin": "^0.9.0",
+    "node-sass": "^4.14.1",
+    "sass": "^1.26.9",
+    "sass-loader": "^9.0.1",
+    "terser-webpack-plugin": "^3.0.6",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.12"
+  },
+  "dependencies": {
+    "bootstrap": "^4.5.0"
+  }
+}

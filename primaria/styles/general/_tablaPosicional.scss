@@ -1,0 +1,210 @@
+.tabPos {
+    margin: 20px auto;
+    box-sizing: border-box;
+}
+
+.tabPos * {
+    box-sizing: border-box;
+}
+
+.tabPos-fila {
+    display: flex;
+    align-items: stretch;
+}
+
+.tabPos-celda {
+    display: flex;
+    flex-grow: 0;
+    width: 100px;
+    justify-content: center;
+    align-items: center;
+}
+
+.tabPos-celda_encabezado {
+    background-color: #1F8EBE;
+    border-left: 0.07em solid #DFD9D0;
+    border-right: 0.07em solid #DFD9D0;
+}
+
+.tabPos-celda_encabezado h6 {
+    font-family: $quicksand-medium;
+    font-size: 1em;
+    font-weight: 300;
+    color: #F9F3E9;
+    margin-top: 0.2em;
+    margin-bottom: 0.2em;
+}
+
+.tabPos-celda_textoencabezado p {
+    font-family: $quicksand-medium;
+    font-size: 30px;
+    color: #363026;
+    margin: 0;
+}
+
+.tabPos-celda_texto p {
+    font-family: $quicksand-medium;
+    font-size: 34px;
+    color: #363026;
+    margin: 0;
+}
+
+.tabPos-celda_cuerpo {
+    border-bottom: 0.14em solid #DFD9D0;
+    border-left: 0.07em solid #DFD9D0;
+    border-right: 0.07em solid #DFD9D0;
+}
+
+.tabPos-celda_coma {
+    position: relative;
+}
+
+.tabPos-celda_coma::before {
+    content: url("https://desarrolloadaptatin.blob.core.windows.net:443/sistemaejercicios/ejercicios/Nivel-3/imagenes_front/tablas_posicionales/coma.svg");
+    position: absolute;
+    border-radius: 50%;
+    left: -9px;
+    bottom: 10px;
+    z-index: 200;
+    height: 15px;
+    width: 15px;
+}
+
+.tabPos-celda_signoMas {
+    position: relative;
+}
+
+.tabPos-celda_signoMas::before {
+    content: url("https://desarrolloadaptatin.blob.core.windows.net/sistemaejercicios/ejercicios/Nivel-5/imagenes_front/simbolos/Suma.svg");
+    position: absolute;
+    border-radius: 50%;
+    left: -9px;
+    bottom: 15px;
+    z-index: 200;
+    height: 15px;
+    width: 15px;
+}
+
+.tabPos-celda_textotachado {
+    position: relative;
+}
+ 
+.tabPos-celda_textotachado:before {
+    position: absolute;
+    height: 40px;
+    width: 3px;
+    content: url("https://desarrolloadaptatin.blob.core.windows.net:443/sistemaejercicios/ejercicios/Nivel-5/imagenes_front/tablas_posicionales/line.svg");
+    -webkit-transform:rotate(30deg);
+    -moz-transform:rotate(30deg);
+    -ms-transform:rotate(30deg);
+    -o-transform:rotate(30deg);
+    transform:rotate(30deg);
+    left: 50%;
+    top: 6px;
+}
+
+.tabPos-celda_operacion {
+    flex-direction: column;
+}
+
+.tabPos-celda_operacion span {
+    font-family: $quicksand-medium;
+    font-size: 20px;
+    color: #363026;
+    height: 20px;
+}
+
+.tabPos-celda_operacion p {
+    font-family: $quicksand-medium;
+    font-size: 34px;
+    color: #363026;
+    margin: 0;
+}
+
+.tabPos-imgFlecha {
+    height: 40px;
+    margin-top: 5px;
+}
+
+.tabPos-imgLLave {
+    width: 100%;
+}
+
+.tabPos-img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    padding: 5px;
+}
+
+/* clases para dibujar los grosores y radios de los bordes de las tablas */
+.tabPos-celda_encabezadofirst {
+    border-left: none;
+    border-top-left-radius: 10px;
+    padding-top: 0.3em;
+    padding-bottom: 0.3em;
+}
+
+.tabPos-celda_encabezadolast {
+    border-right: none;
+    border-top-right-radius: 10px;
+}
+
+.tabPos-celda_cuerpofirst {
+    border-left: 0.14em solid #DFD9D0;
+}
+
+.tabPos-celda_cuerpolast {
+    border-right: 0.14em solid #DFD9D0;
+}
+
+.tabPos-celda_cuerpofirstcol {
+    border-left: 0.14em solid #DFD9D0;
+    border-bottom-left-radius: 10px;
+}
+
+.tabPos-celda_cuerpolastcol {
+    border-right: 0.14em solid #DFD9D0;
+    border-bottom-right-radius: 10px;
+}
+
+.tabPos-bloques_UM {
+    width: 95px;
+}
+
+.tabPos-bloques_C {
+    width: 95px;
+}
+
+.tabPos-bloques_D {
+    width: 95px;
+}
+
+.tabPos-bloques_U {
+    width: 35px;
+}
+
+
+.tabPos-bloques_d {
+    width: 80px;
+}
+
+.tabPos-bloques_c {
+    width: 80px;
+}
+
+.tabPos-monedabillete_UM {
+    width: 90px;
+}
+
+.tabPos-monedabillete_C {
+    width: 85px;
+}
+
+.tabPos-monedabillete_D {
+    width: 85px;
+}
+
+.tabPos-monedabillete_U {
+    width: 85px;
+}
