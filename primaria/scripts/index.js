@@ -35,7 +35,6 @@ const init = () => {
 		tipoEjercicio,
 		tmpProgreso
 	}))
-	
 }
 
 
@@ -44,3 +43,21 @@ if (document.readyState === 'loading') {  // Loading hasn't finished yet
 } else {  // `DOMContentLoaded` has already fired
 	init()
 }
+//esta funcion desordena las opciones de los ejercicios
+(function(){
+	let div = document.getElementById('respuesta');
+	div.style.opacity = '0';
+	let nodes = document.querySelector('#respuesta').children;
+	let opciones = [], posiciones = []
+	for(let i = 0; i < nodes.length; i++) {
+		opciones.push(nodes[i].outerHTML)
+		posiciones.push(i)
+	}
+	div.innerHTML = '';
+	for(let i = opciones.length-1; i > -1; i--) {
+		let indice = Math.floor(Math.random()*posiciones.length)
+		let posicion = posiciones.splice(indice, 1)[0]
+		div.innerHTML = div.innerHTML + opciones[posicion]
+	}
+	div.style.opacity = '1';
+})();
